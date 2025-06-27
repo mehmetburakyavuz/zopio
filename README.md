@@ -17,7 +17,7 @@
 Clone the repo using:
 
 ```sh
-npx zopio@latest init
+npx zopio@latest init 
 ```
 
 > 🚀 **Ready to build something amazing?**  
