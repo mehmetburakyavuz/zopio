@@ -1,5 +1,5 @@
 {
-	"name": "zopio",
+	"name": "zopio2",
 	"version": "0.9.1",
 	"bin": {
 		"zopio": "dist/index.js"
