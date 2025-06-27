@@ -1,3 +1,25 @@
+# v0.9.3 (Fri Jun 27 2025)
+
+:tada: This release contains work from a new contributor! :tada:
+
+Thank you, null[@uozopio](https://github.com/uozopio), for all your work!
+
+#### 🐛 Bug Fix
+
+- chore: update package name to zopio_test3 [#27](https://github.com/zopiolabs/zopio/pull/27) (uo@uozopio.com [@uozopio](https://github.com/uozopio))
+- feat: add test:watch script [#26](https://github.com/zopiolabs/zopio/pull/26) (uo@uozopio.com [@uozopio](https://github.com/uozopio))
+
+#### ⚠️ Pushed to `main`
+
+- fix: rename npm to test (uo@uozopio.com)
+
+#### Authors: 2
+
+- [@uozopio](https://github.com/uozopio)
+- Umutcan ÖNER (uo@uozopio.com)
+
+---
+
 # v0.9.2 (Fri Jun 27 2025)
 
 #### ⚠️ Pushed to `main`
