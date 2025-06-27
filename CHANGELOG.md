@@ -1,3 +1,16 @@
+# v0.9.2 (Fri Jun 27 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat: extreme zopio (uo@uozopio.com)
+- fix: make npm great again (uo@uozopio.com)
+
+#### Authors: 1
+
+- Umutcan ÖNER (uo@uozopio.com)
+
+---
+
 # v0.9.1 (Fri Jun 27 2025)
 
 :tada: This release contains work from a new contributor! :tada:
