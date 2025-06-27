@@ -1,3 +1,16 @@
+# v0.9.4 (Fri Jun 27 2025)
+
+#### 🐛 Bug Fix
+
+- ci: add security scanning workflow [#28](https://github.com/zopiolabs/zopio/pull/28) (uo@uozopio.com [@uozopio](https://github.com/uozopio))
+
+#### Authors: 2
+
+- [@uozopio](https://github.com/uozopio)
+- Umutcan ÖNER (uo@uozopio.com)
+
+---
+
 # v0.9.3 (Fri Jun 27 2025)
 
 :tada: This release contains work from a new contributor! :tada:
