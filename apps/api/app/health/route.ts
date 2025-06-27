@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 
-export const GET = (request?: Request | NextRequest) => {
+export function GET(request?: Request | NextRequest): Response {
   // Check if this is a test request or specifically wants plain text
   const acceptHeader = request?.headers.get('Accept') || '';
   const isTestRequest =
