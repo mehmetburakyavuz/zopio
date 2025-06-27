@@ -1,10 +1,11 @@
 import type { NextRequest } from 'next/server';
 
-export const GET = (request: Request | NextRequest) => {
+export const GET = (request?: Request | NextRequest) => {
   // Check if this is a test request or specifically wants plain text
   const acceptHeader = request?.headers.get('Accept') || '';
-  const isTestRequest = process.env.NODE_ENV === 'test' || acceptHeader.includes('text/plain');
-  
+  const isTestRequest =
+    process.env.NODE_ENV === 'test' || acceptHeader.includes('text/plain');
+
   if (isTestRequest) {
     return new Response('OK', {
       status: 200,
@@ -13,7 +14,7 @@ export const GET = (request: Request | NextRequest) => {
       },
     });
   }
-  
+
   const html = `
     <!DOCTYPE html>
     <html lang="en">
