@@ -1,3 +1,17 @@
+# v0.9.5 (Fri Jun 27 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix: add health check endpoint and set package as private ([@mkzopio](https://github.com/mkzopio))
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: webhook handlers, health endpoint, and update documentation ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.4 (Fri Jun 27 2025)
 
 #### 🐛 Bug Fix
