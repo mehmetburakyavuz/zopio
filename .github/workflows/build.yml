@@ -35,19 +35,18 @@ jobs:
     # This allows for documentation-only changes to bypass the build process
     if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
     steps:
-      # Step 1: Check out the repository code
+      # Step 1: Check out the repository code with full history
       # This step clones the repository code to the GitHub Actions runner
-      # The default depth is 1, which is sufficient for most build operations
+      # We set fetch-depth: 0 to get the complete history for versioning tools
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
-      # Step 2: Fetch complete git history for accurate versioning
-      # This is necessary for tools that rely on git history for versioning
-      # (e.g., semantic-release, lerna, or other versioning tools)
-      - name: Fetch all history for all tags and branches
-        run: git fetch --prune --unshallow
+      # Step 2: Fetch tags for versioning
+      # This ensures all tags are available for versioning tools
       - name: Prepare repository
-        run: git fetch --unshallow --tags
+        run: git fetch --tags
 
       # Step 3: Set up pnpm package manager
       # Using pnpm for faster, more efficient dependency management in the monorepo

@@ -66,13 +66,29 @@ jobs:
 
             // Only assign if no assignees exist to avoid overwriting manual assignments
             if (pr.assignees.length === 0) {
-              await github.rest.issues.addAssignees({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: pr.number,
-                assignees: [pr.user.login]  // Assign to PR author
-              });
-              console.log(`Assigned PR #${pr.number} to author: ${pr.user.login}`);
+              try {
+                await github.rest.issues.addAssignees({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  assignees: [pr.user.login]  // Assign to PR author
+                });
+                console.log(`Assigned PR #${pr.number} to author: ${pr.user.login}`);
+              } catch (error) {
+                console.error(`Error assigning PR to author: ${error.message}`);
+                // Try alternative method if the first one fails
+                try {
+                  await github.rest.pulls.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: pr.number,
+                    assignees: [pr.user.login]
+                  });
+                  console.log(`Assigned PR #${pr.number} to author using alternative method`);
+                } catch (altError) {
+                  console.error(`Alternative assignment method also failed: ${altError.message}`);
+                }
+              }
             } else {
               console.log(`PR #${pr.number} already has assignees, skipping author assignment`);
             }
@@ -181,15 +197,38 @@ jobs:
               if (teamReviewers.size > 0) {
                 try {
                   const teamReviewersList = Array.from(teamReviewers);
-                  await github.rest.pulls.requestReviewers({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    pull_number: pr.number,
-                    team_reviewers: teamReviewersList
-                  });
-                  console.log(`Assigned team reviewers: ${teamReviewersList.join(', ')}`);
+                  console.log(`Attempting to assign team reviewers: ${teamReviewersList.join(', ')}`);
+                  
+                  // Check if teams exist in the organization
+                  for (const team of teamReviewersList) {
+                    try {
+                      // Verify team exists before attempting to assign
+                      await github.rest.teams.getByName({
+                        org: context.repo.owner,
+                        team_slug: team
+                      });
+                    } catch (teamError) {
+                      console.warn(`Team ${team} not found or not accessible: ${teamError.message}`);
+                      // Remove non-existent teams
+                      teamReviewers.delete(team);
+                    }
+                  }
+                  
+                  // Only proceed if we have valid teams
+                  const validTeamsList = Array.from(teamReviewers);
+                  if (validTeamsList.length > 0) {
+                    await github.rest.pulls.requestReviewers({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      pull_number: pr.number,
+                      team_reviewers: validTeamsList
+                    });
+                    console.log(`Successfully assigned team reviewers: ${validTeamsList.join(', ')}`);
+                  } else {
+                    console.log('No valid team reviewers found after validation');
+                  }
                 } catch (error) {
-                  console.error('Error assigning team reviewers:', error);
+                  console.error(`Error assigning team reviewers: ${error.message}`);
                 }
               }
 
@@ -197,15 +236,42 @@ jobs:
               if (individualReviewers.size > 0) {
                 try {
                   const individualReviewersList = Array.from(individualReviewers);
-                  await github.rest.pulls.requestReviewers({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    pull_number: pr.number,
-                    reviewers: individualReviewersList
-                  });
-                  console.log(`Assigned individual reviewers: ${individualReviewersList.join(', ')}`);
+                  console.log(`Attempting to assign individual reviewers: ${individualReviewersList.join(', ')}`);
+                  
+                  // Filter out the PR author from reviewers list to avoid self-review
+                  const filteredReviewers = individualReviewersList.filter(reviewer => reviewer !== pr.user.login);
+                  
+                  if (filteredReviewers.length > 0) {
+                    // Verify each reviewer exists before attempting to assign
+                    const validReviewers = [];
+                    for (const reviewer of filteredReviewers) {
+                      try {
+                        // Check if user exists
+                        await github.rest.users.getByUsername({
+                          username: reviewer
+                        });
+                        validReviewers.push(reviewer);
+                      } catch (userError) {
+                        console.warn(`User ${reviewer} not found: ${userError.message}`);
+                      }
+                    }
+                    
+                    if (validReviewers.length > 0) {
+                      await github.rest.pulls.requestReviewers({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: pr.number,
+                        reviewers: validReviewers
+                      });
+                      console.log(`Successfully assigned individual reviewers: ${validReviewers.join(', ')}`);
+                    } else {
+                      console.log('No valid individual reviewers found after validation');
+                    }
+                  } else {
+                    console.log('No reviewers to assign after filtering out PR author');
+                  }
                 } catch (error) {
-                  console.error('Error assigning individual reviewers:', error);
+                  console.error(`Error assigning individual reviewers: ${error.message}`);
                 }
               }
 
