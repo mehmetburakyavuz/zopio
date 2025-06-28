@@ -251,7 +251,7 @@ jobs:
           echo "Dependency scan result: ${{ needs.dependency-scan.result }}"
           echo "Secret scan result: ${{ needs.secret-scan.result }}"
           echo "Docker scan result: ${{ needs.docker-scan.result }}"
-          
+
           if [[ "${{ needs.dependency-scan.result }}" == "failure" || "${{ needs.secret-scan.result }}" == "failure" ]]; then
             echo "Security Scan failed - Critical jobs failed"
             exit 1
