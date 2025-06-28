@@ -1,3 +1,16 @@
+# v0.9.9 (Sat Jun 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- chore: update package name and add comprehensive security workflow ([@mkzopio](https://github.com/mkzopio))
+- ci: fix comprehensive security scanning workflow with CodeQL, Trivy, and TruffleHog ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.8 (Sat Jun 28 2025)
 
 #### ⚠️ Pushed to `main`
