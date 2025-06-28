@@ -1,19 +1,3 @@
-# v0.9.17 (Sat Jun 28 2025)
-
-#### 🐛 Bug Fix
-
-- chore: update package name from zopio-test1 to zopio and format files… [#60](https://github.com/zopiolabs/zopio/pull/60) ([@mkzopio](https://github.com/mkzopio))
-
-#### ⚠️ Pushed to `main`
-
-- ci: add PR workflows for validation, linting and auto-labeling ([@mkzopio](https://github.com/mkzopio))
-
-#### Authors: 1
-
-- MK ([@mkzopio](https://github.com/mkzopio))
-
----
-
 # v0.9.16 (Sat Jun 28 2025)
 
 #### ⚠️ Pushed to `main`
