@@ -61,10 +61,11 @@ jobs:
       # Uses the GitHub CLI to post the comment with the generated summary
       - name: Comment with AI summary
         run: |
-          gh issue comment $ISSUE_NUMBER --body '${{ steps.inference.outputs.response }}'
+          gh issue comment $ISSUE_NUMBER --body "$RESPONSE"
         env:
           # Authentication token for GitHub API access
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The issue number to comment on
           ISSUE_NUMBER: ${{ github.event.issue.number }}
+          # The AI-generated summary response
           RESPONSE: ${{ steps.inference.outputs.response }}
