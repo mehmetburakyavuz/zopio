@@ -1,3 +1,16 @@
+# v0.9.8 (Sat Jun 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- ci: fix GitHub Actions workflow errors for PR automation and security ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.7 (Sat Jun 28 2025)
 
 #### ⚠️ Pushed to `main`
