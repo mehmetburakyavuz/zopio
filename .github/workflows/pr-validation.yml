@@ -41,10 +41,10 @@ on:
 concurrency:
   # Create a unique concurrency group for each PR or branch reference
   # This prevents multiple workflow runs from processing the same PR simultaneously
-  group: pr-validation-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   # Cancel any in-progress workflow run if a new one is triggered
   # This ensures we're always validating against the latest PR state
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   # Main validation job that performs all checks in sequence

@@ -41,27 +41,48 @@ jobs:
 
       # Step 2: Set up Node.js environment
       # Using Node.js 20 for compatibility with modern JavaScript features
-      # Configures pnpm caching to speed up dependency installation
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          
+      # Step 3: Install pnpm
+      # This installs pnpm globally before we try to use it
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+          
+      # Step 4: Setup pnpm cache
+      # Configures pnpm caching to speed up dependency installation
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      # Step 3: Install project dependencies
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # Step 5: Install project dependencies
       # Uses --frozen-lockfile to ensure consistent installations across environments
       # This prevents unexpected behavior due to dependency changes
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Step 4: Run comprehensive code quality checks
+      # Step 6: Run comprehensive code quality checks
       # Ultracite is a unified tool that runs linting, type checking, and tests
       # The --ci flag optimizes output for continuous integration environments
       # This step will fail if any lint rules are violated, types don't match, or tests fail
       - name: Run Ultracite Checks (Lint + Typecheck + Test)
         run: pnpm ultracite check --ci
 
-      # Step 5: Verify code formatting
+      # Step 7: Verify code formatting
       # Biome is used to ensure consistent code style across the codebase
       # The ci command checks formatting without modifying files
       # This step will fail if any files don't match the project's formatting standards

@@ -40,10 +40,20 @@ concurrency:
   # This ensures we're always using the most up-to-date PR information
   cancel-in-progress: true
 
+# Define permissions needed for this workflow
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
   # Job to automatically assign the PR to its author
   assign-author:
     runs-on: ubuntu-latest
+    # Ensure this job has the necessary permissions
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
       # Step 1: Assign the PR to the person who created it
       # This ensures the author remains responsible for addressing feedback
@@ -71,6 +81,11 @@ jobs:
   # This job analyzes the files changed in the PR and assigns appropriate reviewers
   assign-reviewers:
     runs-on: ubuntu-latest
+    # Ensure this job has the necessary permissions
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: read
     # Skip reviewer assignment for draft PRs to avoid premature reviews
     # This prevents notification spam while the PR is still being worked on
     if: github.event.pull_request.draft == false

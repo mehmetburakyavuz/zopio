@@ -27,10 +27,12 @@ jobs:
   # This job runs on every PR, including those from forks (pull_request_target)
   label:
     runs-on: ubuntu-latest
-    # Minimum permissions required for labeling PRs
+    # Permissions required for labeling PRs
     permissions:
       contents: read      # To read repository files
       pull-requests: write # To modify PR labels
+      issues: write       # To modify issues
+      administration: write # To create and manage labels
 
     steps:
     # Apply labels based on the rules in .github/labeler.yml
