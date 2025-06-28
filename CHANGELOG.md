@@ -1,3 +1,16 @@
+# v0.9.6 (Sat Jun 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: installation docs and health check endpoint ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.5 (Fri Jun 27 2025)
 
 #### ⚠️ Pushed to `main`
