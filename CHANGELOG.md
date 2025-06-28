@@ -1,3 +1,15 @@
+# v0.9.14 (Sat Jun 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat: add GitHub Action to generate AI summaries for new issues ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.13 (Sat Jun 28 2025)
 
 #### ⚠️ Pushed to `main`
