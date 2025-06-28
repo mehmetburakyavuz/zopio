@@ -14,26 +14,40 @@
 #   - Different messages for issues vs PRs
 #   - Encourages community engagement
 #
-# Security Note:
-#   Uses pull_request_target to comment on PRs from forks
+# DX Benefits:
+# - Makes new contributors feel valued and welcomed
+# - Provides immediate guidance to project standards and resources
+# - Reduces friction for first-time contributors
+# - Maintains consistent onboarding experience
+# - Builds a positive community atmosphere
 
 name: Welcome First Time Contributors
 
 on:
+  # Triggered when a pull request is opened
+  # Using pull_request_target for security with external contributors
   pull_request_target:  # Allows commenting on PRs from forks
     types: [opened]
+  # Triggered when an issue is opened
   issues:
     types: [opened]
 
 jobs:
+  # Main job that handles welcoming first-time contributors
   welcome:
+    # Using Ubuntu for its reliability and performance in CI environments
     runs-on: ubuntu-latest
     steps:
-      # Post welcome message for first-time contributors
+      # Use GitHub's official first-interaction action
+      # This action automatically detects if this is the user's first contribution
+      # and only posts the welcome message for genuine first-time contributors
       - uses: actions/first-interaction@v1
         with:
+          # Authentication token to post comments on issues and PRs
+          # Using GITHUB_TOKEN to avoid rate limiting and permission issues
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          # Welcome message for first issue
+          
+          # Customized welcome message for users opening their first issue
           issue-message: |
             👋 Welcome to Zopio, @${{ github.actor }}! 
             

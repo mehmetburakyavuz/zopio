@@ -1,0 +1,69 @@
+# PR Code Quality Workflow
+#
+# Purpose: Enforces code quality standards by running linting, type checking, testing,
+#          and formatting checks on all pull requests to the main branch.
+#
+# Triggers:
+# - Pull requests targeting the main branch
+#
+# Key Features:
+# - Runs Ultracite for comprehensive code quality checks
+# - Verifies code formatting with Biome
+# - Ensures tests pass before merging
+# - Provides fast feedback on code quality issues
+#
+# DX Benefits:
+# - Catches issues early in the development process
+# - Maintains consistent code style across the codebase
+# - Prevents type errors and common bugs
+# - Reduces review cycles by catching issues automatically
+# - Ensures all tests pass before code reaches review
+
+name: PR Checks - Lint, Typecheck, Test, Format
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Main job that runs all code quality checks in a single workflow
+  # This consolidates linting, type checking, testing, and formatting
+  # to provide comprehensive feedback on code quality issues
+  code-quality:
+    name: Lint + Typecheck + Test + Format
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository code
+      # This gets the latest code from the pull request for analysis
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      # Using Node.js 20 for compatibility with modern JavaScript features
+      # Configures pnpm caching to speed up dependency installation
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # Step 3: Install project dependencies
+      # Uses --frozen-lockfile to ensure consistent installations across environments
+      # This prevents unexpected behavior due to dependency changes
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 4: Run comprehensive code quality checks
+      # Ultracite is a unified tool that runs linting, type checking, and tests
+      # The --ci flag optimizes output for continuous integration environments
+      # This step will fail if any lint rules are violated, types don't match, or tests fail
+      - name: Run Ultracite Checks (Lint + Typecheck + Test)
+        run: pnpm ultracite check --ci
+
+      # Step 5: Verify code formatting
+      # Biome is used to ensure consistent code style across the codebase
+      # The ci command checks formatting without modifying files
+      # This step will fail if any files don't match the project's formatting standards
+      - name: Run Biome Format Check
+        run: pnpm biome ci

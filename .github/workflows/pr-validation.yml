@@ -1,42 +1,68 @@
-# Unified Pull Request Validation
+# Zopio Pull Request Validation Workflow
 #
-# Purpose: Comprehensive PR validation combining branch naming, semantic title,
-#          and size checks into a single efficient workflow.
+# Purpose: Enforces quality standards and conventions for all pull requests
+#          to maintain code quality, consistency, and proper documentation.
+#          This unified workflow combines multiple validation checks in one place.
 #
 # Triggers:
-#   - PR opened, edited, synchronized, reopened
-#   - Branch creation (for branch naming)
+#   - PR opened, edited, synchronized (new commits), or reopened
+#   - PR target events for security with external contributors
+#   - Branch creation events for early branch name validation
 #
-# Features:
-#   - Branch naming convention enforcement
-#   - Semantic PR title validation
-#   - PR size limits enforcement
-#   - Breaking change documentation requirements
-#   - Consolidated validation with early exit
+# Key Features:
+#   - Branch naming convention enforcement (feat/, fix/, etc.)
+#   - Semantic PR title validation (conventional commits format)
+#   - PR size limit enforcement to prevent massive changes
+#   - Breaking change documentation verification
+#   - Automated feedback via PR comments and labels
+#
+# DX Benefits:
+#   - Ensures consistent PR standards across the project
+#   - Provides immediate feedback on PR quality issues
+#   - Reduces review cycles by catching common issues early
+#   - Maintains clean git history through standardized commits
+#   - Simplifies release notes and changelog generation
+#   - Enforces documentation of breaking changes
 
 name: PR Validation
 
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
+    branches:
+      - main
+      - develop
   pull_request_target:
     types: [opened, edited, synchronize]
   create:
 
-# Cancel in-progress runs for the same PR
+# Concurrency configuration to prevent duplicate validation runs
+# This ensures only one validation workflow runs per PR at any given time
 concurrency:
+  # Create a unique concurrency group for each PR or branch reference
+  # This prevents multiple workflow runs from processing the same PR simultaneously
   group: pr-validation-${{ github.event.pull_request.number || github.ref }}
+  # Cancel any in-progress workflow run if a new one is triggered
+  # This ensures we're always validating against the latest PR state
   cancel-in-progress: true
 
 jobs:
+  # Main validation job that performs all checks in sequence
+  # Using a single job for all validations improves performance and provides a unified status check
   validate-all:
     runs-on: ubuntu-latest
+    # Required permissions to comment on PRs and add/remove labels
     permissions:
-      pull-requests: write
-      issues: write
+      pull-requests: write  # Needed to comment on PRs and modify PR metadata
+      issues: write         # Needed to add/remove labels and create comments
     steps:
-      # Branch Naming Check
+      # Step 1: Branch Naming Convention Check
+      # Validates that branch names follow the project's standardized naming conventions
+      # This ensures consistent branch organization and enables automated workflows
+      # based on branch name patterns (e.g., automatic versioning, deployment)
       - name: Check branch naming convention
+        # Run this check for PRs and when new branches are created
+        # This provides early feedback on branch naming issues
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event_name == 'create'
         uses: actions/github-script@v7
         with:
@@ -136,12 +162,17 @@ jobs:
               }
             }
 
-      # Semantic PR Title Check
+      # Step 2: Semantic PR Title Validation
+      # Ensures PR titles follow the Conventional Commits specification
+      # This standardization enables automated changelog generation and semantic versioning
+      # Format: type(scope): description  [e.g., feat(auth): add SSO support]
       - name: Validate PR title format
+        # Only run on PR events (not on branch creation)
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         uses: amannn/action-semantic-pull-request@v5
-        id: semantic
+        id: semantic  # ID used to reference this step in later steps if needed
         env:
+          # Token for GitHub API access to comment on PRs
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           types: |
@@ -190,8 +221,12 @@ jobs:
             doesn't match the configured pattern. Please ensure that the subject
             doesn't start with an uppercase character.
 
-      # Breaking Change Check
+      # Step 3: Breaking Change Documentation Check
+      # Detects breaking changes (indicated by '!' in PR title) and ensures proper documentation
+      # This enforces that breaking changes are well-documented with migration instructions
+      # to help users adapt to API changes and maintain backward compatibility awareness
       - name: Check for breaking changes documentation
+        # Only run on PR events (not on branch creation)
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         uses: actions/github-script@v7
         with:
@@ -230,8 +265,12 @@ jobs:
               }
             }
 
-      # PR Size Check
+      # Step 4: PR Size Limit Check
+      # Enforces reasonable PR sizes to improve code review quality and velocity
+      # Large PRs are harder to review thoroughly and often lead to missed issues
+      # This check provides warnings for medium-sized PRs and blocks excessively large ones
       - name: Check PR size
+        # Only run on PR events (not on branch creation)
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         uses: actions/github-script@v7
         with:
@@ -309,8 +348,12 @@ jobs:
               core.setFailed(`PR is too large (${totalChanges} lines changed). Maximum allowed: ${hardLimit} lines.`);
             }
 
-      # Add helpful comment for any validation failures
+      # Step 5: Validation Summary - Provides a helpful error message when any validation fails
+      # This step creates a comprehensive comment with guidance on fixing validation issues
+      # The comment includes links to documentation and specific requirements for each check
+      # This improves DX by providing clear, actionable feedback to contributors
       - name: Add validation summary
+        # Only run this step if a previous step has failed and we're processing a PR
         if: failure() && (github.event_name == 'pull_request' || github.event_name == 'pull_request_target')
         uses: actions/github-script@v7
         with:
