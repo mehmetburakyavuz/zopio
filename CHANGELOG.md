@@ -1,3 +1,16 @@
+# v0.9.15 (Sat Jun 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- chore: rename package from zopio to zopio-test and format files array ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.13 (Sat Jun 28 2025)
 
 #### ⚠️ Pushed to `main`
