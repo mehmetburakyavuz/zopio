@@ -1,6 +1,6 @@
 {
   "name": "zopio",
-  "version": "0.9.12",
+  "version": "0.9.13",
   "private": true,
   "bin": {
     "zopio": "dist/index.js"
