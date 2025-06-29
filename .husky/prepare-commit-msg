@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+# Get the current branch name
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+
+# Check if branch name contains "wip"
+if echo "$BRANCH_NAME" | grep -q "^wip/"; then
+  echo "ℹ️  WIP branch detected: $BRANCH_NAME"
+  echo "   Adding [skip ci] to commit message"
+  echo "[skip ci]" >> $1
+  echo "✅ CI will be skipped for this commit"
+fi
