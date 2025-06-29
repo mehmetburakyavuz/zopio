@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+echo "Running post-merge steps..."
+echo "ℹ️  Updating dependencies after merge"
+
+# Install dependencies to ensure they're up-to-date after merge
+pnpm install || {
+  echo "❌ Failed to update dependencies"
+  echo "   Please run 'pnpm install' manually"
+  exit 1
+}
+
+echo "✅ Dependencies updated successfully"
