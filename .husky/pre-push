@@ -3,6 +3,28 @@
 echo "🚀 Running pre-push checks..."
 echo "ℹ️  This hook ensures code quality before pushing to remote"
 
+# Run full lint checking on the entire project (temporary disabled)
+#echo "🔎 Running full lint check..."
+#echo "   - Verifying that all code meets linting standards"
+#pnpm lint && {
+#  echo "   ✓ Lint check passed successfully"
+#} || {
+#  echo "❌ Lint check failed"
+#  echo "   Please fix linting issues before pushing"
+#  exit 1
+#}
+
+# Run type checking on the entire project (temporary disabled)
+#echo "🔎 Running full type check..."
+#echo "   - Verifying TypeScript types across the project"
+#pnpm typecheck && {
+#  echo "   ✓ TypeScript type check passed"
+#} || {
+#  echo "❌ Type checking failed"
+#  echo "   Please fix type errors before rebasing"
+#  exit 1
+#}
+
 # Run tests and build (temporary disabled)
 #echo "🧪 Running tests..."
 #echo "   - Verifying that all tests pass before pushing"

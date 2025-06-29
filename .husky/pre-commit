@@ -8,20 +8,20 @@ echo "ℹ️  This hook ensures code quality before committing"
 #echo "   - Formatting and linting only staged files"
 #pnpm lint-staged && {
 #  echo "   ✓ Staged files pass lint and format checks"
-#} || { 
+#} || {
 #  echo "❌ Lint-staged checks failed"
 #  echo "   Please fix the issues before committing"
 #  exit 1
 #}
 
-# Run type checking on the entire project (temporary disabled)
-#echo "🔎 Running type check..."
-#echo "   - Verifying TypeScript types across the project"
-#pnpm typecheck && {
-#  echo "   ✓ TypeScript type check passed"
-#} || { 
-#  echo "❌ Type checking failed"
-#  echo "   Please fix type errors before committing"
+# Run Turbo lint on affected packages (temporary disabled)
+#echo "🔎 Running turbo affected lint..."
+#echo "   - Linting only packages affected by your changes"
+#pnpm turbo run lint --filter=...[HEAD^1] && {
+#  echo "   ✓ Affected packages lint passed"
+#} || {
+#  echo "❌ Turbo lint failed"
+#  echo "   Please fix linting issues before committing"
 #  exit 1
 #}
 

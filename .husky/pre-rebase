@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+
+echo "🔄 Running pre-rebase checks..."
+echo "ℹ️  This hook ensures code quality before rebasing"
+
+# Run Turbo lint on affected packages
+echo "🔎 Running turbo affected lint..."
+echo "   - Linting only packages affected by your changes"
+pnpm turbo run lint --filter=...[HEAD^1] && {
+  echo "   ✓ Affected packages lint passed"
+} || {
+  echo "❌ Turbo lint failed"
+  echo "   Please fix linting issues before rebasing"
+  exit 1
+}
+
+# Run type checking on the entire project (temporary disabled)
+#echo "🔎 Running type check..."
+#echo "   - Verifying TypeScript types across the project"
+#pnpm typecheck && {
+#  echo "   ✓ TypeScript type check passed"
+#} || {
+#  echo "❌ Type checking failed"
+#  echo "   Please fix type errors before rebasing"
+#  exit 1
+#}
+
+# Run unit tests
+echo "🧪 Running unit tests..."
+echo "   - Verifying that all tests pass before rebasing"
+pnpm test --changed && {
+  echo "   ✓ All tests passed successfully"
+} || {
+  echo "❌ Tests failed"
+  echo "   Please fix failing tests before rebasing"
+  exit 1
+}
+
+echo "✅ All pre-rebase checks passed!"
+echo "   Your code is ready to be rebased"
