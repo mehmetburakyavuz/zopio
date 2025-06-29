@@ -1,6 +1,7 @@
 {
   "name": "@repo/auth-log",
   "version": "0.1.0",
+  "private": true,
   "main": "./logger.ts",
   "types": "./logger.ts",
   "dependencies": {

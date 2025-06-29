@@ -1,6 +1,7 @@
 {
   "name": "@repo/auth-hooks",
   "version": "0.1.0",
+  "private": true,
   "main": "./hooks/useAccess.ts",
   "types": "./hooks/useAccess.ts",
   "dependencies": {

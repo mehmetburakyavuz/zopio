@@ -1,6 +1,7 @@
 {
   "name": "@repo/data-providers-nestcrud",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "main": "./index.ts",
@@ -16,4 +17,3 @@
     "typescript": "^5.0.0"
   }
 }
-

@@ -1,10 +1,9 @@
 {
   "name": "@repo/crud",
   "version": "0.1.0",
+  "private": true,
   "main": "index.ts",
   "type": "module",
-  "license": "MIT",
-  "private": true,
   "dependencies": {
     "@repo/data": "workspace:*",
     "next-intl": "^3.0.0"

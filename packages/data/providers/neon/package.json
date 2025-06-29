@@ -1,11 +1,20 @@
 {
   "name": "@repo/data-providers-neon",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "sideEffects": false,
   "main": "./index.ts",
   "description": "Neon serverless Postgres data provider for Zopio framework",
-  "keywords": ["zopio", "data", "providers", "crud", "neon", "postgres", "serverless"],
+  "keywords": [
+    "zopio",
+    "data",
+    "providers",
+    "crud",
+    "neon",
+    "postgres",
+    "serverless"
+  ],
   "dependencies": {},
   "peerDependencies": {
     "@repo/data-base": "workspace:*",
@@ -17,4 +26,3 @@
     "typescript": "^5.0.0"
   }
 }
-

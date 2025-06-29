@@ -1,6 +1,7 @@
 {
   "name": "@repo/view",
   "version": "0.1.0",
+  "private": true,
   "main": "index.ts",
   "types": "index.ts",
   "type": "module",

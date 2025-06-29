@@ -1,12 +1,10 @@
 {
   "name": "@repo/crud-hooks",
   "version": "0.1.0",
+  "private": true,
   "main": "index.ts",
   "type": "module",
-  "license": "MIT",
-  "private": true,
-  "dependencies": {
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@repo/crud-engine": "workspace:*",
     "react": "^18.0.0"
