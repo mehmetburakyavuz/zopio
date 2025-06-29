@@ -1,8 +1,8 @@
 // This script handles Husky installation, skipping it in CI environments
 // It's used in the prepare script in package.json
 
-const { execSync } = require('node:child_process');
-const fs = require('node:fs');
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
 
 // Check if we're in a CI environment
 const isCI = process.env.CI === 'true';
