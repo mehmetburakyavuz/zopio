@@ -5,7 +5,9 @@
   "bin": {
     "zopio": "dist/index.js"
   },
-  "files": ["dist/index.js"],
+  "files": [
+    "dist/index.js"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -21,7 +23,7 @@
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
     "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma db push",
     "clean": "git clean -xdf node_modules",
-    "prepare": "node scripts/prepare-husky.js",
+    "prepare": "husky",
     "lint-staged": "lint-staged"
   },
   "devDependencies": {
