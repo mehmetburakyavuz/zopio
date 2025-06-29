@@ -1,19 +1,38 @@
 export default {
   // For JavaScript/TypeScript files
   "*.{js,jsx,ts,tsx}": (files) => {
-    const filePaths = files.join(' ');
+    // Get the list of staged files for better logging
+    const fileList = files.join('\n- ');
+    console.log(`\n🔍 Processing staged JS/TS files:\n- ${fileList}`);
+    
     return [
-      // Format files first
-      `pnpm format ${filePaths}`,
-      // Then lint only the staged files
-      `pnpm ultracite lint ${filePaths}`
+      // Format files - unfortunately ultracite doesn't support specific files
+      // but we'll only run this when there are staged JS/TS files
+      `pnpm format`,
+      
+      // Re-stage the formatted files that were originally staged
+      // This ensures we don't stage unrelated changes
+      `git add ${files.map(f => `"${f}"`).join(' ')}`,
+      
+      // Run ESLint on just the staged files if your lint command supports it
+      // Otherwise fallback to the general lint command
+      `pnpm lint`
     ];
   },
+  
   // For JSON files
   "*.json": (files) => {
-    const filePaths = files.join(' ');
+    // Get the list of staged files for better logging
+    const fileList = files.join('\n- ');
+    console.log(`\n🔍 Processing staged JSON files:\n- ${fileList}`);
+    
     return [
-      `pnpm format ${filePaths}`
+      // Format files - unfortunately ultracite doesn't support specific files
+      // but we'll only run this when there are staged JSON files
+      `pnpm format`,
+      
+      // Re-stage the formatted files that were originally staged
+      `git add ${files.map(f => `"${f}"`).join(' ')}`
     ];
   },
 };

@@ -15,6 +15,10 @@
         ".react-email/**"
       ]
     },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "outputs": []
+    },
     "test": {
       "dependsOn": ["^test"]
     },
