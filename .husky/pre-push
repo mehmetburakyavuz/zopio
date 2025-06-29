@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+echo "🚀 Running pre-push checks..."
+
+# Run tests and build
+echo "🧪 Running tests..."
+pnpm test || { echo "❌ Tests failed"; exit 1; }
+
+echo "🏗️ Building project..."
+pnpm build || { echo "❌ Build failed"; exit 1; }
+
+echo "✅ All pre-push checks passed!"
