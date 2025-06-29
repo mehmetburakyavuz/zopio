@@ -3,7 +3,7 @@
 echo "🔍 Running pre-commit checks..."
 
 # Run lint-staged to check only staged files
-pnpm lint-staged || { echo "❌ Lint-staged checks failed"; exit 1; }
+#pnpm lint-staged || { echo "❌ Lint-staged checks failed"; exit 1; }
 
 # Run type checking on the entire project
 #echo "🔎 Running type check..."

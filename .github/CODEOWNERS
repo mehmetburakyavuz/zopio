@@ -59,8 +59,11 @@
 # ───────────────────────────────────────────────────────
 # ⚙️ Infra Team (Infrastructure, CI/CD, DevOps, Security)
 /.github/                        @zopiolabs/infra-team @zopiolabs/core-team
-/.github/ISSUE_TEMPLATE          @zopiolabs/infra-team @zopiolabs/core-team
+/.github/ai-guides               @zopiolabs/infra-team @zopiolabs/core-team
+/.github/ISSUE_TEMPLATE/         @zopiolabs/infra-team @zopiolabs/core-team
+/.github/policies/               @zopiolabs/infra-team @zopiolabs/core-team
 /.github/workflows/              @zopiolabs/infra-team @zopiolabs/core-team
+/.husky/                         @zopiolabs/infra-team @zopiolabs/core-team
 /.vscode/                        @zopiolabs/infra-team @zopiolabs/core-team
 /packages/next-config/           @zopiolabs/infra-team @zopiolabs/core-team
 /packages/observability/         @zopiolabs/infra-team @zopiolabs/core-team
@@ -72,11 +75,17 @@
 /scripts/                        @zopiolabs/infra-team @zopiolabs/core-team
 /turbo/                          @zopiolabs/infra-team @zopiolabs/core-team
 /.autorc                         @zopiolabs/infra-team @zopiolabs/core-team
+/.editorconfig                   @zopiolabs/infra-team @zopiolabs/core-team
 /.gitignore                      @zopiolabs/infra-team @zopiolabs/core-team
+/.lintstagedrc.js           @zopiolabs/infra-team @zopiolabs/core-team
 /biome.json                      @zopiolabs/infra-team @zopiolabs/core-team
+/CHANGELOG.md                    @zopiolabs/infra-team @zopiolabs/core-team
+/commitlint.config.js            @zopiolabs/infra-team @zopiolabs/core-team
+/LICENSE.md                      @zopiolabs/infra-team @zopiolabs/core-team
 /package.json                    @zopiolabs/infra-team @zopiolabs/core-team
 /pnpm-lock.yaml                  @zopiolabs/infra-team @zopiolabs/core-team
 /pnpm-workspace.yaml             @zopiolabs/infra-team @zopiolabs/core-team
+/README.md                       @zopiolabs/infra-team @zopiolabs/core-team
 /tsconfig.json                   @zopiolabs/infra-team @zopiolabs/core-team
 /tsup.config.ts                  @zopiolabs/infra-team @zopiolabs/core-team
 /turbo.json                      @zopiolabs/infra-team @zopiolabs/core-team

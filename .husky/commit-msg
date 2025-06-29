@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+# Enforce conventional commit messages
+pnpm commitlint --edit "$1"
