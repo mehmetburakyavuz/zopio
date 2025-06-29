@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+echo "🔄 Running post-checkout tasks..."
+
+# Optional: Run turbo prune when branch changes
+echo "   - Pruning Turbo cache for web apps"
+pnpm turbo prune --scope=apps/web
+
+# Optional: Automatic dependency installation
+echo "   - Installing dependencies"
+pnpm install
+
+echo "✅ post-checkout done."
