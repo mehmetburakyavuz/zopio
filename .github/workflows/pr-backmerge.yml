@@ -1,0 +1,54 @@
+# Backmerge Bot - Trigger Only on Version Bump Commits
+#
+# This workflow automatically creates a pull request to backmerge changes from the main branch
+# to the develop branch, but only when triggered by version bump commits.
+# This ensures that version updates made in production are properly synchronized back to the
+# development branch, maintaining version consistency across branches.
+
+name: Backmerge main to develop after version bump
+
+# Trigger conditions for the workflow
+on:
+  push:
+    branches:
+      # Only trigger on pushes to the main branch
+      - main
+
+jobs:
+  backmerge:
+    runs-on: ubuntu-latest
+    # Only run this workflow when the commit message contains 'chore: bump version'
+    # This prevents unnecessary backmerges for regular commits to main
+    if: |
+      contains(github.event.head_commit.message, 'chore: bump version')
+
+    steps:
+      # Step 1: Check out the repository code
+      # This gives the workflow access to the repository contents
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Create an automated pull request for the backmerge
+      # Uses the peter-evans/create-pull-request action to generate a PR
+      - name: Create Backmerge PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          # Use the default GitHub token for authentication
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Target branch that will receive the changes
+          base: develop
+          # Name of the temporary branch that will be created for this PR
+          branch: auto/backmerge-main-to-develop
+          # Title of the pull request with emoji for better visibility
+          title: "🔁 Backmerge: main → develop (after version bump)"
+          # Detailed description of what this PR does
+          body: |
+            This automated PR syncs the **develop** branch with **main** after a production version bump.
+
+            Triggered by commit:
+            `${{ github.event.head_commit.message }}`
+
+          # Commit message for the changes in this PR
+          commit-message: "chore(backmerge): sync main into develop after version bump"
+          # Clean up by deleting the temporary branch after the PR is merged or closed
+          delete-branch: true
