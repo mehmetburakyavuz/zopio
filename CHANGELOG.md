@@ -1,3 +1,26 @@
+# v0.9.23 (Sun Jun 29 2025)
+
+#### ⚠️ Pushed to `main`
+
+- chore: add husky git hooks configuration and update dependencies ([@mkzopio](https://github.com/mkzopio))
+- chore: add husky and lint-staged with CI-aware installation script ([@mkzopio](https://github.com/mkzopio))
+- feat: initialize package.json files for all framework modules and providers ([@mkzopio](https://github.com/mkzopio))
+- chore: add husky and lint-staged for pre-commit code quality checks ([@mkzopio](https://github.com/mkzopio))
+- chore: add git flow docs and setup pre-commit hooks with backmerge automation ([@mkzopio](https://github.com/mkzopio))
+- ci: add automated backmerge workflow for version bump commits from main to develop ([@mkzopio](https://github.com/mkzopio))
+- ci: add GitHub workflow for automated backmerge after version bumps ([@mkzopio](https://github.com/mkzopio))
+- ci: add GitHub workflow for automated backmerging after version bumps ([@mkzopio](https://github.com/mkzopio))
+- docs: add security, build and release status badges to README ([@mkzopio](https://github.com/mkzopio))
+- docs: remove unnecessary div wrapper around badges in README ([@mkzopio](https://github.com/mkzopio))
+- docs: update README badges with clickable links to resources ([@mkzopio](https://github.com/mkzopio))
+- docs: add tech stack badge to README header ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.16 (Sat Jun 28 2025)
 
 #### ⚠️ Pushed to `main`
