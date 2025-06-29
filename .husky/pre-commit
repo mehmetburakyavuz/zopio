@@ -1,5 +1,14 @@
 #!/usr/bin/env sh
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+if [ "$CI" = "true" ]; then
+  echo "CI environment detected. Skipping pre-commit hook."
+  exit 0
+fi
+
 echo "🔍 Running pre-commit checks..."
 echo "ℹ️  This hook ensures code quality before committing"
 
@@ -9,7 +18,7 @@ echo "ℹ️  This hook ensures code quality before committing"
 #pnpm lint-staged && {
 #  echo "   ✓ Staged files pass lint and format checks"
 #} || {
-#  echo "❌ Lint-staged checks failed"
+#  echo "${RED}❌ Lint-staged checks failed${NC}"
 #  echo "   Please fix the issues before committing"
 #  exit 1
 #}
@@ -20,10 +29,10 @@ echo "ℹ️  This hook ensures code quality before committing"
 #pnpm turbo run lint --filter=...[HEAD^1] && {
 #  echo "   ✓ Affected packages lint passed"
 #} || {
-#  echo "❌ Turbo lint failed"
+#  echo "${RED}❌ Turbo lint failed${NC}"
 #  echo "   Please fix linting issues before committing"
 #  exit 1
 #}
 
-echo "✅ All pre-commit checks passed!"
+echo "${GREEN}✅ All pre-commit checks passed!${NC}"
 echo "   Your code is ready to be committed"
