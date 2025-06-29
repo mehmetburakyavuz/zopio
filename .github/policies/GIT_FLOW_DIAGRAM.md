@@ -8,7 +8,7 @@
 
 **The complete guide to Zopio's branching strategy, automated workflows, and development practices**
 
-✨ **Optimized**: 13 streamlined workflows with concurrency controls • 40-50% reduction in GitHub Actions usage
+✨ **Optimized**: 11 streamlined workflows with concurrency controls • 40-50% reduction in GitHub Actions usage
 
 </div>
 
@@ -221,10 +221,9 @@ flowchart LR
     end
     
     subgraph "Code Quality"
-        Lint[Biome<br/>Linting]
         Test[Vitest<br/>Testing]
         Build[Build<br/>Verification]
-        Type[TypeScript<br/>Check]
+        Static[Static<br/>Checks]
     end
     
     subgraph "Security Scanning"
@@ -236,6 +235,7 @@ flowchart LR
         Assign[PR<br/>Assignment]
         Welcome[Welcome<br/>Messages]
         Stale[Stale<br/>Management]
+        Backmerge[Auto<br/>Backmerge]
     end
     
     subgraph "Release"
@@ -252,17 +252,19 @@ flowchart LR
     PRV -->|validates| Breaking[Breaking Changes]
     
     PR --> CI{CI Pipeline}
-    CI --> Lint & Test & Build & Type
+    CI --> Test & Build & Static
     
     PR --> SEC
     SEC -->|includes| CodeQL[CodeQL Analysis]
     SEC -->|includes| Deps[Trivy Dependencies]
     SEC -->|includes| Secrets[TruffleHog Secrets]
+    SEC -->|includes| Docker[Container Scan]
     
     PR --> Label & Assign & Welcome
     
     Merge[Merge to Main] --> CL
     CL --> Ver --> Pub & GH
+    Ver -->|triggers| Backmerge
     
     Schedule[Scheduled Jobs] --> Stale
     DailySchedule[Daily Schedule] --> SEC
@@ -280,9 +282,9 @@ flowchart LR
     
     class PRV protection
     class BranchName,SemanticTitle,SizeCheck,Breaking protection
-    class Lint,Test,Build,Type quality
-    class SEC,CodeQL,Deps,Secrets security
-    class Label,Assign,Welcome,Stale automation
+    class Test,Build,Static quality
+    class SEC,CodeQL,Deps,Secrets,Docker security
+    class Label,Assign,Welcome,Stale,Backmerge automation
     class CL,Ver,Pub,GH release
     class Schedule,DailySchedule automation
     class Concurrency optimization
@@ -305,6 +307,7 @@ flowchart LR
 |:-------------------|:-:|:-------------------|:---------|
 | • branch-naming.yml<br>• semantic-pr.yml<br>• pr-size-check.yml | **→** | **pr-validation.yml** | • Single workflow for all PR checks<br>• Reduced API calls<br>• Clearer error messages |
 | • codeql.yml<br>• security.yml (partial) | **→** | **security.yml** | • Unified security scanning<br>• Single results dashboard<br>• Consistent scheduling |
+| • lint.yml<br>• test.yml<br>• typecheck.yml | **→** | **pr-static-checks.yml** | • Combined code quality checks<br>• Faster feedback<br>• Simplified configuration |
 
 </details>
 
@@ -317,7 +320,7 @@ All major workflows now include:
 
 ```yaml
 concurrency:
-  group: $workflow-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 ```
 
@@ -328,14 +331,10 @@ concurrency:
 - ✅ Faster feedback on PRs
 - ✅ Significant cost savings
 
-### Archived Workflows
+### New Automated Workflows
 
-The following files have been archived with `.old` extension:
-
-- `branch-naming.yml.old`
-- `semantic-pr.yml.old`
-- `pr-size-check.yml.old`
-- `codeql.yml.old`
+- `pr-backmerge.yml` - Automatically creates PRs to backmerge version bumps from main to develop
+- `ai-summary.yml` - Generates AI-powered summaries for PRs
 
 </details>
 
@@ -353,25 +352,25 @@ The following files have been archived with `.old` extension:
 
 | Workflow | Push to `main` | Push to `develop` | Push to `staging` | Pull Request | Schedule | Manual |
 |----------|:--------------:|:-----------------:|:-----------------:|:------------:|:--------:|:------:|
-| **CI Pipeline** ¹ | ❌ | ✅ | ✅ | ✅ (develop/staging) | ❌ | ❌ |
+| **PR Static Checks** ¹ | ❌ | ❌ | ❌ | ✅ (to main) | ❌ | ❌ |
 | **Build (Bundle Analysis)** ² | ❌ | ❌ | ❌ | ✅ (to main) | ❌ | ❌ |
 | **PR Validation** ³ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | **Security Scan** ⁴ | ✅ | ✅ | ✅ | ✅ | 🕐 Daily | ❌ |
-| **Changelog** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | **Release** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Label PR** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| **Assign PR** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **PR Backmerge** ⁵ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **PR Labeler** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **PR Assignment** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | **Welcome** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| **Stale Issues** | ❌ | ❌ | ❌ | ❌ | 🕐 Daily | ✅ |
-| **Lock Threads** | ❌ | ❌ | ❌ | ❌ | 🕐 Daily | ✅ |
-| **Docs** | ❌ | ❌ | ❌ | ✅ (docs only) | ❌ | ❌ |
+| **Stale** | ❌ | ❌ | ❌ | ❌ | 🕐 Daily | ✅ |
+| **AI Summary** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
 > **Notes:**
 >
-> - ¹ **CI Pipeline** includes: linting, testing, type checking, and build verification (focused on develop/staging)
+> - ¹ **PR Static Checks** includes testing and code quality verification
 > - ² **Build (Bundle Analysis)** runs comprehensive checks with bundle size analysis for PRs to main
 > - ³ **PR Validation** consolidates: branch naming, semantic PR titles, PR size checks, and breaking change validation
-> - ⁴ **Security Scan** unified workflow includes: CodeQL, Trivy dependency scan, and TruffleHog secret detection
+> - ⁴ **Security Scan** unified workflow includes: CodeQL, Trivy dependency scan, TruffleHog secret detection, and container scanning
+> - ⁵ **PR Backmerge** automatically creates PRs to backmerge version bumps from main to develop
 >
 > **✨ All workflows include concurrency controls to prevent duplicate runs**
 

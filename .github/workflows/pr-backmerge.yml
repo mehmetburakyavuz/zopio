@@ -66,25 +66,25 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
           base: develop
-          branch: auto/backmerge-main-to-develop-${{ github.run_number }}
+          branch: sync/backmerge-main-to-develop-${{ github.run_number }}
           title: "🔁 Backmerge: main → develop (after version bump)"
           body: |
             ## Automated Backmerge PR
-            
+
             This PR syncs the **develop** branch with **main** after a production version bump.
-            
+
             ### Details
             - Triggered by commit: `${{ github.event.head_commit.message }}`
             - Commit SHA: `${{ github.sha }}`
             - Workflow run: [View Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            
+
             Please review the changes and merge when ready.
           commit-message: "chore(backmerge): sync main into develop after version bump"
           delete-branch: true
           labels: |
             automated-pr
             backmerge
-          
+
       # Step 5: Report workflow status
       - name: PR Creation Status
         if: always()
@@ -99,7 +99,7 @@ jobs:
             echo "2. Repository settings for GitHub Actions"
             echo "3. Branch protection rules on develop branch"
           fi
-          
+
       # Step 6: Notify on workflow completion
       - name: Workflow Summary
         if: always()
