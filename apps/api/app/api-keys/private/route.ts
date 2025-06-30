@@ -1,4 +1,4 @@
-import { apiKeyAuthMiddleware } from '@repo/auth/apiKeyAuthMiddleware';
+import { apiKeyAuthMiddleware } from '@repo/auth/api-key-auth-middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
