@@ -1,5 +1,4 @@
-import React from 'react';
-import { Tabs, TabItem } from '.';
+import { TabItem, Tabs } from '.';
 
 /**
  * CodeGroup component for displaying code examples in different languages or package managers
@@ -12,7 +11,11 @@ export default function CodeGroup({ snippets }) {
   return (
     <Tabs>
       {snippets.map((snippet) => (
-        <TabItem key={snippet.language} value={snippet.language} label={snippet.language}>
+        <TabItem
+          key={snippet.language}
+          value={snippet.language}
+          label={snippet.language}
+        >
           <pre>
             <code className={`language-${snippet.language}`}>
               {snippet.code}

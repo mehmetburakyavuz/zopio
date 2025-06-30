@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsup';
 import { platform } from 'node:os';
+import { defineConfig } from 'tsup';
 
 // Only use chmod on Unix-like systems
 const isWindows = platform() === 'win32';

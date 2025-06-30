@@ -8,6 +8,6 @@ const logToConsole = (prefix: string, data: unknown): void => {
 
 export const consoleLogger = {
   write: (entry: AccessLogEntry): void => {
-    logToConsole("[AUTH-LOG]", entry);
-  }
+    logToConsole('[AUTH-LOG]', entry);
+  },
 };

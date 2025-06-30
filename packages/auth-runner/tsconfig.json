@@ -12,8 +12,5 @@
     }
   },
   "include": ["."],
-  "references": [
-    { "path": "../auth-rbac" },
-    { "path": "../auth-log" }
-  ]
+  "references": [{ "path": "../auth-rbac" }, { "path": "../auth-log" }]
 }

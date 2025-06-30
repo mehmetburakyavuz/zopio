@@ -1,13 +1,13 @@
-import { SchemaProvider } from "./hooks/useSchemaState";
-import { DragDropCanvas } from "./canvas/DragDropCanvas";
-import { Toolbox } from "./toolbox/Toolbox";
-import { JSONEditor } from "./json-editor/JSONEditor";
-import { AIPromptPanel } from "./ai/AIPromptPanel";
+import { AIPromptPanel } from './ai/AIPromptPanel';
+import { DragDropCanvas } from './canvas/DragDropCanvas';
+import { SchemaProvider } from './hooks/useSchemaState';
+import { JSONEditor } from './json-editor/JSONEditor';
+import { Toolbox } from './toolbox/Toolbox';
 
 export function ViewBuilder() {
   return (
     <SchemaProvider>
-      <div className="grid grid-cols-5 gap-4 h-full p-4">
+      <div className="grid h-full grid-cols-5 gap-4 p-4">
         <div className="col-span-1 space-y-4">
           <Toolbox />
           <AIPromptPanel />

@@ -1,6 +1,6 @@
 /**
  * Auto UI Components for CRUD Operations
- * 
+ *
  * This module exports components for building CRUD interfaces with minimal code.
  * Components automatically adapt to field types and handle common CRUD operations.
  */
@@ -33,57 +33,47 @@ export type {
   FieldDefinition,
   FieldValue,
   ValidationRule,
-  
   // Form types
   FormSection,
   FormTab,
   FormLayout,
   AutoFormProps,
-  
   // Table types
   TableColumn,
   TableFilter,
   TablePagination,
   TableSorting,
   AutoTableProps,
-  
   // Filter types
   AutoFilterProps,
-  
   // Relation types
   RelationOption,
   AutoRelationFieldProps,
-  
   // Detail types
   DetailSection,
   DetailTab,
   DetailLayout,
   AutoDetailProps,
-  
   // Actions types
   Action,
   AutoActionsProps,
-  
   // Export types
   ExportFormat,
   ExportOptions,
   AutoExportProps,
-  
   // Import types
   ImportFormat,
   ImportResult,
   ImportOptions,
   AutoImportProps,
-  
   // Audit log types
   AuditAction,
   AuditLogEntry,
   AuditLogFilter,
   AutoAuditLogViewProps,
-  
   // Hook types
   UseCrudFormOptions,
-  UseCrudFormReturn
+  UseCrudFormReturn,
 } from './types';
 
 // Export field component map for custom extensions

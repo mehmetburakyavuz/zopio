@@ -1,6 +1,6 @@
 /**
  * Model Context Protocol (MCP) for Zopio
- * 
+ *
  * This package provides a standardized way to define, validate, and interact with
  * AI model contexts across the Zopio codebase.
  */

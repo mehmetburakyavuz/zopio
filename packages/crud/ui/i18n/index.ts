@@ -1,19 +1,23 @@
-import { useCallback } from 'react';
 import type { TranslationValues } from 'next-intl';
-import enTranslations from './en';
-import trTranslations from './tr';
-import esTranslations from './es';
+import { useCallback } from 'react';
 import deTranslations from './de';
+import enTranslations from './en';
+import esTranslations from './es';
+import trTranslations from './tr';
 
 type TranslationFunction = (key: string, values?: TranslationValues) => string;
 type NextIntlTranslation = { t: TranslationFunction } & Record<string, unknown>;
 
 // Import from the project's i18n configuration if available
-let nextIntlUseTranslation: ((namespace: string) => NextIntlTranslation) | undefined;
+let nextIntlUseTranslation:
+  | ((namespace: string) => NextIntlTranslation)
+  | undefined;
 try {
   // Try to use the project's internationalization setup
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  nextIntlUseTranslation = require('next-intl/client').useTranslation as ((namespace: string) => NextIntlTranslation);
+  nextIntlUseTranslation = require('next-intl/client').useTranslation as (
+    namespace: string
+  ) => NextIntlTranslation;
 } catch (e) {
   // Fallback to our simple implementation if next-intl is not available
   nextIntlUseTranslation = undefined;
@@ -29,14 +33,23 @@ const translations: TranslationsType = {
 };
 
 // Get nested value from object using path like 'form.validation.required'
-const getNestedValue = (obj: Record<string, unknown>, path: string, params?: Record<string, unknown>): string => {
-  const value = path.split('.').reduce<unknown>(
-    (o, i) => (o && typeof o === 'object' && i in o ? (o as Record<string, unknown>)[i] : undefined), 
-    obj
-  );
-  
+const getNestedValue = (
+  obj: Record<string, unknown>,
+  path: string,
+  params?: Record<string, unknown>
+): string => {
+  const value = path
+    .split('.')
+    .reduce<unknown>(
+      (o, i) =>
+        o && typeof o === 'object' && i in o
+          ? (o as Record<string, unknown>)[i]
+          : undefined,
+      obj
+    );
+
   if (typeof value !== 'string') return path;
-  
+
   // Replace parameters like {{param}} with actual values
   if (params) {
     return value.replace(/\{\{(\w+)\}\}/g, (_, key) => {
@@ -44,7 +57,7 @@ const getNestedValue = (obj: Record<string, unknown>, path: string, params?: Rec
       return paramValue !== undefined ? String(paramValue) : `{{${key}}}`;
     });
   }
-  
+
   return value;
 };
 
@@ -57,22 +70,27 @@ const createFallbackTranslation = (locale = 'en'): TranslationFunction => {
 };
 
 // Custom hook that works with next-intl or falls back to our implementation
-export const useCrudTranslation = (namespace = 'crud'): { t: TranslationFunction } => {
+export const useCrudTranslation = (
+  namespace = 'crud'
+): { t: TranslationFunction } => {
   // If next-intl is available, use it
   if (nextIntlUseTranslation) {
     return nextIntlUseTranslation(namespace);
   }
-  
+
   // Otherwise use our fallback implementation
   // In a real app, you might want to get the locale from a context or config
-  const locale = typeof window !== 'undefined' ? 
-    (localStorage.getItem('locale') || navigator.language.split('-')[0]) : 'en';
-  
+  const locale =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('locale') || navigator.language.split('-')[0]
+      : 'en';
+
   const t = useCallback(
-    (key: string, params?: Record<string, unknown>) => createFallbackTranslation(locale)(key, params),
+    (key: string, params?: Record<string, unknown>) =>
+      createFallbackTranslation(locale)(key, params),
     [locale]
   );
-  
+
   return { t };
 };
 

@@ -2,18 +2,18 @@
  * Temporal provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 export interface TemporalProviderConfig {
@@ -25,17 +25,19 @@ export interface TemporalProviderConfig {
 /**
  * Create a Temporal provider
  */
-export function createTemporalProvider(config: TemporalProviderConfig): CrudProvider {
-  const { 
-    apiUrl, 
+export function createTemporalProvider(
+  config: TemporalProviderConfig
+): CrudProvider {
+  const {
+    apiUrl,
     namespace = 'default',
     resourceMapping = {
       workflows: 'workflows',
       activities: 'activities',
       tasks: 'tasks',
       namespaces: 'namespaces',
-      schedules: 'schedules'
-    }
+      schedules: 'schedules',
+    },
   } = config;
 
   // Helper to get Temporal resource from resource name
@@ -52,19 +54,24 @@ export function createTemporalProvider(config: TemporalProviderConfig): CrudProv
 
   // Default headers
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
 
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Build URL with query parameters
         const url = new URL(buildUrl(resource));
-        
+
         // Add pagination params
         if (pagination) {
           url.searchParams.append('pageSize', String(pagination.perPage));
-          
+
           if (pagination.page > 1) {
             // Temporal uses token-based pagination
             // This is a simplified approach - in a real implementation,
@@ -72,40 +79,44 @@ export function createTemporalProvider(config: TemporalProviderConfig): CrudProv
             url.searchParams.append('nextPageToken', `page_${pagination.page}`);
           }
         }
-        
+
         // Add filter params
         if (filter) {
           // Temporal uses a specific query format
           const query: Record<string, unknown> = {};
-          
-          for (const [key, value] of Object.entries(filter as Record<string, unknown>)) {
+
+          for (const [key, value] of Object.entries(
+            filter as Record<string, unknown>
+          )) {
             if (value !== undefined && value !== null) {
               query[key] = value;
             }
           }
-          
+
           if (Object.keys(query).length > 0) {
             url.searchParams.append('query', JSON.stringify(query));
           }
         }
-        
+
         // Fetch data
         const response = await fetch(url.toString(), { headers });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Temporal returns data in a specific format
         // e.g. { executions: [...], nextPageToken: "..." }
         const temporalResource = getTemporalResource(resource);
         const data = result[temporalResource] || result.items || [];
-        
+
         // Temporal doesn't provide a total count, so we estimate it
         const total = result.nextPageToken ? data.length * 2 : data.length;
-        
+
         return { data, total };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -116,13 +127,15 @@ export function createTemporalProvider(config: TemporalProviderConfig): CrudProv
       try {
         // Fetch data
         const response = await fetch(buildUrl(resource, id), { headers });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -135,36 +148,44 @@ export function createTemporalProvider(config: TemporalProviderConfig): CrudProv
         const response = await fetch(buildUrl(resource), {
           method: 'POST',
           headers,
-          body: JSON.stringify(variables)
+          body: JSON.stringify(variables),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to create ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to create ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Update data
         const response = await fetch(buildUrl(resource, id), {
           method: 'PUT',
           headers,
-          body: JSON.stringify(variables)
+          body: JSON.stringify(variables),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to update ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to update ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -175,21 +196,23 @@ export function createTemporalProvider(config: TemporalProviderConfig): CrudProv
       try {
         // Get the record before deleting
         const { data } = await this.getOne({ resource, id });
-        
+
         // Delete data
         const response = await fetch(buildUrl(resource, id), {
           method: 'DELETE',
-          headers
+          headers,
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to delete ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to delete ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

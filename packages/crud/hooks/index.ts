@@ -1,14 +1,20 @@
 /**
  * @repo/crud-hooks
- * 
+ *
  * React hooks for CRUD operations that integrate with the engine package.
  * These hooks provide a convenient way to use the CRUD engine in React components.
  * Includes internationalization support with next-intl for client-side translations.
  */
 
-import { useCallback, useEffect, useState } from 'react';
 import type { CrudEngine } from '@repo/crud-engine';
-import type { GetListParams, GetOneParams, CreateParams, UpdateParams, DeleteParams } from '@repo/data-base';
+import type {
+  CreateParams,
+  DeleteParams,
+  GetListParams,
+  GetOneParams,
+  UpdateParams,
+} from '@repo/data-base';
+import { useCallback, useEffect, useState } from 'react';
 
 // This would be imported from the internationalization package in a real implementation
 // import { useTranslations } from 'next-intl';
@@ -27,7 +33,7 @@ interface I18nConfig {
  */
 const DEFAULT_I18N_CONFIG: I18nConfig = {
   defaultLocale: 'en',
-  supportedLocales: ['en', 'tr', 'es', 'de']
+  supportedLocales: ['en', 'tr', 'es', 'de'],
 };
 
 /**
@@ -43,22 +49,27 @@ let i18nConfig: I18nConfig = { ...DEFAULT_I18N_CONFIG };
 /**
  * Initialize the CRUD engine for use in hooks
  */
-export function initializeCrudEngine(engine: CrudEngine, config?: Partial<I18nConfig>): void {
+export function initializeCrudEngine(
+  engine: CrudEngine,
+  config?: Partial<I18nConfig>
+): void {
   globalEngine = engine;
-  
+
   // Set internationalization config from provided config or engine
   if (config) {
     i18nConfig = {
       ...DEFAULT_I18N_CONFIG,
-      ...config
+      ...config,
     };
   } else if (engine && typeof engine === 'object') {
     // Try to extract i18n config from engine
     const engineAny = engine as any;
     if (engineAny.defaultLocale || engineAny.supportedLocales) {
       i18nConfig = {
-        defaultLocale: engineAny.defaultLocale || DEFAULT_I18N_CONFIG.defaultLocale,
-        supportedLocales: engineAny.supportedLocales || DEFAULT_I18N_CONFIG.supportedLocales
+        defaultLocale:
+          engineAny.defaultLocale || DEFAULT_I18N_CONFIG.defaultLocale,
+        supportedLocales:
+          engineAny.supportedLocales || DEFAULT_I18N_CONFIG.supportedLocales,
       };
     }
   }
@@ -69,7 +80,9 @@ export function initializeCrudEngine(engine: CrudEngine, config?: Partial<I18nCo
  */
 export function useCrudEngine(): CrudEngine {
   if (!globalEngine) {
-    throw new Error('CRUD engine not initialized. Call initializeCrudEngine first.');
+    throw new Error(
+      'CRUD engine not initialized. Call initializeCrudEngine first.'
+    );
   }
   return globalEngine;
 }
@@ -77,7 +90,10 @@ export function useCrudEngine(): CrudEngine {
 /**
  * Hook for getting a list of resources
  */
-export function useGetList<TData = unknown>(resource: string, params?: Partial<GetListParams>) {
+export function useGetList<TData = unknown>(
+  resource: string,
+  params?: Partial<GetListParams>
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -111,7 +127,10 @@ export function useGetList<TData = unknown>(resource: string, params?: Partial<G
 /**
  * Hook for getting a single resource
  */
-export function useGetOne<TData = unknown>(resource: string, id: string | number) {
+export function useGetOne<TData = unknown>(
+  resource: string,
+  id: string | number
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -143,7 +162,9 @@ export function useGetOne<TData = unknown>(resource: string, id: string | number
 /**
  * Hook for creating a resource
  */
-export function useCreate<TData = unknown, TVariables = unknown>(resource: string) {
+export function useCreate<TData = unknown, TVariables = unknown>(
+  resource: string
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -177,7 +198,9 @@ export function useCreate<TData = unknown, TVariables = unknown>(resource: strin
 /**
  * Hook for updating a resource
  */
-export function useUpdate<TData = unknown, TVariables = unknown>(resource: string) {
+export function useUpdate<TData = unknown, TVariables = unknown>(
+  resource: string
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -250,7 +273,7 @@ export function useDelete<TData = unknown>(resource: string) {
 export function useCrudTranslation() {
   // In a real implementation, this would use the internationalization package
   // const t = useTranslations('crud');
-  
+
   // For now, we'll return a simple implementation that mimics the next-intl API
   // but in a real implementation, this would use the actual next-intl package
   return {
@@ -259,14 +282,17 @@ export function useCrudTranslation() {
       return key;
     },
     locale: i18nConfig.defaultLocale,
-    supportedLocales: i18nConfig.supportedLocales
+    supportedLocales: i18nConfig.supportedLocales,
   };
 }
 
 /**
  * Hook for getting a list of resources
  */
-export function useGetList<TData = unknown>(resource: string, params?: Partial<GetListParams>) {
+export function useGetList<TData = unknown>(
+  resource: string,
+  params?: Partial<GetListParams>
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -300,7 +326,10 @@ export function useGetList<TData = unknown>(resource: string, params?: Partial<G
 /**
  * Hook for getting a single resource
  */
-export function useGetOne<TData = unknown>(resource: string, id: string | number) {
+export function useGetOne<TData = unknown>(
+  resource: string,
+  id: string | number
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -332,7 +361,9 @@ export function useGetOne<TData = unknown>(resource: string, id: string | number
 /**
  * Hook for creating a resource
  */
-export function useCreate<TData = unknown, TVariables = unknown>(resource: string) {
+export function useCreate<TData = unknown, TVariables = unknown>(
+  resource: string
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -366,7 +397,9 @@ export function useCreate<TData = unknown, TVariables = unknown>(resource: strin
 /**
  * Hook for updating a resource
  */
-export function useUpdate<TData = unknown, TVariables = unknown>(resource: string) {
+export function useUpdate<TData = unknown, TVariables = unknown>(
+  resource: string
+) {
   const engine = useCrudEngine();
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -439,7 +472,7 @@ export function useCrudTranslation() {
   const engine = useCrudEngine();
   const defaultLocale = engine['defaultLocale'] || 'en';
   const supportedLocales = engine['supportedLocales'] || ['en'];
-  
+
   // This would integrate with the internationalization package
   // For now, we'll return a simple implementation
   return {
@@ -448,7 +481,7 @@ export function useCrudTranslation() {
       return key;
     },
     locale: defaultLocale,
-    supportedLocales
+    supportedLocales,
   };
 }
 
@@ -462,5 +495,5 @@ export {
   useUpdate,
   useDelete,
   useCrudEngine,
-  useCrudTranslation
+  useCrudTranslation,
 };

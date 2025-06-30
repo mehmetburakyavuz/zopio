@@ -29,21 +29,28 @@ declare module '@repo/design-system/components/ui/tabs' {
   >;
 
   export const TabsTrigger: React.ForwardRefExoticComponent<
-    React.ButtonHTMLAttributes<HTMLButtonElement> & 
-    { value: string } & 
-    React.RefAttributes<HTMLButtonElement>
+    React.ButtonHTMLAttributes<HTMLButtonElement> & {
+      value: string;
+    } & React.RefAttributes<HTMLButtonElement>
   >;
 
   export const TabsContent: React.ForwardRefExoticComponent<
-    React.HTMLAttributes<HTMLDivElement> & 
-    { value: string } & 
-    React.RefAttributes<HTMLDivElement>
+    React.HTMLAttributes<HTMLDivElement> & {
+      value: string;
+    } & React.RefAttributes<HTMLDivElement>
   >;
 }
 
 declare module '@repo/design-system/components/ui/button' {
-  export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  export interface ButtonProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?:
+      | 'default'
+      | 'destructive'
+      | 'outline'
+      | 'secondary'
+      | 'ghost'
+      | 'link';
     size?: 'default' | 'sm' | 'lg' | 'icon';
     asChild?: boolean;
   }

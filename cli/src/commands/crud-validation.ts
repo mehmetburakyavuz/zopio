@@ -1,9 +1,9 @@
-// Use ES module import for commander
-import { Command } from 'commander';
-import chalk from 'chalk';
 import fs from 'node:fs';
 import path from 'node:path';
-import { logger, isZopioProject } from '../utils/helpers';
+import chalk from 'chalk';
+// Use ES module import for commander
+import { Command } from 'commander';
+import { isZopioProject, logger } from '../utils/helpers';
 
 interface CrudValidationCommandOptions {
   model?: string;
@@ -24,7 +24,12 @@ interface CrudValidationCommandOptions {
  */
 function parseValidationRule(
   rule: string,
-  validationRules: { required?: boolean; min?: number; max?: number; pattern?: string }
+  validationRules: {
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  }
 ): void {
   if (rule === 'required') {
     validationRules.required = true;
@@ -42,18 +47,28 @@ function parseValidationRule(
  * @param rulesStr The rules string (e.g., 'required|min=5|max=100')
  * @returns Object with parsed validation rules
  */
-function parseValidationRules(rulesStr?: string): { required?: boolean; min?: number; max?: number; pattern?: string } {
-  const validationRules: { required?: boolean; min?: number; max?: number; pattern?: string } = {};
-  
+function parseValidationRules(rulesStr?: string): {
+  required?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: string;
+} {
+  const validationRules: {
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  } = {};
+
   if (!rulesStr) {
     return validationRules;
   }
-  
+
   const rules = rulesStr.split('|');
   for (const rule of rules) {
     parseValidationRule(rule, validationRules);
   }
-  
+
   return validationRules;
 }
 
@@ -62,16 +77,23 @@ function parseValidationRules(rulesStr?: string): { required?: boolean; min?: nu
  * @param fieldStr The field string (e.g., 'name:string:required|min=2')
  * @returns Parsed field object
  */
-function parseField(fieldStr: string): { name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string } {
+function parseField(fieldStr: string): {
+  name: string;
+  type: string;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: string;
+} {
   const parts = fieldStr.trim().split(':');
   const name = parts[0].trim();
   const type = parts[1]?.trim() || 'string';
   const validationRules = parseValidationRules(parts[2]);
-  
-  return { 
-    name, 
+
+  return {
+    name,
     type,
-    ...validationRules
+    ...validationRules,
   };
 }
 
@@ -80,11 +102,18 @@ function parseField(fieldStr: string): { name: string; type: string; required?: 
  * @param fieldsStr Fields string in format "name:string:required|min=2,age:number:min=0"
  * @returns Array of field objects
  */
-function parseFields(fieldsStr: string): Array<{ name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }> {
+function parseFields(fieldsStr: string): Array<{
+  name: string;
+  type: string;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: string;
+}> {
   if (!fieldsStr) {
     return [];
   }
-  
+
   return fieldsStr.split(',').map(parseField);
 }
 
@@ -118,11 +147,13 @@ function getYupType(fieldType: string): string {
  * @param field The field object
  * @returns Validation rule string or undefined
  */
-function generateMinValidation(field: { type: string; min?: number }): string | undefined {
+function generateMinValidation(field: { type: string; min?: number }):
+  | string
+  | undefined {
   if (field.min === undefined) {
     return undefined;
   }
-  
+
   switch (field.type) {
     case 'string':
       return `min(${field.min}, 'Must be at least ${field.min} characters')`;
@@ -141,11 +172,13 @@ function generateMinValidation(field: { type: string; min?: number }): string | 
  * @param field The field object
  * @returns Validation rule string or undefined
  */
-function generateMaxValidation(field: { type: string; max?: number }): string | undefined {
+function generateMaxValidation(field: { type: string; max?: number }):
+  | string
+  | undefined {
   if (field.max === undefined) {
     return undefined;
   }
-  
+
   switch (field.type) {
     case 'string':
       return `max(${field.max}, 'Must be at most ${field.max} characters')`;
@@ -164,31 +197,38 @@ function generateMaxValidation(field: { type: string; max?: number }): string | 
  * @param field The field object
  * @returns Array of validation rule strings
  */
-function generateYupFieldValidations(field: { name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }): string[] {
+function generateYupFieldValidations(field: {
+  name: string;
+  type: string;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: string;
+}): string[] {
   const validations: string[] = [];
-  
+
   // Add required validation
   if (field.required) {
     validations.push('required()');
   }
-  
+
   // Add min validation
   const minValidation = generateMinValidation(field);
   if (minValidation) {
     validations.push(minValidation);
   }
-  
+
   // Add max validation
   const maxValidation = generateMaxValidation(field);
   if (maxValidation) {
     validations.push(maxValidation);
   }
-  
+
   // Add pattern validation
   if (field.pattern) {
     validations.push(`matches(/${field.pattern}/, 'Invalid format')`);
   }
-  
+
   return validations;
 }
 
@@ -198,17 +238,29 @@ function generateYupFieldValidations(field: { name: string; type: string; requir
  * @param fields Array of field objects
  * @returns Yup validation schema as a string
  */
-function generateYupSchema(model: string, fields: Array<{ name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }>): string {
+function generateYupSchema(
+  model: string,
+  fields: Array<{
+    name: string;
+    type: string;
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
-  
+
   // Generate validation rules for each field
-  const validationRules = fields.map(field => {
-    const yupType = getYupType(field.type);
-    const validations = generateYupFieldValidations(field);
-    
-    return `  ${field.name}: yup.${yupType}${validations.length > 0 ? `.${validations.join('.')}` : ''}`;
-  }).join(',\n');
-  
+  const validationRules = fields
+    .map((field) => {
+      const yupType = getYupType(field.type);
+      const validations = generateYupFieldValidations(field);
+
+      return `  ${field.name}: yup.${yupType}${validations.length > 0 ? `.${validations.join('.')}` : ''}`;
+    })
+    .join(',\n');
+
   return `import * as yup from 'yup';
 
 /**
@@ -250,41 +302,62 @@ function getZodType(fieldType: string): string {
  * @param field The field object
  * @returns Array of validation rule strings
  */
-function generateZodFieldValidations(field: { name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }): string[] {
+function generateZodFieldValidations(field: {
+  name: string;
+  type: string;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: string;
+}): string[] {
   const validations: string[] = [];
-  
+
   // Add required/optional validation
   if (!field.required) {
     validations.push('optional()');
   }
-  
+
   // Add min validation
   if (field.min !== undefined) {
     if (field.type === 'string') {
-      validations.push(`min(${field.min}, { message: 'Must be at least ${field.min} characters' })`);
+      validations.push(
+        `min(${field.min}, { message: 'Must be at least ${field.min} characters' })`
+      );
     } else if (field.type === 'number' || field.type === 'integer') {
-      validations.push(`min(${field.min}, { message: 'Must be at least ${field.min}' })`);
+      validations.push(
+        `min(${field.min}, { message: 'Must be at least ${field.min}' })`
+      );
     } else if (field.type === 'array') {
-      validations.push(`min(${field.min}, { message: 'Must have at least ${field.min} items' })`);
+      validations.push(
+        `min(${field.min}, { message: 'Must have at least ${field.min} items' })`
+      );
     }
   }
-  
+
   // Add max validation
   if (field.max !== undefined) {
     if (field.type === 'string') {
-      validations.push(`max(${field.max}, { message: 'Must be at most ${field.max} characters' })`);
+      validations.push(
+        `max(${field.max}, { message: 'Must be at most ${field.max} characters' })`
+      );
     } else if (field.type === 'number' || field.type === 'integer') {
-      validations.push(`max(${field.max}, { message: 'Must be at most ${field.max}' })`);
+      validations.push(
+        `max(${field.max}, { message: 'Must be at most ${field.max}' })`
+      );
     } else if (field.type === 'array') {
-      validations.push(`max(${field.max}, { message: 'Must have at most ${field.max} items' })`);
+      validations.push(
+        `max(${field.max}, { message: 'Must have at most ${field.max} items' })`
+      );
     }
   }
-  
+
   // Add pattern validation
   if (field.pattern) {
-    validations.push(`regex(/${field.pattern}/, { message: 'Invalid format' })`);
+    validations.push(
+      `regex(/${field.pattern}/, { message: 'Invalid format' })`
+    );
   }
-  
+
   return validations;
 }
 
@@ -294,17 +367,29 @@ function generateZodFieldValidations(field: { name: string; type: string; requir
  * @param fields Array of field objects
  * @returns Zod validation schema as a string
  */
-function generateZodSchema(model: string, fields: Array<{ name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }>): string {
+function generateZodSchema(
+  model: string,
+  fields: Array<{
+    name: string;
+    type: string;
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
-  
+
   // Generate validation rules for each field
-  const validationRules = fields.map(field => {
-    const zodType = getZodType(field.type);
-    const validations = generateZodFieldValidations(field);
-    
-    return `  ${field.name}: ${zodType}${validations.length > 0 ? `.${validations.join('.')}` : ''}`;
-  }).join(',\n');
-  
+  const validationRules = fields
+    .map((field) => {
+      const zodType = getZodType(field.type);
+      const validations = generateZodFieldValidations(field);
+
+      return `  ${field.name}: ${zodType}${validations.length > 0 ? `.${validations.join('.')}` : ''}`;
+    })
+    .join(',\n');
+
   return `import { z } from 'zod';
 
 /**
@@ -328,9 +413,18 @@ export default ${modelName}Schema;
  * @param fields Array of field objects
  * @returns Set of import names
  */
-function getClassValidatorImports(fields: Array<{ name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }>): Set<string> {
+function getClassValidatorImports(
+  fields: Array<{
+    name: string;
+    type: string;
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  }>
+): Set<string> {
   const imports = new Set<string>();
-  
+
   // Add imports based on field types and validations
   for (const field of fields) {
     // Required validation
@@ -339,7 +433,7 @@ function getClassValidatorImports(fields: Array<{ name: string; type: string; re
     } else {
       imports.add('IsOptional');
     }
-    
+
     // Type validation
     switch (field.type.toLowerCase()) {
       case 'string':
@@ -373,21 +467,27 @@ function getClassValidatorImports(fields: Array<{ name: string; type: string; re
       default:
         imports.add('IsString');
     }
-    
+
     // Min/max validations
-    if (field.min !== undefined && (field.type === 'string' || field.type === 'number')) {
+    if (
+      field.min !== undefined &&
+      (field.type === 'string' || field.type === 'number')
+    ) {
       imports.add('Min');
     }
-    if (field.max !== undefined && (field.type === 'string' || field.type === 'number')) {
+    if (
+      field.max !== undefined &&
+      (field.type === 'string' || field.type === 'number')
+    ) {
       imports.add('Max');
     }
-    
+
     // Pattern validation
     if (field.pattern) {
       imports.add('Matches');
     }
   }
-  
+
   return imports;
 }
 
@@ -436,19 +536,19 @@ function getMinDecorator(field: { type: string; min?: number }): string {
   if (field.min === undefined) {
     return '';
   }
-  
+
   if (field.type === 'string') {
     return `@MinLength(${field.min}, { message: 'Must be at least ${field.min} characters' })`;
-  } 
-  
+  }
+
   if (field.type === 'number' || field.type === 'integer') {
     return `@Min(${field.min}, { message: 'Must be at least ${field.min}' })`;
-  } 
-  
+  }
+
   if (field.type === 'array') {
     return `@ArrayMinSize(${field.min}, { message: 'Must have at least ${field.min} items' })`;
   }
-  
+
   return '';
 }
 
@@ -461,19 +561,19 @@ function getMaxDecorator(field: { type: string; max?: number }): string {
   if (field.max === undefined) {
     return '';
   }
-  
+
   if (field.type === 'string') {
     return `@MaxLength(${field.max}, { message: 'Must be at most ${field.max} characters' })`;
-  } 
-  
+  }
+
   if (field.type === 'number' || field.type === 'integer') {
     return `@Max(${field.max}, { message: 'Must be at most ${field.max}' })`;
-  } 
-  
+  }
+
   if (field.type === 'array') {
     return `@ArrayMaxSize(${field.max}, { message: 'Must have at most ${field.max} items' })`;
   }
-  
+
   return '';
 }
 
@@ -482,19 +582,23 @@ function getMaxDecorator(field: { type: string; max?: number }): string {
  * @param field The field object
  * @returns Array of min/max decorator strings
  */
-function getMinMaxDecorators(field: { type: string; min?: number; max?: number }): string[] {
+function getMinMaxDecorators(field: {
+  type: string;
+  min?: number;
+  max?: number;
+}): string[] {
   const decorators: string[] = [];
-  
+
   const minDecorator = getMinDecorator(field);
   if (minDecorator) {
     decorators.push(minDecorator);
   }
-  
+
   const maxDecorator = getMaxDecorator(field);
   if (maxDecorator) {
     decorators.push(maxDecorator);
   }
-  
+
   return decorators;
 }
 
@@ -503,27 +607,36 @@ function getMinMaxDecorators(field: { type: string; min?: number; max?: number }
  * @param field The field object
  * @returns Array of decorator strings
  */
-function generateFieldDecorators(field: { name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }): string[] {
+function generateFieldDecorators(field: {
+  name: string;
+  type: string;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  pattern?: string;
+}): string[] {
   const decorators: string[] = [];
-  
+
   // Required/optional decorator
   if (field.required) {
     decorators.push('@IsNotEmpty()');
   } else {
     decorators.push('@IsOptional()');
   }
-  
+
   // Add type decorators
   decorators.push(...getTypeDecorators(field.type));
-  
+
   // Add min/max decorators
   decorators.push(...getMinMaxDecorators(field));
-  
+
   // Pattern validation
   if (field.pattern) {
-    decorators.push(`@Matches(/${field.pattern}/, { message: 'Invalid format' })`);
+    decorators.push(
+      `@Matches(/${field.pattern}/, { message: 'Invalid format' })`
+    );
   }
-  
+
   return decorators;
 }
 
@@ -533,23 +646,35 @@ function generateFieldDecorators(field: { name: string; type: string; required?:
  * @param fields Array of field objects
  * @returns Class with validation decorators as a string
  */
-function generateClassValidators(model: string, fields: Array<{ name: string; type: string; required?: boolean; min?: number; max?: number; pattern?: string }>): string {
+function generateClassValidators(
+  model: string,
+  fields: Array<{
+    name: string;
+    type: string;
+    required?: boolean;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
-  
+
   // Collect required imports
   const imports = getClassValidatorImports(fields);
-  
+
   const importStatement = `import { ${Array.from(imports).join(', ')} } from 'class-validator';`;
-  
+
   // Generate class properties with decorators
-  const classProperties = fields.map(field => {
-    // Use the helper function to generate all decorators
-    const decorators = generateFieldDecorators(field);
-    
-    // Map field type to TypeScript type and create property declaration
-    return `  ${decorators.join('\n  ')}\n  ${field.name}: ${mapTypeToTypeScript(field.type)};`;
-  }).join('\n\n');
-  
+  const classProperties = fields
+    .map((field) => {
+      // Use the helper function to generate all decorators
+      const decorators = generateFieldDecorators(field);
+
+      // Map field type to TypeScript type and create property declaration
+      return `  ${decorators.join('\n  ')}\n  ${field.name}: ${mapTypeToTypeScript(field.type)};`;
+    })
+    .join('\n\n');
+
   return `${importStatement}
 
 /**
@@ -593,43 +718,57 @@ function mapTypeToTypeScript(type: string): string {
 export const crudValidationCommand = new Command('crud-validation')
   .description('Generate validation schemas for a model')
   .option('-m, --model <name>', 'Model name')
-  .option('-f, --fields <fields>', 'Fields in format "name:type:validations,age:number:required|min=18"')
+  .option(
+    '-f, --fields <fields>',
+    'Fields in format "name:type:validations,age:number:required|min=18"'
+  )
   .option('-o, --output <directory>', 'Output directory for validation schemas')
-  .option('-l, --library <library>', 'Validation library (yup, zod, class-validator)', 'zod')
+  .option(
+    '-l, --library <library>',
+    'Validation library (yup, zod, class-validator)',
+    'zod'
+  )
   .action((options: CrudValidationCommandOptions) => {
     // Check if running in a Zopio project
     if (!isZopioProject()) {
-      logger.error('Not a Zopio project. Please run this command in a Zopio project directory.');
+      logger.error(
+        'Not a Zopio project. Please run this command in a Zopio project directory.'
+      );
       process.exit(1);
     }
-    
+
     if (!options.model) {
-      logger.error('Model name is required. Use --model <name> to specify a model name.');
+      logger.error(
+        'Model name is required. Use --model <name> to specify a model name.'
+      );
       crudValidationCommand.help();
       return;
     }
-    
+
     const modelName = options.model;
     const fields = options.fields ? parseFields(options.fields) : [];
     const library = options.library || 'zod';
-    
+
     if (fields.length === 0) {
-      logger.warning('No fields specified. Use --fields <fields> to specify fields for the model.');
+      logger.warning(
+        'No fields specified. Use --fields <fields> to specify fields for the model.'
+      );
     }
-    
+
     // Determine output directory
-    const outputDir = options.output || path.join(process.cwd(), 'src', 'validations');
-    
+    const outputDir =
+      options.output || path.join(process.cwd(), 'src', 'validations');
+
     // Create output directory if it doesn't exist
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
       logger.info(`Created output directory: ${outputDir}`);
     }
-    
+
     // Generate validation schema based on the selected library
     let schema = '';
     let fileName = '';
-    
+
     switch (library.toLowerCase()) {
       case 'yup': {
         schema = generateYupSchema(modelName, fields);
@@ -651,12 +790,18 @@ export const crudValidationCommand = new Command('crud-validation')
         fileName = `${modelName.toLowerCase()}.zod.validation.ts`;
       }
     }
-    
+
     const schemaPath = path.join(outputDir, fileName);
-    
+
     fs.writeFileSync(schemaPath, schema);
-    logger.success(`Generated ${library} validation schema: ${chalk.green(schemaPath)}`);
-    
-    logger.info('\nYou can now use this validation schema in your application.');
-    logger.info(`Import it with: import { ${modelName}ValidationSchema } from './validations/${fileName.replace('.ts', '')}';`);
+    logger.success(
+      `Generated ${library} validation schema: ${chalk.green(schemaPath)}`
+    );
+
+    logger.info(
+      '\nYou can now use this validation schema in your application.'
+    );
+    logger.info(
+      `Import it with: import { ${modelName}ValidationSchema } from './validations/${fileName.replace('.ts', '')}';`
+    );
   });

@@ -1,6 +1,6 @@
 /**
  * Design System Theme
- * 
+ *
  * This file exports the design tokens and utility functions for using them
  * consistently across the application.
  */
@@ -15,7 +15,7 @@ import tokens from './tokens';
 export function getColor(path: string): string {
   const parts = path.split('.');
   let value: Record<string, unknown> = tokens.colors;
-  
+
   for (const part of parts) {
     if (value[part] === undefined) {
       console.warn(`Color not found: ${path}`);
@@ -23,11 +23,11 @@ export function getColor(path: string): string {
     }
     value = value[part] as Record<string, unknown>;
   }
-  
+
   if (typeof value !== 'string') {
     return (value as Record<string, string>).DEFAULT || '';
   }
-  
+
   return value as string;
 }
 
@@ -37,15 +37,18 @@ export function getColor(path: string): string {
  * @param key - Key within the category
  * @returns The typography value as a string
  */
-export function getTypography(category: keyof typeof tokens.typography, key: string): string {
+export function getTypography(
+  category: keyof typeof tokens.typography,
+  key: string
+): string {
   type TypographyKey = keyof (typeof tokens.typography)[typeof category];
   const value = tokens.typography[category]?.[key as TypographyKey];
-  
+
   if (value === undefined) {
     console.warn(`Typography value not found: ${category}.${key}`);
     return '';
   }
-  
+
   return value;
 }
 
@@ -56,12 +59,12 @@ export function getTypography(category: keyof typeof tokens.typography, key: str
  */
 export function getSpacing(key: keyof typeof tokens.spacing): string {
   const value = tokens.spacing[key];
-  
+
   if (value === undefined) {
     console.warn(`Spacing value not found: ${key}`);
     return '';
   }
-  
+
   return value;
 }
 
@@ -70,14 +73,16 @@ export function getSpacing(key: keyof typeof tokens.spacing): string {
  * @param key - Border radius key
  * @returns The border radius value as a string
  */
-export function getBorderRadius(key: keyof typeof tokens.borders.radius = 'DEFAULT'): string {
+export function getBorderRadius(
+  key: keyof typeof tokens.borders.radius = 'DEFAULT'
+): string {
   const value = tokens.borders.radius[key];
-  
+
   if (value === undefined) {
     console.warn(`Border radius value not found: ${key}`);
     return tokens.borders.radius.DEFAULT;
   }
-  
+
   return value;
 }
 
@@ -89,12 +94,12 @@ export function getBorderRadius(key: keyof typeof tokens.borders.radius = 'DEFAU
 export function getShadow(key: string): string {
   type ShadowKey = keyof typeof tokens.shadows;
   const value = tokens.shadows[key as ShadowKey];
-  
+
   if (value === undefined) {
     console.warn(`Shadow value not found: ${key}`);
     return tokens.shadows.DEFAULT;
   }
-  
+
   return value;
 }
 
@@ -103,36 +108,46 @@ export function getShadow(key: string): string {
  * @param styles - Style object with token references
  * @returns Processed style object with resolved token values
  */
-export function createStyles(styles: Record<string, unknown>): Record<string, unknown> {
+export function createStyles(
+  styles: Record<string, unknown>
+): Record<string, unknown> {
   const processValue = (value: unknown): unknown => {
     if (typeof value !== 'string') {
       if (typeof value === 'object' && value !== null) {
         // Ensure value is a valid Record before processing
         const safeValue = value as Record<string, unknown>;
-        return Object.entries(safeValue).reduce<Record<string, unknown>>((acc, [k, v]) => {
-          acc[k] = processValue(v);
-          return acc;
-        }, Object.create(null) as Record<string, unknown>);
+        return Object.entries(safeValue).reduce<Record<string, unknown>>(
+          (acc, [k, v]) => {
+            acc[k] = processValue(v);
+            return acc;
+          },
+          Object.create(null) as Record<string, unknown>
+        );
       }
       return value;
     }
-    
+
     // Process token references in string values
     return value.replace(/\$tokens\.([\w.]+)/g, (_, path) => {
       const [category, ...rest] = path.split('.');
       const key = rest.join('.');
-      
+
       switch (category) {
         case 'colors':
           return getColor(key);
         case 'typography':
           if (rest.length < 2) return '';
-          return getTypography(rest[0] as keyof typeof tokens.typography, rest[1]);
+          return getTypography(
+            rest[0] as keyof typeof tokens.typography,
+            rest[1]
+          );
         case 'spacing':
           return getSpacing(key as keyof typeof tokens.spacing);
         case 'borders':
           if (rest[0] === 'radius') {
-            return getBorderRadius(rest[1] as keyof typeof tokens.borders.radius);
+            return getBorderRadius(
+              rest[1] as keyof typeof tokens.borders.radius
+            );
           }
           return '';
         case 'shadows':
@@ -142,7 +157,7 @@ export function createStyles(styles: Record<string, unknown>): Record<string, un
       }
     });
   };
-  
+
   return processValue(styles) as Record<string, unknown>;
 }
 

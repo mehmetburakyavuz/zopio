@@ -1,4 +1,4 @@
-import { evaluateAccess } from "@repo/auth-runner";
+import { evaluateAccess } from '@repo/auth-runner';
 
 interface Record {
   [key: string]: unknown;
@@ -24,10 +24,10 @@ type AccessResult = {
 
 /**
  * Hook for checking access permissions based on RBAC rules
- * 
+ *
  * This is designed to be used with React's useState and useEffect hooks.
  * The implementation uses the evaluateAccess function from auth-runner.
- * 
+ *
  * @param params Access parameters including resource, action, and context
  * @returns Access result with can, reason, and loading state
  */
@@ -36,20 +36,20 @@ export function useAccess(params: Params): AccessResult {
   // The actual implementation depends on the React runtime
   // This is just a placeholder that returns a static result
   // In a real React environment, this would use useState and useEffect
-  
+
   // Synchronously evaluate access for server-side rendering or non-React environments
   try {
     const result = evaluateAccess(params);
     return {
       can: result.can,
       reason: result.reason,
-      loading: false
+      loading: false,
     };
   } catch (error) {
     return {
       can: false,
       reason: error instanceof Error ? error.message : 'Unknown error',
-      loading: false
+      loading: false,
     };
   }
 }

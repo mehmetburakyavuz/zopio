@@ -2,9 +2,12 @@ interface ComponentOptions {
   withI18n?: boolean;
 }
 
-export default function componentTemplate(name: string, options: ComponentOptions = {}): string {
+export default function componentTemplate(
+  name: string,
+  options: ComponentOptions = {}
+): string {
   const { withI18n = false } = options;
-  
+
   if (withI18n) {
     return `'use client';
 
@@ -26,7 +29,7 @@ export default function ${name}({ className }: ${name}Props) {
 }
 `;
   }
-  
+
   return `'use client';
 
 interface ${name}Props {

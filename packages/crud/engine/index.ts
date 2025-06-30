@@ -1,12 +1,19 @@
 /**
  * @repo/crud-engine
- * 
+ *
  * Core CRUD engine that extends the data package with additional features.
  * This module provides enhanced CRUD operations with support for permissions,
  * auditing, and plugins.
  */
 
-import type { CrudProvider, GetListParams, GetOneParams, CreateParams, UpdateParams, DeleteParams } from '@repo/data-base';
+import type {
+  CreateParams,
+  CrudProvider,
+  DeleteParams,
+  GetListParams,
+  GetOneParams,
+  UpdateParams,
+} from '@repo/data-base';
 import { createDataProvider, providerRegistry } from '@repo/data-base';
 
 /**
@@ -70,11 +77,11 @@ export class CrudEngine {
     this.enablePermissions = options.enablePermissions ?? false;
     this.defaultLocale = options.defaultLocale ?? 'en';
     this.supportedLocales = options.supportedLocales ?? ['en'];
-    
+
     // Initialize plugins
     if (options.plugins) {
       this.plugins = options.plugins;
-      this.plugins.forEach(plugin => plugin.initialize(this));
+      this.plugins.forEach((plugin) => plugin.initialize(this));
     }
   }
 
@@ -90,17 +97,17 @@ export class CrudEngine {
    */
   async getList(params: GetListParams): Promise<any> {
     let modifiedParams = params;
-    
+
     // Apply plugin hooks
     for (const plugin of this.plugins) {
       if (plugin.hooks?.beforeGetList) {
         modifiedParams = plugin.hooks.beforeGetList(modifiedParams);
       }
     }
-    
+
     // Execute the operation
     const result = await this.dataProvider.getList(modifiedParams);
-    
+
     // Apply plugin hooks
     let modifiedResult = result;
     for (const plugin of this.plugins) {
@@ -108,7 +115,7 @@ export class CrudEngine {
         modifiedResult = plugin.hooks.afterGetList(modifiedResult, params);
       }
     }
-    
+
     return modifiedResult;
   }
 
@@ -117,17 +124,17 @@ export class CrudEngine {
    */
   async getOne(params: GetOneParams): Promise<any> {
     let modifiedParams = params;
-    
+
     // Apply plugin hooks
     for (const plugin of this.plugins) {
       if (plugin.hooks?.beforeGetOne) {
         modifiedParams = plugin.hooks.beforeGetOne(modifiedParams);
       }
     }
-    
+
     // Execute the operation
     const result = await this.dataProvider.getOne(modifiedParams);
-    
+
     // Apply plugin hooks
     let modifiedResult = result;
     for (const plugin of this.plugins) {
@@ -135,7 +142,7 @@ export class CrudEngine {
         modifiedResult = plugin.hooks.afterGetOne(modifiedResult, params);
       }
     }
-    
+
     return modifiedResult;
   }
 
@@ -144,17 +151,17 @@ export class CrudEngine {
    */
   async create(params: CreateParams): Promise<any> {
     let modifiedParams = params;
-    
+
     // Apply plugin hooks
     for (const plugin of this.plugins) {
       if (plugin.hooks?.beforeCreate) {
         modifiedParams = plugin.hooks.beforeCreate(modifiedParams);
       }
     }
-    
+
     // Execute the operation
     const result = await this.dataProvider.create(modifiedParams);
-    
+
     // Apply plugin hooks
     let modifiedResult = result;
     for (const plugin of this.plugins) {
@@ -162,7 +169,7 @@ export class CrudEngine {
         modifiedResult = plugin.hooks.afterCreate(modifiedResult, params);
       }
     }
-    
+
     return modifiedResult;
   }
 
@@ -171,17 +178,17 @@ export class CrudEngine {
    */
   async update(params: UpdateParams): Promise<any> {
     let modifiedParams = params;
-    
+
     // Apply plugin hooks
     for (const plugin of this.plugins) {
       if (plugin.hooks?.beforeUpdate) {
         modifiedParams = plugin.hooks.beforeUpdate(modifiedParams);
       }
     }
-    
+
     // Execute the operation
     const result = await this.dataProvider.update(modifiedParams);
-    
+
     // Apply plugin hooks
     let modifiedResult = result;
     for (const plugin of this.plugins) {
@@ -189,7 +196,7 @@ export class CrudEngine {
         modifiedResult = plugin.hooks.afterUpdate(modifiedResult, params);
       }
     }
-    
+
     return modifiedResult;
   }
 
@@ -198,17 +205,17 @@ export class CrudEngine {
    */
   async delete(params: DeleteParams): Promise<any> {
     let modifiedParams = params;
-    
+
     // Apply plugin hooks
     for (const plugin of this.plugins) {
       if (plugin.hooks?.beforeDelete) {
         modifiedParams = plugin.hooks.beforeDelete(modifiedParams);
       }
     }
-    
+
     // Execute the operation
     const result = await this.dataProvider.delete(modifiedParams);
-    
+
     // Apply plugin hooks
     let modifiedResult = result;
     for (const plugin of this.plugins) {
@@ -216,7 +223,7 @@ export class CrudEngine {
         modifiedResult = plugin.hooks.afterDelete(modifiedResult, params);
       }
     }
-    
+
     return modifiedResult;
   }
 }
@@ -231,15 +238,19 @@ export function createCrudEngine(options: CrudEngineOptions): CrudEngine {
 /**
  * Create a CrudEngine with a data provider
  */
-export function createCrudEngineWithProvider(providerType: string, providerConfig: any, engineOptions?: Partial<CrudEngineOptions>): CrudEngine {
+export function createCrudEngineWithProvider(
+  providerType: string,
+  providerConfig: any,
+  engineOptions?: Partial<CrudEngineOptions>
+): CrudEngine {
   const dataProvider = createDataProvider({
     type: providerType,
-    config: providerConfig
+    config: providerConfig,
   });
-  
+
   return createCrudEngine({
     dataProvider,
-    ...engineOptions
+    ...engineOptions,
   });
 }
 

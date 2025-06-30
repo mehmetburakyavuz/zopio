@@ -76,4 +76,4 @@ export function GET(request: Request | NextRequest): Response {
       'Content-Type': 'text/html',
     },
   });
-};
+}

@@ -1,2 +1,2 @@
 // Re-export the component template
-export { default } from "./component";
+export { default } from './component';

@@ -5,7 +5,7 @@
 // Extend React types
 declare namespace React {
   // Ensure ReactNode is properly defined
-  type ReactNode = 
+  type ReactNode =
     | React.ReactElement
     | string
     | number
@@ -13,17 +13,17 @@ declare namespace React {
     | null
     | undefined
     | React.ReactNodeArray;
-  
+
   // Ensure React.FC is properly defined
   type FC<P = {}> = React.FunctionComponent<P>;
-  
+
   // Ensure React.FunctionComponent is properly defined
   interface FunctionComponent<P = {}> {
     (props: P, context?: any): ReactElement<any, any> | null;
     displayName?: string;
     defaultProps?: Partial<P>;
   }
-  
+
   // Ensure ForwardRefExoticComponent is properly defined
   interface ForwardRefExoticComponent<P> extends React.FC<P> {
     defaultProps?: Partial<P>;

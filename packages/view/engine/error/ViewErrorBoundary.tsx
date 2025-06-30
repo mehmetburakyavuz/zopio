@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { useViewTranslations } from '../../i18n';
 
 interface ErrorBoundaryProps {
@@ -14,7 +14,10 @@ interface ErrorBoundaryState {
 /**
  * Error boundary component for catching and displaying view rendering errors
  */
-class ErrorBoundaryComponent extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundaryComponent extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -51,14 +54,18 @@ class ErrorBoundaryComponent extends Component<ErrorBoundaryProps, ErrorBoundary
 
       // Default error UI
       return (
-        <div className="p-4 border border-red-500 bg-red-50 rounded-md">
-          <h3 className="text-lg font-semibold text-red-700 mb-2">View Rendering Error</h3>
-          <p className="text-sm text-red-600 mb-2">
+        <div className="rounded-md border border-red-500 bg-red-50 p-4">
+          <h3 className="mb-2 font-semibold text-lg text-red-700">
+            View Rendering Error
+          </h3>
+          <p className="mb-2 text-red-600 text-sm">
             An error occurred while rendering this view.
           </p>
           <details className="text-xs">
-            <summary className="cursor-pointer font-medium mb-1">Error details</summary>
-            <pre className="overflow-auto p-2 bg-white border border-red-200 rounded">
+            <summary className="mb-1 cursor-pointer font-medium">
+              Error details
+            </summary>
+            <pre className="overflow-auto rounded border border-red-200 bg-white p-2">
               {error.message}
               {error.stack && `\n\n${error.stack}`}
             </pre>
@@ -74,29 +81,30 @@ class ErrorBoundaryComponent extends Component<ErrorBoundaryProps, ErrorBoundary
 /**
  * Wrapper component that provides translations to the error message
  */
-export function ViewErrorBoundary({ children, fallback }: ErrorBoundaryProps): JSX.Element {
+export function ViewErrorBoundary({
+  children,
+  fallback,
+}: ErrorBoundaryProps): JSX.Element {
   const t = useViewTranslations();
-  
+
   const defaultFallback = (error: Error) => (
-    <div className="p-4 border border-red-500 bg-red-50 rounded-md">
-      <h3 className="text-lg font-semibold text-red-700 mb-2">
+    <div className="rounded-md border border-red-500 bg-red-50 p-4">
+      <h3 className="mb-2 font-semibold text-lg text-red-700">
         {t('error.title')}
       </h3>
-      <p className="text-sm text-red-600 mb-2">
-        {t('error.renderingFailed')}
-      </p>
+      <p className="mb-2 text-red-600 text-sm">{t('error.renderingFailed')}</p>
       <details className="text-xs">
-        <summary className="cursor-pointer font-medium mb-1">
+        <summary className="mb-1 cursor-pointer font-medium">
           {t('error.details')}
         </summary>
-        <pre className="overflow-auto p-2 bg-white border border-red-200 rounded">
+        <pre className="overflow-auto rounded border border-red-200 bg-white p-2">
           {error.message}
           {error.stack && `\n\n${error.stack}`}
         </pre>
       </details>
     </div>
   );
-  
+
   return (
     <ErrorBoundaryComponent fallback={fallback || defaultFallback}>
       {children}

@@ -1,63 +1,131 @@
-import * as React from "react";
-import { useState, type ReactNode } from "react";
+import type * as React from 'react';
+import { type ReactNode, useState } from 'react';
 
 // Mock components for design system - replace with actual imports when available
-const Card = ({ children, className }: { children: ReactNode; className?: string }) => (
+const Card = ({
+  children,
+  className,
+}: { children: ReactNode; className?: string }) => (
   <div className={className}>{children}</div>
 );
-const CardContent = ({ children }: { children: ReactNode }) => <div>{children}</div>;
-const CardHeader = ({ children }: { children: ReactNode }) => <div>{children}</div>;
-const CardTitle = ({ children }: { children: ReactNode }) => <h2>{children}</h2>;
-const CardDescription = ({ children }: { children: ReactNode }) => <p>{children}</p>;
+const CardContent = ({ children }: { children: ReactNode }) => (
+  <div>{children}</div>
+);
+const CardHeader = ({ children }: { children: ReactNode }) => (
+  <div>{children}</div>
+);
+const CardTitle = ({ children }: { children: ReactNode }) => (
+  <h2>{children}</h2>
+);
+const CardDescription = ({ children }: { children: ReactNode }) => (
+  <p>{children}</p>
+);
 
-const Table = ({ children }: { children: ReactNode }) => <table>{children}</table>;
-const TableHeader = ({ children }: { children: ReactNode }) => <thead>{children}</thead>;
-const TableBody = ({ children }: { children: ReactNode }) => <tbody>{children}</tbody>;
+const Table = ({ children }: { children: ReactNode }) => (
+  <table>{children}</table>
+);
+const TableHeader = ({ children }: { children: ReactNode }) => (
+  <thead>{children}</thead>
+);
+const TableBody = ({ children }: { children: ReactNode }) => (
+  <tbody>{children}</tbody>
+);
 const TableRow = ({ children }: { children: ReactNode }) => <tr>{children}</tr>;
-const TableHead = ({ children, className }: { children: ReactNode; className?: string }) => <th className={className}>{children}</th>;
-const TableCell = ({ children, className, colSpan }: { children: ReactNode; className?: string; colSpan?: number }) => (
-  <td className={className} colSpan={colSpan}>{children}</td>
+const TableHead = ({
+  children,
+  className,
+}: { children: ReactNode; className?: string }) => (
+  <th className={className}>{children}</th>
+);
+const TableCell = ({
+  children,
+  className,
+  colSpan,
+}: { children: ReactNode; className?: string; colSpan?: number }) => (
+  <td className={className} colSpan={colSpan}>
+    {children}
+  </td>
 );
 
-const Select = ({ children, value, onValueChange, id }: { children: ReactNode; value?: string; onValueChange?: (value: string) => void; id?: string }) => (
-  <select id={id} value={value} onChange={(e) => onValueChange?.(e.target.value)}>{children}</select>
+const Select = ({
+  children,
+  value,
+  onValueChange,
+  id,
+}: {
+  children: ReactNode;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  id?: string;
+}) => (
+  <select
+    id={id}
+    value={value}
+    onChange={(e) => onValueChange?.(e.target.value)}
+  >
+    {children}
+  </select>
 );
-const SelectTrigger = ({ children, className, id }: { children: ReactNode; className?: string; id?: string }) => (
-  <div className={className} id={id}>{children}</div>
+const SelectTrigger = ({
+  children,
+  className,
+  id,
+}: { children: ReactNode; className?: string; id?: string }) => (
+  <div className={className} id={id}>
+    {children}
+  </div>
 );
-const SelectValue = ({ children, placeholder }: { children?: ReactNode; placeholder?: string }) => (
+const SelectValue = ({
+  children,
+  placeholder,
+}: { children?: ReactNode; placeholder?: string }) => (
   <span>{children || placeholder}</span>
 );
-const SelectContent = ({ children }: { children: ReactNode }) => <div>{children}</div>;
-const SelectItem = ({ children, value }: { children: ReactNode; value: string }) => (
+const SelectContent = ({ children }: { children: ReactNode }) => (
+  <div>{children}</div>
+);
+const SelectItem = ({
+  children,
+  value,
+}: { children: ReactNode; value: string }) => (
   <option value={value}>{children}</option>
 );
 
-const Popover = ({ children }: { children: ReactNode }) => <div>{children}</div>;
-const PopoverTrigger = ({ children, asChild }: { children: ReactNode; asChild?: boolean }) => <div>{children}</div>;
-const PopoverContent = ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>;
-
-const Button = ({ 
-  children, 
-  variant, 
-  size, 
-  onClick, 
-  disabled, 
+const Popover = ({ children }: { children: ReactNode }) => (
+  <div>{children}</div>
+);
+const PopoverTrigger = ({
+  children,
+  asChild,
+}: { children: ReactNode; asChild?: boolean }) => <div>{children}</div>;
+const PopoverContent = ({
+  children,
   className,
-  'aria-label': ariaLabel 
-}: { 
-  children: ReactNode; 
-  variant?: string; 
-  size?: string; 
-  onClick?: () => void; 
-  disabled?: boolean; 
+}: { children: ReactNode; className?: string }) => (
+  <div className={className}>{children}</div>
+);
+
+const Button = ({
+  children,
+  variant,
+  size,
+  onClick,
+  disabled,
+  className,
+  'aria-label': ariaLabel,
+}: {
+  children: ReactNode;
+  variant?: string;
+  size?: string;
+  onClick?: () => void;
+  disabled?: boolean;
   className?: string;
-  'aria-label'?: string 
+  'aria-label'?: string;
 }) => (
-  <button 
-    type="button" 
-    onClick={onClick} 
-    disabled={disabled} 
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
     className={className}
     onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
     aria-label={ariaLabel}
@@ -66,81 +134,109 @@ const Button = ({
   </button>
 );
 
-const Badge = ({ children, className }: { children: ReactNode; className?: string }) => (
+const Badge = ({
+  children,
+  className,
+}: { children: ReactNode; className?: string }) => (
   <span className={className}>{children}</span>
 );
 
-const Calendar = ({ 
-  mode, 
-  selected, 
-  onSelect, 
+const Calendar = ({
+  mode,
+  selected,
+  onSelect,
   initialFocus,
-  id
-}: { 
-  mode?: string; 
-  selected?: Date; 
-  onSelect?: (date: Date | undefined) => void; 
+  id,
+}: {
+  mode?: string;
+  selected?: Date;
+  onSelect?: (date: Date | undefined) => void;
   initialFocus?: boolean;
-  id?: string
+  id?: string;
 }) => (
   <div>
-    <input 
-      type="date" 
-      value={selected?.toISOString().split('T')[0] || ''} 
-      onChange={(e) => onSelect?.(e.target.value ? new Date(e.target.value) : undefined)}
+    <input
+      type="date"
+      value={selected?.toISOString().split('T')[0] || ''}
+      onChange={(e) =>
+        onSelect?.(e.target.value ? new Date(e.target.value) : undefined)
+      }
       id={id}
     />
   </div>
 );
 
-const Input = ({ 
-  placeholder, 
-  value, 
-  onChange, 
-  className, 
-  id 
-}: { 
-  placeholder?: string; 
-  value?: string; 
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-  className?: string; 
-  id?: string 
+const Input = ({
+  placeholder,
+  value,
+  onChange,
+  className,
+  id,
+}: {
+  placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  id?: string;
 }) => (
-  <input 
-    type="text" 
-    placeholder={placeholder} 
-    value={value} 
-    onChange={onChange} 
-    className={className} 
+  <input
+    type="text"
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    className={className}
     id={id}
   />
 );
 
 // Mock icons - replace with actual imports when available
-const ChevronLeft = ({ className }: { className?: string }) => <span className={className}>←</span>;
-const ChevronRight = ({ className }: { className?: string }) => <span className={className}>→</span>;
-const CalendarIcon = ({ className }: { className?: string }) => <span className={className}>📅</span>;
-const Filter = ({ className }: { className?: string }) => <span className={className}>🔍</span>;
-const Search = ({ className }: { className?: string }) => <span className={className}>🔎</span>;
-const Eye = ({ className }: { className?: string }) => <span className={className}>👁️</span>;
-const ArrowUpDown = ({ className }: { className?: string }) => <span className={className}>↕️</span>;
+const ChevronLeft = ({ className }: { className?: string }) => (
+  <span className={className}>←</span>
+);
+const ChevronRight = ({ className }: { className?: string }) => (
+  <span className={className}>→</span>
+);
+const CalendarIcon = ({ className }: { className?: string }) => (
+  <span className={className}>📅</span>
+);
+const Filter = ({ className }: { className?: string }) => (
+  <span className={className}>🔍</span>
+);
+const Search = ({ className }: { className?: string }) => (
+  <span className={className}>🔎</span>
+);
+const Eye = ({ className }: { className?: string }) => (
+  <span className={className}>👁️</span>
+);
+const ArrowUpDown = ({ className }: { className?: string }) => (
+  <span className={className}>↕️</span>
+);
 
-import { useCrudTranslation } from "../i18n";
-import type { FieldValue } from "./types";
+import { useCrudTranslation } from '../i18n';
+import type { FieldValue } from './types';
 
-export type AuditAction = 'create' | 'update' | 'delete' | 'view' | 'export' | 'import' | 'login' | 'logout' | string;
+export type AuditAction =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'view'
+  | 'export'
+  | 'import'
+  | 'login'
+  | 'logout'
+  | string;
 
 export interface AuditLogEntry {
   /**
    * Unique identifier for the audit log entry
    */
   id: string | number;
-  
+
   /**
    * Timestamp of the action
    */
   timestamp: string | Date;
-  
+
   /**
    * User who performed the action
    */
@@ -150,22 +246,22 @@ export interface AuditLogEntry {
     email?: string;
     avatar?: string;
   };
-  
+
   /**
    * Type of action performed
    */
   action: AuditAction;
-  
+
   /**
    * Entity type that was affected
    */
   entityType: string;
-  
+
   /**
    * Entity ID that was affected
    */
   entityId?: string | number;
-  
+
   /**
    * Changes made (for update actions)
    */
@@ -174,17 +270,17 @@ export interface AuditLogEntry {
     oldValue?: FieldValue;
     newValue?: FieldValue;
   }[];
-  
+
   /**
    * IP address of the user
    */
   ipAddress?: string;
-  
+
   /**
    * User agent of the browser/client
    */
   userAgent?: string;
-  
+
   /**
    * Additional metadata
    */
@@ -196,32 +292,32 @@ export interface AuditLogFilter {
    * Start date for filtering
    */
   startDate?: Date;
-  
+
   /**
    * End date for filtering
    */
   endDate?: Date;
-  
+
   /**
    * User IDs to filter by
    */
   users?: (string | number)[];
-  
+
   /**
    * Actions to filter by
    */
   actions?: AuditAction[];
-  
+
   /**
    * Entity types to filter by
    */
   entityTypes?: string[];
-  
+
   /**
    * Entity IDs to filter by
    */
   entityIds?: (string | number)[];
-  
+
   /**
    * Search query
    */
@@ -233,92 +329,92 @@ export interface AutoAuditLogViewProps {
    * Audit log entries to display
    */
   entries: AuditLogEntry[];
-  
+
   /**
    * Total number of entries (for pagination)
    */
   total: number;
-  
+
   /**
    * Current page
    */
   page: number;
-  
+
   /**
    * Number of entries per page
    */
   pageSize: number;
-  
+
   /**
    * Function to handle page change
    */
   onPageChange: (page: number) => void;
-  
+
   /**
    * Function to handle page size change
    */
   onPageSizeChange?: (pageSize: number) => void;
-  
+
   /**
    * Current filters
    */
   filters?: AuditLogFilter;
-  
+
   /**
    * Function to handle filter change
    */
   onFilterChange?: (filters: AuditLogFilter) => void;
-  
+
   /**
    * Available actions for filtering
    */
   availableActions?: AuditAction[];
-  
+
   /**
    * Available entity types for filtering
    */
   availableEntityTypes?: string[];
-  
+
   /**
    * Available users for filtering
    */
   availableUsers?: { id: string | number; name: string }[];
-  
+
   /**
    * Function to handle viewing details of an entry
    */
   onViewDetails?: (entry: AuditLogEntry) => void;
-  
+
   /**
    * Whether the component is loading
    */
   isLoading?: boolean;
-  
+
   /**
    * Title for the audit log view
    */
   title?: string;
-  
+
   /**
    * Description for the audit log view
    */
   description?: string;
-  
+
   /**
    * Whether to show the card wrapper
    */
   showCard?: boolean;
-  
+
   /**
    * Whether to show filters
    */
   showFilters?: boolean;
-  
+
   /**
    * CSS class for the component
    */
   className?: string;
-  
+
   /**
    * Locale for date formatting
    */
@@ -338,7 +434,16 @@ export function AutoAuditLogView({
   onPageSizeChange,
   filters = {},
   onFilterChange,
-  availableActions = ['create', 'update', 'delete', 'view', 'export', 'import', 'login', 'logout'],
+  availableActions = [
+    'create',
+    'update',
+    'delete',
+    'view',
+    'export',
+    'import',
+    'login',
+    'logout',
+  ],
   availableEntityTypes = [],
   availableUsers = [],
   onViewDetails,
@@ -347,45 +452,73 @@ export function AutoAuditLogView({
   description,
   showCard = true,
   showFilters = true,
-  className = "",
+  className = '',
   locale,
 }: AutoAuditLogViewProps) {
   const { t } = useCrudTranslation();
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [localFilters, setLocalFilters] = useState<AuditLogFilter>(filters);
-  
+
   // Format date for display
   const formatDate = (date: Date | string): string => {
     if (!date) return '';
-    
+
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
+
     return dateObj.toLocaleString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
   };
-  
+
   // Get action label and color
-  const getActionInfo = (action: AuditAction): { label: string; color: string } => {
+  const getActionInfo = (
+    action: AuditAction
+  ): { label: string; color: string } => {
     const actionMap: Record<string, { label: string; color: string }> = {
-      create: { label: t('auditLog.actions.create', { defaultValue: 'Create' }), color: 'bg-green-100 text-green-800' },
-      update: { label: t('auditLog.actions.update', { defaultValue: 'Update' }), color: 'bg-blue-100 text-blue-800' },
-      delete: { label: t('auditLog.actions.delete', { defaultValue: 'Delete' }), color: 'bg-red-100 text-red-800' },
-      view: { label: t('auditLog.actions.view', { defaultValue: 'View' }), color: 'bg-gray-100 text-gray-800' },
-      export: { label: t('auditLog.actions.export', { defaultValue: 'Export' }), color: 'bg-purple-100 text-purple-800' },
-      import: { label: t('auditLog.actions.import', { defaultValue: 'Import' }), color: 'bg-indigo-100 text-indigo-800' },
-      login: { label: t('auditLog.actions.login', { defaultValue: 'Login' }), color: 'bg-yellow-100 text-yellow-800' },
-      logout: { label: t('auditLog.actions.logout', { defaultValue: 'Logout' }), color: 'bg-orange-100 text-orange-800' }
+      create: {
+        label: t('auditLog.actions.create', { defaultValue: 'Create' }),
+        color: 'bg-green-100 text-green-800',
+      },
+      update: {
+        label: t('auditLog.actions.update', { defaultValue: 'Update' }),
+        color: 'bg-blue-100 text-blue-800',
+      },
+      delete: {
+        label: t('auditLog.actions.delete', { defaultValue: 'Delete' }),
+        color: 'bg-red-100 text-red-800',
+      },
+      view: {
+        label: t('auditLog.actions.view', { defaultValue: 'View' }),
+        color: 'bg-gray-100 text-gray-800',
+      },
+      export: {
+        label: t('auditLog.actions.export', { defaultValue: 'Export' }),
+        color: 'bg-purple-100 text-purple-800',
+      },
+      import: {
+        label: t('auditLog.actions.import', { defaultValue: 'Import' }),
+        color: 'bg-indigo-100 text-indigo-800',
+      },
+      login: {
+        label: t('auditLog.actions.login', { defaultValue: 'Login' }),
+        color: 'bg-yellow-100 text-yellow-800',
+      },
+      logout: {
+        label: t('auditLog.actions.logout', { defaultValue: 'Logout' }),
+        color: 'bg-orange-100 text-orange-800',
+      },
     };
-    
-    return actionMap[action] || { label: action, color: 'bg-gray-100 text-gray-800' };
+
+    return (
+      actionMap[action] || { label: action, color: 'bg-gray-100 text-gray-800' }
+    );
   };
-  
+
   // Apply filters
   const applyFilters = () => {
     if (onFilterChange) {
@@ -393,7 +526,7 @@ export function AutoAuditLogView({
     }
     setShowFilterPanel(false);
   };
-  
+
   // Reset filters
   const resetFilters = () => {
     setLocalFilters({});
@@ -402,24 +535,29 @@ export function AutoAuditLogView({
     }
     setShowFilterPanel(false);
   };
-  
+
   // Calculate total pages
   const totalPages = Math.ceil(total / pageSize);
-  
+
   // Render filter panel
   const renderFilterPanel = () => {
     if (!showFilterPanel) return null;
-    
+
     return (
       <Card className="mb-4">
         <CardHeader>
-          <CardTitle>{t('auditLog.filters.title', { defaultValue: 'Filter Audit Logs' })}</CardTitle>
+          <CardTitle>
+            {t('auditLog.filters.title', { defaultValue: 'Filter Audit Logs' })}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {/* Date range filter */}
             <div>
-              <label htmlFor="start-date" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="start-date"
+                className="mb-1 block font-medium text-sm"
+              >
                 {t('auditLog.filters.dateRange')}
               </label>
               <div className="flex space-x-2">
@@ -428,7 +566,7 @@ export function AutoAuditLogView({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="justify-start text-left font-normal w-full"
+                      className="w-full justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {localFilters.startDate ? (
@@ -442,19 +580,24 @@ export function AutoAuditLogView({
                     <Calendar
                       mode="single"
                       selected={localFilters.startDate}
-                      onSelect={(date) => setLocalFilters({ ...localFilters, startDate: date || undefined })}
+                      onSelect={(date) =>
+                        setLocalFilters({
+                          ...localFilters,
+                          startDate: date || undefined,
+                        })
+                      }
                       initialFocus
                       id="start-date"
                     />
                   </PopoverContent>
                 </Popover>
-                
+
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="justify-start text-left font-normal w-full"
+                      className="w-full justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {localFilters.endDate ? (
@@ -468,7 +611,12 @@ export function AutoAuditLogView({
                     <Calendar
                       mode="single"
                       selected={localFilters.endDate}
-                      onSelect={(date) => setLocalFilters({ ...localFilters, endDate: date || undefined })}
+                      onSelect={(date) =>
+                        setLocalFilters({
+                          ...localFilters,
+                          endDate: date || undefined,
+                        })
+                      }
                       initialFocus
                       id="end-date"
                     />
@@ -476,26 +624,38 @@ export function AutoAuditLogView({
                 </Popover>
               </div>
             </div>
-            
+
             {/* Actions filter */}
             <div>
-              <label htmlFor="action-filter" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="action-filter"
+                className="mb-1 block font-medium text-sm"
+              >
                 {t('auditLog.filters.actions')}
               </label>
               <Select
-                value={localFilters.actions?.length === 1 ? localFilters.actions[0] : ''}
-                onValueChange={(value: AuditAction) => 
-                  setLocalFilters({ ...localFilters, actions: value ? [value] : undefined })
+                value={
+                  localFilters.actions?.length === 1
+                    ? localFilters.actions[0]
+                    : ''
+                }
+                onValueChange={(value: AuditAction) =>
+                  setLocalFilters({
+                    ...localFilters,
+                    actions: value ? [value] : undefined,
+                  })
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('auditLog.filters.selectAction')} />
+                  <SelectValue
+                    placeholder={t('auditLog.filters.selectAction')}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">
                     {t('auditLog.filters.allActions')}
                   </SelectItem>
-                  {availableActions.map(action => (
+                  {availableActions.map((action) => (
                     <SelectItem key={action} value={action}>
                       {getActionInfo(action).label}
                     </SelectItem>
@@ -503,28 +663,40 @@ export function AutoAuditLogView({
                 </SelectContent>
               </Select>
             </div>
-            
+
             {/* Entity types filter */}
             {availableEntityTypes.length > 0 && (
               <div>
-                <label htmlFor="entity-type-filter" className="block text-sm font-medium mb-1">
+                <label
+                  htmlFor="entity-type-filter"
+                  className="mb-1 block font-medium text-sm"
+                >
                   {t('auditLog.filters.entityTypes')}
                 </label>
                 <Select
                   id="entity-type-filter"
-                  value={localFilters.entityTypes?.length === 1 ? localFilters.entityTypes[0] : ''}
-                  onValueChange={(value: string) => 
-                    setLocalFilters({ ...localFilters, entityTypes: value ? [value] : undefined })
+                  value={
+                    localFilters.entityTypes?.length === 1
+                      ? localFilters.entityTypes[0]
+                      : ''
+                  }
+                  onValueChange={(value: string) =>
+                    setLocalFilters({
+                      ...localFilters,
+                      entityTypes: value ? [value] : undefined,
+                    })
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('auditLog.filters.selectEntityType')} />
+                    <SelectValue
+                      placeholder={t('auditLog.filters.selectEntityType')}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">
                       {t('auditLog.filters.allEntityTypes')}
                     </SelectItem>
-                    {availableEntityTypes.map(type => (
+                    {availableEntityTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {t(`entities.${type}`, { defaultValue: type })}
                       </SelectItem>
@@ -533,28 +705,40 @@ export function AutoAuditLogView({
                 </Select>
               </div>
             )}
-            
+
             {/* Users filter */}
             {availableUsers.length > 0 && (
               <div>
-                <label htmlFor="user-filter" className="block text-sm font-medium mb-1">
+                <label
+                  htmlFor="user-filter"
+                  className="mb-1 block font-medium text-sm"
+                >
                   {t('auditLog.filters.users')}
                 </label>
                 <Select
                   id="user-filter"
-                  value={localFilters.users?.length === 1 ? String(localFilters.users[0]) : ''}
-                  onValueChange={(value: string) => 
-                    setLocalFilters({ ...localFilters, users: value ? [value] : undefined })
+                  value={
+                    localFilters.users?.length === 1
+                      ? String(localFilters.users[0])
+                      : ''
+                  }
+                  onValueChange={(value: string) =>
+                    setLocalFilters({
+                      ...localFilters,
+                      users: value ? [value] : undefined,
+                    })
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('auditLog.filters.selectUser')} />
+                    <SelectValue
+                      placeholder={t('auditLog.filters.selectUser')}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">
                       {t('auditLog.filters.allUsers')}
                     </SelectItem>
-                    {availableUsers.map(user => (
+                    {availableUsers.map((user) => (
                       <SelectItem key={String(user.id)} value={String(user.id)}>
                         {user.name}
                       </SelectItem>
@@ -563,26 +747,34 @@ export function AutoAuditLogView({
                 </Select>
               </div>
             )}
-            
+
             {/* Search filter */}
             <div>
-              <label htmlFor="search-filter" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="search-filter"
+                className="mb-1 block font-medium text-sm"
+              >
                 {t('auditLog.filters.search')}
               </label>
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                <Search className="absolute top-2.5 left-2 h-4 w-4 text-gray-500" />
                 <Input
                   id="search-filter"
                   placeholder={t('auditLog.filters.searchPlaceholder')}
                   value={localFilters.search || ''}
-                  onChange={(e) => setLocalFilters({ ...localFilters, search: e.target.value || undefined })}
+                  onChange={(e) =>
+                    setLocalFilters({
+                      ...localFilters,
+                      search: e.target.value || undefined,
+                    })
+                  }
                   className="pl-8"
                 />
               </div>
             </div>
           </div>
-          
-          <div className="flex justify-end space-x-2 mt-4">
+
+          <div className="mt-4 flex justify-end space-x-2">
             <Button variant="outline" onClick={resetFilters}>
               {t('auditLog.filters.reset')}
             </Button>
@@ -594,30 +786,30 @@ export function AutoAuditLogView({
       </Card>
     );
   };
-  
+
   // Render content
   const content = (
     <div className={className}>
       {showFilters && (
-        <div className="mb-4 flex justify-between items-center">
+        <div className="mb-4 flex items-center justify-between">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowFilterPanel(!showFilterPanel)}
           >
-            <Filter className="h-4 w-4 mr-2" />
+            <Filter className="mr-2 h-4 w-4" />
             {t('auditLog.filters.toggle', { defaultValue: 'Filters' })}
           </Button>
-          
+
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">
-              {t('auditLog.showing', { 
+            <span className="text-gray-500 text-sm">
+              {t('auditLog.showing', {
                 start: Math.min((page - 1) * pageSize + 1, total),
                 end: Math.min(page * pageSize, total),
-                total
+                total,
               })}
             </span>
-            
+
             {onPageSizeChange && (
               <Select
                 value={String(pageSize)}
@@ -637,10 +829,10 @@ export function AutoAuditLogView({
           </div>
         </div>
       )}
-      
+
       {showFilters && renderFilterPanel()}
-      
-      <div className="border rounded-md">
+
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -650,10 +842,16 @@ export function AutoAuditLogView({
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
-              <TableHead className="w-[150px]">{t('auditLog.columns.user')}</TableHead>
-              <TableHead className="w-[100px]">{t('auditLog.columns.action')}</TableHead>
+              <TableHead className="w-[150px]">
+                {t('auditLog.columns.user')}
+              </TableHead>
+              <TableHead className="w-[100px]">
+                {t('auditLog.columns.action')}
+              </TableHead>
               <TableHead>{t('auditLog.columns.entity')}</TableHead>
-              <TableHead className="w-[100px] text-right">{t('auditLog.columns.actions')}</TableHead>
+              <TableHead className="w-[100px] text-right">
+                {t('auditLog.columns.actions')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -672,7 +870,7 @@ export function AutoAuditLogView({
             ) : (
               entries.map((entry) => {
                 const actionInfo = getActionInfo(entry.action);
-                
+
                 return (
                   <TableRow key={entry.id}>
                     <TableCell className="font-medium">
@@ -684,7 +882,7 @@ export function AutoAuditLogView({
                           <img
                             src={entry.user.avatar}
                             alt={entry.user.name}
-                            className="h-6 w-6 rounded-full mr-2"
+                            className="mr-2 h-6 w-6 rounded-full"
                           />
                         )}
                         <span>{entry.user.name}</span>
@@ -698,16 +896,18 @@ export function AutoAuditLogView({
                     <TableCell>
                       <div>
                         <span className="font-medium">
-                          {t(`entities.${entry.entityType}`, { defaultValue: entry.entityType })}
+                          {t(`entities.${entry.entityType}`, {
+                            defaultValue: entry.entityType,
+                          })}
                         </span>
                         {entry.entityId && (
-                          <span className="text-gray-500 ml-1">
+                          <span className="ml-1 text-gray-500">
                             #{entry.entityId}
                           </span>
                         )}
                       </div>
                       {entry.changes && entry.changes.length > 0 && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="mt-1 text-gray-500 text-xs">
                           {entry.changes.length} {t('auditLog.fieldsChanged')}
                         </div>
                       )}
@@ -730,7 +930,7 @@ export function AutoAuditLogView({
           </TableBody>
         </Table>
       </div>
-      
+
       {totalPages > 1 && (
         <div className="flex items-center justify-between space-x-2 py-4">
           <Button
@@ -739,14 +939,17 @@ export function AutoAuditLogView({
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
           >
-            <ChevronLeft className="h-4 w-4 mr-2" />
+            <ChevronLeft className="mr-2 h-4 w-4" />
             {t('auditLog.pagination.previous')}
           </Button>
-          
-          <span className="text-sm text-gray-500">
-            {t('auditLog.pagination.pageInfo', { current: page, total: totalPages })}
+
+          <span className="text-gray-500 text-sm">
+            {t('auditLog.pagination.pageInfo', {
+              current: page,
+              total: totalPages,
+            })}
           </span>
-          
+
           <Button
             variant="outline"
             size="sm"
@@ -754,13 +957,13 @@ export function AutoAuditLogView({
             disabled={page >= totalPages}
           >
             {t('auditLog.pagination.next')}
-            <ChevronRight className="h-4 w-4 ml-2" />
+            <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       )}
     </div>
   );
-  
+
   // Wrap in card if requested
   if (showCard) {
     return (
@@ -771,12 +974,10 @@ export function AutoAuditLogView({
             {description && <CardDescription>{description}</CardDescription>}
           </CardHeader>
         )}
-        <CardContent>
-          {content}
-        </CardContent>
+        <CardContent>{content}</CardContent>
       </Card>
     );
   }
-  
+
   return content;
 }

@@ -15,7 +15,7 @@ const writeFile = promisify(fs.writeFile);
 // Logger function to replace console usage
 function logger(type, message) {
   let prefix = '';
-  
+
   if (type === 'error') {
     prefix = '❌';
   } else if (type === 'success') {
@@ -25,7 +25,7 @@ function logger(type, message) {
   } else if (type === 'done') {
     prefix = '✨';
   }
-  
+
   process.stdout.write(`${prefix} ${message}\n`);
 }
 
@@ -35,19 +35,19 @@ const mainFile = path.join(__dirname, '..', 'src', 'zopio.ts');
 async function updateFile(filePath) {
   try {
     const content = await readFile(filePath, 'utf8');
-    
+
     // Replace CommonJS require with ES module import
     const updatedContent = content.replace(
       /\/\/ Use CommonJS require for commander to avoid TypeScript issues\n\/\/ @ts-ignore\nconst { Command } = require\('commander'\);/g,
       "// Use ES module import for commander\nimport { Command } from 'commander';"
     );
-    
+
     if (content !== updatedContent) {
       await fs.writeFile(filePath, updatedContent, 'utf8');
       logger('success', `Updated: ${path.relative(process.cwd(), filePath)}`);
       return true;
     }
-    
+
     return false;
   } catch (error) {
     logger('error', `Error updating ${filePath}: ${error}`);
@@ -58,19 +58,22 @@ async function updateFile(filePath) {
 async function updateMainFile() {
   try {
     const content = await readFile(mainFile, 'utf8');
-    
+
     // Replace CommonJS require with ES module import in main file
     const updatedContent = content.replace(
       /\/\/ Use a CommonJS require for commander to avoid TypeScript issues\n\/\/ @ts-ignore\nconst { Command } = require\("commander"\);/g,
       "// Use ES module import for commander\nimport { Command } from 'commander';"
     );
-    
+
     if (content !== updatedContent) {
       await writeFile(mainFile, updatedContent, 'utf8');
-      logger('success', `Updated main file: ${path.relative(process.cwd(), mainFile)}`);
+      logger(
+        'success',
+        `Updated main file: ${path.relative(process.cwd(), mainFile)}`
+      );
       return true;
     }
-    
+
     return false;
   } catch (error) {
     logger('error', `Error updating main file: ${error}`);
@@ -80,17 +83,18 @@ async function updateMainFile() {
 
 async function main() {
   logger('info', 'Converting CommonJS requires to ES module imports...');
-  
+
   // Update the main zopio.ts file
   await updateMainFile();
-  
+
   // Get all command files
-  const files = fs.readdirSync(commandsDir)
-    .filter(file => file.endsWith('.ts'))
-    .map(file => path.join(commandsDir, file));
-  
+  const files = fs
+    .readdirSync(commandsDir)
+    .filter((file) => file.endsWith('.ts'))
+    .map((file) => path.join(commandsDir, file));
+
   let updatedCount = 0;
-  
+
   // Update each command file
   for (const file of files) {
     const updated = await updateFile(file);
@@ -98,7 +102,7 @@ async function main() {
       updatedCount++;
     }
   }
-  
+
   logger('done', `Done! Updated ${updatedCount} command files.`);
 }
 

@@ -2,7 +2,10 @@ declare module 'swr' {
   export interface SWRResponse<Data = unknown, Error = unknown> {
     data?: Data;
     error?: Error;
-    mutate: (data?: Data, shouldRevalidate?: boolean) => Promise<Data | undefined>;
+    mutate: (
+      data?: Data,
+      shouldRevalidate?: boolean
+    ) => Promise<Data | undefined>;
     isValidating: boolean;
   }
 
@@ -24,9 +27,23 @@ declare module 'swr' {
       errorRetryCount?: number;
       shouldRetryOnError?: boolean;
       onLoadingSlow?: (key: string, config: Record<string, unknown>) => void;
-      onSuccess?: (data: Data, key: string, config: Record<string, unknown>) => void;
-      onError?: (err: Error, key: string, config: Record<string, unknown>) => void;
-      onErrorRetry?: (err: Error, key: string, config: Record<string, unknown>, revalidate: () => Promise<unknown>, revalidateOpts: Record<string, unknown>) => void;
+      onSuccess?: (
+        data: Data,
+        key: string,
+        config: Record<string, unknown>
+      ) => void;
+      onError?: (
+        err: Error,
+        key: string,
+        config: Record<string, unknown>
+      ) => void;
+      onErrorRetry?: (
+        err: Error,
+        key: string,
+        config: Record<string, unknown>,
+        revalidate: () => Promise<unknown>,
+        revalidateOpts: Record<string, unknown>
+      ) => void;
       compare?: (a: Data | undefined, b: Data | undefined) => boolean;
     }
   ): SWRResponse<Data, Error>;

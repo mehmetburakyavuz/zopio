@@ -1,6 +1,6 @@
 /**
  * @repo/adapters
- * 
+ *
  * A unified interface for data format adapters in the Zopio framework.
  * This module exports all available adapters with consistent interfaces.
  */

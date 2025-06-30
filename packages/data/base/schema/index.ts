@@ -8,8 +8,13 @@ import { z } from 'zod';
  * Create a schema for a data resource
  */
 // Type guard for ZodObject
-function isZodObject(schema: z.ZodType): schema is z.ZodObject<z.ZodRawShape, z.UnknownKeysParam, z.ZodTypeAny> {
-  return 'shape' in schema && typeof (schema as { shape?: unknown }).shape === 'object';
+function isZodObject(
+  schema: z.ZodType
+): schema is z.ZodObject<z.ZodRawShape, z.UnknownKeysParam, z.ZodTypeAny> {
+  return (
+    'shape' in schema &&
+    typeof (schema as { shape?: unknown }).shape === 'object'
+  );
 }
 
 // Define the return type separately to avoid circular references
@@ -18,8 +23,12 @@ export interface SchemaUtils<T extends z.ZodType> {
   parse: (data: unknown) => z.infer<T>;
   safeParse: (data: unknown) => z.SafeParseReturnType<unknown, z.infer<T>>;
   extend: <U extends z.ZodType>(extension: U) => SchemaUtils<z.ZodType>;
-  pick: <K extends keyof z.infer<T>>(keys: readonly K[]) => SchemaUtils<z.ZodType>;
-  omit: <K extends keyof z.infer<T>>(keys: readonly K[]) => SchemaUtils<z.ZodType>;
+  pick: <K extends keyof z.infer<T>>(
+    keys: readonly K[]
+  ) => SchemaUtils<z.ZodType>;
+  omit: <K extends keyof z.infer<T>>(
+    keys: readonly K[]
+  ) => SchemaUtils<z.ZodType>;
   partial: () => SchemaUtils<z.ZodType>;
   required: () => SchemaUtils<z.ZodType>;
 }

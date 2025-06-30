@@ -2,22 +2,22 @@
  * Shopify provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 // Pre-defined regex patterns for better performance
-const lastPageRegex = /page=(\d+)>; rel="last"/
+const lastPageRegex = /page=(\d+)>; rel="last"/;
 
 export interface ShopifyProviderConfig {
   shopDomain: string;
@@ -29,9 +29,11 @@ export interface ShopifyProviderConfig {
 /**
  * Create a Shopify provider
  */
-export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvider {
-  const { 
-    shopDomain, 
+export function createShopifyProvider(
+  config: ShopifyProviderConfig
+): CrudProvider {
+  const {
+    shopDomain,
     accessToken,
     apiVersion = '2023-10',
     resourceMapping = {
@@ -41,8 +43,8 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
       collections: 'collections',
       inventory: 'inventory_items',
       fulfillments: 'fulfillments',
-      discounts: 'price_rules'
-    }
+      discounts: 'price_rules',
+    },
   } = config;
 
   // Helper to get Shopify resource from resource name
@@ -64,28 +66,34 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
   };
   const headers: HeadersType = {
     'X-Shopify-Access-Token': accessToken,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
 
   // Helper functions to build URL parameters
-  const addPaginationParams = (url: URL, pagination?: { page: number; perPage: number }): void => {
+  const addPaginationParams = (
+    url: URL,
+    pagination?: { page: number; perPage: number }
+  ): void => {
     if (!pagination) {
       return;
     }
-    
+
     url.searchParams.append('limit', String(pagination.perPage));
-    
+
     if (pagination.page > 1) {
       // Shopify uses page-based pagination
       url.searchParams.append('page', String(pagination.page));
     }
   };
 
-  const addFilterParams = (url: URL, filter?: Record<string, unknown>): void => {
+  const addFilterParams = (
+    url: URL,
+    filter?: Record<string, unknown>
+  ): void => {
     if (!filter) {
       return;
     }
-    
+
     for (const [key, value] of Object.entries(filter)) {
       if (value !== undefined && value !== null) {
         url.searchParams.append(key, String(value));
@@ -94,33 +102,39 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
   };
 
   return {
-    async getList({ resource, pagination, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Build URL with query parameters
         const url = new URL(buildUrl(resource));
-        
+
         // Add parameters
         addPaginationParams(url, pagination);
         addFilterParams(url, filter);
-        
+
         // Fetch data
         const response = await fetch(url.toString(), { headers });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Shopify returns data in a specific format
         // e.g. { products: [...] }
         const shopifyResource = getShopifyResource(resource);
         const data = result[shopifyResource] || [];
-        
+
         // Get total count from headers if available
         let total = data.length;
         const linkHeader = response.headers.get('Link');
-        
+
         if (linkHeader) {
           // Parse Link header to get total pages
           const matches = linkHeader.match(lastPageRegex);
@@ -129,7 +143,7 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
             total = lastPage * pagination.perPage;
           }
         }
-        
+
         return { data, total };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -140,27 +154,29 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
       try {
         // Fetch data
         const response = await fetch(buildUrl(resource, id), { headers });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Shopify returns data in a specific format
         // e.g. { product: {...} }
         const shopifyResource = getShopifyResource(resource);
         // Remove trailing 's' for singular resource
-        const singularResource = shopifyResource.endsWith('s') 
-          ? shopifyResource.slice(0, -1) 
+        const singularResource = shopifyResource.endsWith('s')
+          ? shopifyResource.slice(0, -1)
           : shopifyResource;
-          
+
         const data = result[singularResource];
-        
+
         if (!data) {
           throw new Error(`Record with id ${id} not found in ${resource}`);
         }
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -173,68 +189,76 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
         // e.g. { product: {...} }
         const shopifyResource = getShopifyResource(resource);
         // Remove trailing 's' for singular resource
-        const singularResource = shopifyResource.endsWith('s') 
-          ? shopifyResource.slice(0, -1) 
+        const singularResource = shopifyResource.endsWith('s')
+          ? shopifyResource.slice(0, -1)
           : shopifyResource;
-          
+
         const body = {
-          [singularResource]: variables
+          [singularResource]: variables,
         };
-        
+
         // Create data
         const response = await fetch(buildUrl(resource), {
           method: 'POST',
           headers,
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to create ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to create ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Shopify returns data in a specific format
         // e.g. { product: {...} }
         const data = result[singularResource];
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Shopify expects a specific format
         // e.g. { product: {...} }
         const shopifyResource = getShopifyResource(resource);
         // Remove trailing 's' for singular resource
-        const singularResource = shopifyResource.endsWith('s') 
-          ? shopifyResource.slice(0, -1) 
+        const singularResource = shopifyResource.endsWith('s')
+          ? shopifyResource.slice(0, -1)
           : shopifyResource;
-          
+
         const body = {
-          [singularResource]: variables
+          [singularResource]: variables,
         };
-        
+
         // Update data
         const response = await fetch(buildUrl(resource, id), {
           method: 'PUT',
           headers,
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to update ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to update ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Shopify returns data in a specific format
         // e.g. { product: {...} }
         const data = result[singularResource];
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -245,21 +269,23 @@ export function createShopifyProvider(config: ShopifyProviderConfig): CrudProvid
       try {
         // Get the record before deleting
         const { data } = await this.getOne({ resource, id });
-        
+
         // Delete data
         const response = await fetch(buildUrl(resource, id), {
           method: 'DELETE',
-          headers
+          headers,
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to delete ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to delete ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

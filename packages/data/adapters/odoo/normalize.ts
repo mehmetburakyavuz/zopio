@@ -1,6 +1,6 @@
 /**
  * Odoo Record Normalizer
- * 
+ *
  * Transforms Odoo API responses into a more usable structure.
  */
 
@@ -9,7 +9,7 @@ import { isMany2One, parseMany2One } from './relations.js';
 
 /**
  * Normalizes an Odoo record by converting many2one fields to object format
- * 
+ *
  * @param record - The raw Odoo record to normalize
  * @returns A normalized record with properly formatted relation fields
  */

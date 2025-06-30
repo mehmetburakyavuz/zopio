@@ -1,7 +1,7 @@
-import type { ViewSchema } from "../../engine/renderers/types";
-import type { ViewStorageProvider } from "./types";
-import { promises as fs } from "node:fs";
-import path from "node:path";
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import type { ViewSchema } from '../../engine/renderers/types';
+import type { ViewStorageProvider } from './types';
 
 /**
  * A view storage provider that uses the file system
@@ -33,7 +33,7 @@ export class FileStorageProvider implements ViewStorageProvider {
     try {
       await fs.mkdir(this.basePath, { recursive: true });
     } catch (error) {
-      console.error("Error creating base directory:", error);
+      console.error('Error creating base directory:', error);
       throw new Error(`Failed to create directory '${this.basePath}'`);
     }
   }
@@ -46,12 +46,12 @@ export class FileStorageProvider implements ViewStorageProvider {
    */
   async saveView(id: string, view: ViewSchema): Promise<void> {
     await this.ensureBaseDir();
-    
+
     try {
       const viewPath = this.getViewPath(id);
-      await fs.writeFile(viewPath, JSON.stringify(view, null, 2), "utf8");
+      await fs.writeFile(viewPath, JSON.stringify(view, null, 2), 'utf8');
     } catch (error) {
-      console.error("Error saving view to file:", error);
+      console.error('Error saving view to file:', error);
       throw new Error(`Failed to save view '${id}' to file`);
     }
   }
@@ -63,17 +63,17 @@ export class FileStorageProvider implements ViewStorageProvider {
    */
   async getView(id: string): Promise<ViewSchema | undefined> {
     const viewPath = this.getViewPath(id);
-    
+
     try {
-      const content = await fs.readFile(viewPath, "utf8");
+      const content = await fs.readFile(viewPath, 'utf8');
       return JSON.parse(content) as ViewSchema;
     } catch (error) {
       // If file doesn't exist, return undefined
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         return undefined;
       }
-      
-      console.error("Error reading view from file:", error);
+
+      console.error('Error reading view from file:', error);
       throw new Error(`Failed to read view '${id}' from file`);
     }
   }
@@ -85,14 +85,14 @@ export class FileStorageProvider implements ViewStorageProvider {
   async listViews(): Promise<string[]> {
     try {
       await this.ensureBaseDir();
-      
+
       const files = await fs.readdir(this.basePath);
       return files
-        .filter(file => file.endsWith(".json"))
-        .map(file => path.basename(file, ".json"));
+        .filter((file) => file.endsWith('.json'))
+        .map((file) => path.basename(file, '.json'));
     } catch (error) {
-      console.error("Error listing views from directory:", error);
-      throw new Error("Failed to list views from directory");
+      console.error('Error listing views from directory:', error);
+      throw new Error('Failed to list views from directory');
     }
   }
 
@@ -103,13 +103,13 @@ export class FileStorageProvider implements ViewStorageProvider {
    */
   async deleteView(id: string): Promise<void> {
     const viewPath = this.getViewPath(id);
-    
+
     try {
       await fs.unlink(viewPath);
     } catch (error) {
       // Ignore if file doesn't exist
-      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
-        console.error("Error deleting view file:", error);
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+        console.error('Error deleting view file:', error);
         throw new Error(`Failed to delete view '${id}'`);
       }
     }

@@ -1,9 +1,9 @@
-// Use ES module import for commander
-import { Command } from 'commander';
-import chalk from 'chalk';
 import fs from 'node:fs';
 import path from 'node:path';
-import { logger, isZopioProject } from '../utils/helpers';
+import chalk from 'chalk';
+// Use ES module import for commander
+import { Command } from 'commander';
+import { isZopioProject, logger } from '../utils/helpers';
 
 interface CrudPermissionsCommandOptions {
   model?: string;
@@ -16,18 +16,20 @@ interface CrudPermissionsCommandOptions {
  * @param rolesStr Roles string in format "admin:all,user:read,editor:read,write"
  * @returns Array of role objects
  */
-function parseRoles(rolesStr: string): Array<{ role: string; permissions: string[] }> {
+function parseRoles(
+  rolesStr: string
+): Array<{ role: string; permissions: string[] }> {
   if (!rolesStr) {
     return [];
   }
-  
-  return rolesStr.split(',').map(roleStr => {
+
+  return rolesStr.split(',').map((roleStr) => {
     const [role, permissionsStr = 'read'] = roleStr.trim().split(':');
     const permissions = permissionsStr.split(',');
-    
-    return { 
-      role: role.trim(), 
-      permissions: permissions.map(p => p.trim())
+
+    return {
+      role: role.trim(),
+      permissions: permissions.map((p) => p.trim()),
     };
   });
 }
@@ -38,16 +40,19 @@ function parseRoles(rolesStr: string): Array<{ role: string; permissions: string
  * @param roles Array of role objects
  * @returns Permissions configuration as a string
  */
-function generatePermissionsConfig(model: string, roles: Array<{ role: string; permissions: string[] }>): string {
+function generatePermissionsConfig(
+  model: string,
+  roles: Array<{ role: string; permissions: string[] }>
+): string {
   const modelName = model.toLowerCase();
   const permissionsObj: Record<string, Record<string, string[]>> = {
-    [modelName]: {}
+    [modelName]: {},
   };
-  
+
   for (const { role, permissions } of roles) {
     permissionsObj[modelName][role] = permissions;
   }
-  
+
   return `/**
  * Permissions configuration for ${model}
  */
@@ -63,7 +68,7 @@ export const ${modelName}Permissions = ${JSON.stringify(permissionsObj, null, 2)
 function generatePermissionsMiddleware(model: string): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
   const modelNameLower = model.toLowerCase();
-  
+
   return `import { Request, Response, NextFunction } from 'express';
 import { ${modelNameLower}Permissions } from '../config/${modelNameLower}.permissions';
 
@@ -128,7 +133,7 @@ export const ${modelName}PermissionMiddleware = {
 function generatePermissionsHook(model: string): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
   const modelNameLower = model.toLowerCase();
-  
+
   return `import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { ${modelNameLower}Permissions } from '../config/${modelNameLower}.permissions';
@@ -183,36 +188,43 @@ export const use${modelName}Permissions = () => {
 export const crudPermissionsCommand = new Command('crud-permissions')
   .description('Generate permissions configuration and middleware for a model')
   .option('-m, --model <name>', 'Model name')
-  .option('-r, --roles <roles>', 'Roles and permissions in format "admin:all,user:read,editor:read,write"')
+  .option(
+    '-r, --roles <roles>',
+    'Roles and permissions in format "admin:all,user:read,editor:read,write"'
+  )
   .option('-o, --output <directory>', 'Output directory for permissions files')
   .action((options: CrudPermissionsCommandOptions) => {
     // Check if running in a Zopio project
     if (!isZopioProject()) {
-      logger.error('Not a Zopio project. Please run this command in a Zopio project directory.');
+      logger.error(
+        'Not a Zopio project. Please run this command in a Zopio project directory.'
+      );
       process.exit(1);
     }
-    
+
     if (!options.model) {
-      logger.error('Model name is required. Use --model <name> to specify a model name.');
+      logger.error(
+        'Model name is required. Use --model <name> to specify a model name.'
+      );
       crudPermissionsCommand.help();
       return;
     }
-    
+
     const modelName = options.model;
-    const roles = options.roles 
-      ? parseRoles(options.roles) 
+    const roles = options.roles
+      ? parseRoles(options.roles)
       : [
           { role: 'admin', permissions: ['all'] },
           { role: 'user', permissions: ['read'] },
-          { role: 'editor', permissions: ['read', 'update'] }
+          { role: 'editor', permissions: ['read', 'update'] },
         ];
-    
+
     // Determine output directories
     const baseDir = options.output || process.cwd();
     const configDir = path.join(baseDir, 'src', 'config');
     const middlewareDir = path.join(baseDir, 'src', 'middleware');
     const hooksDir = path.join(baseDir, 'src', 'hooks');
-    
+
     // Create directories if they don't exist
     for (const dir of [configDir, middlewareDir, hooksDir]) {
       if (!fs.existsSync(dir)) {
@@ -220,29 +232,41 @@ export const crudPermissionsCommand = new Command('crud-permissions')
         logger.info(`Created directory: ${chalk.green(dir)}`);
       }
     }
-    
+
     // Generate permissions configuration
     const permissionsConfig = generatePermissionsConfig(modelName, roles);
-    const configPath = path.join(configDir, `${modelName.toLowerCase()}.permissions.ts`);
-    
+    const configPath = path.join(
+      configDir,
+      `${modelName.toLowerCase()}.permissions.ts`
+    );
+
     fs.writeFileSync(configPath, permissionsConfig);
-    logger.success(`Generated permissions configuration: ${chalk.green(configPath)}`);
-    
+    logger.success(
+      `Generated permissions configuration: ${chalk.green(configPath)}`
+    );
+
     // Generate permissions middleware
     const permissionsMiddleware = generatePermissionsMiddleware(modelName);
-    const middlewarePath = path.join(middlewareDir, `${modelName.toLowerCase()}.permissions.ts`);
-    
+    const middlewarePath = path.join(
+      middlewareDir,
+      `${modelName.toLowerCase()}.permissions.ts`
+    );
+
     fs.writeFileSync(middlewarePath, permissionsMiddleware);
-    logger.success(`Generated permissions middleware: ${chalk.green(middlewarePath)}`);
-    
+    logger.success(
+      `Generated permissions middleware: ${chalk.green(middlewarePath)}`
+    );
+
     // Generate permissions hook
     const permissionsHook = generatePermissionsHook(modelName);
     const hookPath = path.join(hooksDir, `use${modelName}Permissions.ts`);
-    
+
     fs.writeFileSync(hookPath, permissionsHook);
     logger.success(`Generated permissions hook: ${chalk.green(hookPath)}`);
-    
-    logger.info('\nYou can now use these files to implement permissions in your application.');
+
+    logger.info(
+      '\nYou can now use these files to implement permissions in your application.'
+    );
     logger.info('\nExample usage in Express routes:');
     logger.info(`
 import { ${modelName}PermissionMiddleware } from './middleware/${modelName.toLowerCase()}.permissions';
@@ -253,7 +277,7 @@ router.post('/${modelName.toLowerCase()}', ${modelName}PermissionMiddleware.crea
 router.put('/${modelName.toLowerCase()}/:id', ${modelName}PermissionMiddleware.update, controller.update);
 router.delete('/${modelName.toLowerCase()}/:id', ${modelName}PermissionMiddleware.delete, controller.delete);
 `);
-    
+
     logger.info('\nExample usage in React components:');
     logger.info(`
 import { use${modelName}Permissions } from './hooks/use${modelName}Permissions';

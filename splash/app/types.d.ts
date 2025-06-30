@@ -1,12 +1,10 @@
 // Type declarations for modules without type definitions
 declare module 'lucide-react' {
-  import type * as React from 'react';
   export const StarIcon: React.FC<{ size?: number }>;
   // Add other icons as needed
 }
 
 declare module 'react-tweet' {
-  import type * as React from 'react';
   export interface TweetProps {
     id: string;
   }
@@ -16,7 +14,10 @@ declare module 'react-tweet' {
 // Add JSX namespace to fix the "JSX element implicitly has type 'any'" errors
 declare namespace JSX {
   interface IntrinsicElements {
-    [elemName: string]: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    [elemName: string]: React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement>,
+      HTMLElement
+    >;
   }
 }
 

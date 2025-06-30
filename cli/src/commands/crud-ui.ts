@@ -1,8 +1,8 @@
-// Use ES module import for commander
-import { Command } from 'commander';
 import fs from 'node:fs';
 import path from 'node:path';
-import { logger, isZopioProject } from '../utils/helpers';
+// Use ES module import for commander
+import { Command } from 'commander';
+import { isZopioProject, logger } from '../utils/helpers';
 
 interface CrudUiCommandOptions {
   model?: string;
@@ -16,17 +16,20 @@ interface CrudUiCommandOptions {
  * @param fieldsStr Fields string in format "name:type,age:number"
  * @returns Array of field objects
  */
-function parseFields(fieldsStr: string): Array<{ name: string; type: string; label?: string }> {
+function parseFields(
+  fieldsStr: string
+): Array<{ name: string; type: string; label?: string }> {
   if (!fieldsStr) {
     return [];
   }
-  
-  return fieldsStr.split(',').map(field => {
+
+  return fieldsStr.split(',').map((field) => {
     const parts = field.trim().split(':');
     const name = parts[0].trim();
     const type = parts[1]?.trim() || 'string';
-    const label = parts[2]?.trim() || name.charAt(0).toUpperCase() + name.slice(1);
-    
+    const label =
+      parts[2]?.trim() || name.charAt(0).toUpperCase() + name.slice(1);
+
     return { name, type, label };
   });
 }
@@ -37,24 +40,31 @@ function parseFields(fieldsStr: string): Array<{ name: string; type: string; lab
  * @param fields Array of field objects
  * @returns React component as a string
  */
-function generateListComponent(model: string, fields: Array<{ name: string; type: string; label?: string }>): string {
+function generateListComponent(
+  model: string,
+  fields: Array<{ name: string; type: string; label?: string }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
   const modelNamePlural = `${modelName}s`;
-  
+
   // Generate table headers
-  const tableHeaders = fields.map(field => `            <th>${field.label || field.name}</th>`).join('\n');
-  
+  const tableHeaders = fields
+    .map((field) => `            <th>${field.label || field.name}</th>`)
+    .join('\n');
+
   // Generate table cells
-  const tableCells = fields.map(field => {
-    if (field.type === 'date') {
-      return `              <td>{new Date(item.${field.name}).toLocaleDateString()}</td>`;
-    } 
-    if (field.type === 'boolean') {
-      return `              <td>{item.${field.name} ? 'Yes' : 'No'}</td>`;
-    } 
-    return `              <td>{item.${field.name}}</td>`;
-  }).join('\n');
-  
+  const tableCells = fields
+    .map((field) => {
+      if (field.type === 'date') {
+        return `              <td>{new Date(item.${field.name}).toLocaleDateString()}</td>`;
+      }
+      if (field.type === 'boolean') {
+        return `              <td>{item.${field.name} ? 'Yes' : 'No'}</td>`;
+      }
+      return `              <td>{item.${field.name}}</td>`;
+    })
+    .join('\n');
+
   return `import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Table, Container, Row, Col, Alert } from 'react-bootstrap';
@@ -169,16 +179,20 @@ ${tableCells}
  * @param fields Array of field objects
  * @returns React component as a string
  */
-function generateFormComponent(model: string, fields: Array<{ name: string; type: string; label?: string }>): string {
+function generateFormComponent(
+  model: string,
+  fields: Array<{ name: string; type: string; label?: string }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
-  
+
   // Generate form fields
-  const formFields = fields.map(field => {
-    let inputField = '';
-    
-    switch (field.type) {
-      case 'boolean':
-        inputField = `
+  const formFields = fields
+    .map((field) => {
+      let inputField = '';
+
+      switch (field.type) {
+        case 'boolean':
+          inputField = `
             <Form.Group className="mb-3">
               <Form.Check 
                 type="checkbox"
@@ -188,9 +202,9 @@ function generateFormComponent(model: string, fields: Array<{ name: string; type
                 onChange={(e) => setFormData({...formData, ${field.name}: e.target.checked})}
               />
             </Form.Group>`;
-        break;
-      case 'date':
-        inputField = `
+          break;
+        case 'date':
+          inputField = `
             <Form.Group className="mb-3">
               <Form.Label>${field.label || field.name}</Form.Label>
               <Form.Control
@@ -200,10 +214,10 @@ function generateFormComponent(model: string, fields: Array<{ name: string; type
                 onChange={(e) => setFormData({...formData, ${field.name}: e.target.value})}
               />
             </Form.Group>`;
-        break;
-      case 'number':
-      case 'integer':
-        inputField = `
+          break;
+        case 'number':
+        case 'integer':
+          inputField = `
             <Form.Group className="mb-3">
               <Form.Label>${field.label || field.name}</Form.Label>
               <Form.Control
@@ -213,9 +227,9 @@ function generateFormComponent(model: string, fields: Array<{ name: string; type
                 onChange={(e) => setFormData({...formData, ${field.name}: Number(e.target.value)})}
               />
             </Form.Group>`;
-        break;
-      case 'textarea':
-        inputField = `
+          break;
+        case 'textarea':
+          inputField = `
             <Form.Group className="mb-3">
               <Form.Label>${field.label || field.name}</Form.Label>
               <Form.Control
@@ -226,9 +240,9 @@ function generateFormComponent(model: string, fields: Array<{ name: string; type
                 onChange={(e) => setFormData({...formData, ${field.name}: e.target.value})}
               />
             </Form.Group>`;
-        break;
-      default:
-        inputField = `
+          break;
+        default:
+          inputField = `
             <Form.Group className="mb-3">
               <Form.Label>${field.label || field.name}</Form.Label>
               <Form.Control
@@ -238,37 +252,40 @@ function generateFormComponent(model: string, fields: Array<{ name: string; type
                 onChange={(e) => setFormData({...formData, ${field.name}: e.target.value})}
               />
             </Form.Group>`;
-    }
-    
-    return inputField;
-  }).join('');
-  
+      }
+
+      return inputField;
+    })
+    .join('');
+
   // Generate initial form data
-  const formFieldsContent = fields.map(field => {
-    let defaultValue: string | number | boolean | null = '';
-    
-    switch (field.type) {
-      case 'boolean':
-        defaultValue = false;
-        break;
-      case 'number':
-      case 'integer':
-        defaultValue = 0;
-        break;
-      case 'date':
-        defaultValue = null;
-        break;
-      default:
-        defaultValue = '';
-    }
-    
-    return `  ${field.name}: ${JSON.stringify(defaultValue)}`;
-  }).join(',\n');
-  
+  const formFieldsContent = fields
+    .map((field) => {
+      let defaultValue: string | number | boolean | null = '';
+
+      switch (field.type) {
+        case 'boolean':
+          defaultValue = false;
+          break;
+        case 'number':
+        case 'integer':
+          defaultValue = 0;
+          break;
+        case 'date':
+          defaultValue = null;
+          break;
+        default:
+          defaultValue = '';
+      }
+
+      return `  ${field.name}: ${JSON.stringify(defaultValue)}`;
+    })
+    .join(',\n');
+
   const initialFormData = `{
 ${formFieldsContent}
 }`;
-  
+
   return `import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
@@ -365,31 +382,36 @@ ${formFields}
  * @param fields Array of field objects
  * @returns React component as a string
  */
-function generateDetailComponent(model: string, fields: Array<{ name: string; type: string; label?: string }>): string {
+function generateDetailComponent(
+  model: string,
+  fields: Array<{ name: string; type: string; label?: string }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
-  
+
   // Generate detail fields
-  const detailFields = fields.map(field => {
-    let displayValue = '';
-    
-    switch (field.type) {
-      case 'boolean':
-        displayValue = `{${model.toLowerCase()}.${field.name} ? 'Yes' : 'No'}`;
-        break;
-      case 'date':
-        displayValue = `{${model.toLowerCase()}.${field.name} ? new Date(${model.toLowerCase()}.${field.name}).toLocaleDateString() : '-'}`;
-        break;
-      default:
-        displayValue = `{${model.toLowerCase()}.${field.name} || '-'}`;
-    }
-    
-    return `
+  const detailFields = fields
+    .map((field) => {
+      let displayValue = '';
+
+      switch (field.type) {
+        case 'boolean':
+          displayValue = `{${model.toLowerCase()}.${field.name} ? 'Yes' : 'No'}`;
+          break;
+        case 'date':
+          displayValue = `{${model.toLowerCase()}.${field.name} ? new Date(${model.toLowerCase()}.${field.name}).toLocaleDateString() : '-'}`;
+          break;
+        default:
+          displayValue = `{${model.toLowerCase()}.${field.name} || '-'}`;
+      }
+
+      return `
             <Row className="mb-2">
               <Col sm={3} className="fw-bold">${field.label || field.name}:</Col>
               <Col>${displayValue}</Col>
             </Row>`;
-  }).join('');
-  
+    })
+    .join('');
+
   return `import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
@@ -487,7 +509,7 @@ ${detailFields}
  */
 function generateService(model: string): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
-  
+
   return `import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || '/api';
@@ -556,74 +578,90 @@ export const ${modelName}Service = {
 export const crudUiCommand = new Command('crud-ui')
   .description('Generate React components for CRUD operations')
   .option('-m, --model <name>', 'Model name')
-  .option('-f, --fields <fields>', 'Fields in format "name:type:label,age:number:Age"')
+  .option(
+    '-f, --fields <fields>',
+    'Fields in format "name:type:label,age:number:Age"'
+  )
   .option('-o, --output <directory>', 'Output directory for UI components')
   .option('-t, --theme <theme>', 'UI theme (bootstrap, material)', 'bootstrap')
   .action((options: CrudUiCommandOptions) => {
     // Check if running in a Zopio project
     if (!isZopioProject()) {
-      logger.error('Not a Zopio project. Please run this command in a Zopio project directory.');
+      logger.error(
+        'Not a Zopio project. Please run this command in a Zopio project directory.'
+      );
       process.exit(1);
     }
-    
+
     if (!options.model) {
-      logger.error('Model name is required. Use --model <name> to specify a model name.');
+      logger.error(
+        'Model name is required. Use --model <name> to specify a model name.'
+      );
       crudUiCommand.help();
       return;
     }
-    
+
     const modelName = options.model;
     const fields = options.fields ? parseFields(options.fields) : [];
-    
+
     if (fields.length === 0) {
-      logger.warning('No fields specified. Use --fields <fields> to specify fields for the model.');
+      logger.warning(
+        'No fields specified. Use --fields <fields> to specify fields for the model.'
+      );
     }
-    
+
     // Determine output directory
-    const outputDir = options.output || path.join(process.cwd(), 'src', 'components', modelName.toLowerCase());
-    
+    const outputDir =
+      options.output ||
+      path.join(process.cwd(), 'src', 'components', modelName.toLowerCase());
+
     // Create output directory if it doesn't exist
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
       logger.info(`Created output directory: ${outputDir}`);
     }
-    
+
     // Create services directory if it doesn't exist
     const servicesDir = path.join(process.cwd(), 'src', 'services');
     if (!fs.existsSync(servicesDir)) {
       fs.mkdirSync(servicesDir, { recursive: true });
       logger.info(`Created services directory: ${servicesDir}`);
     }
-    
+
     // Generate list component
     const listComponent = generateListComponent(modelName, fields);
     const listComponentPath = path.join(outputDir, `${modelName}List.jsx`);
-    
+
     fs.writeFileSync(listComponentPath, listComponent);
     logger.success(`Generated list component: ${listComponentPath}`);
-    
+
     // Generate form component
     const formComponent = generateFormComponent(modelName, fields);
     const formComponentPath = path.join(outputDir, `${modelName}Form.jsx`);
-    
+
     fs.writeFileSync(formComponentPath, formComponent);
     logger.success(`Generated form component: ${formComponentPath}`);
-    
+
     // Generate detail component
     const detailComponent = generateDetailComponent(modelName, fields);
     const detailComponentPath = path.join(outputDir, `${modelName}Detail.jsx`);
-    
+
     fs.writeFileSync(detailComponentPath, detailComponent);
     logger.success(`Generated detail component: ${detailComponentPath}`);
-    
+
     // Generate service
     const service = generateService(modelName);
-    const servicePath = path.join(servicesDir, `${modelName.toLowerCase()}.service.js`);
-    
+    const servicePath = path.join(
+      servicesDir,
+      `${modelName.toLowerCase()}.service.js`
+    );
+
     fs.writeFileSync(servicePath, service);
     logger.success(`Generated service: ${servicePath}`);
-    
-    logger.info('\nYou can now use these components in your React application.');
+
+    logger.info(
+      '\nYou can now use these components in your React application.'
+    );
     logger.info('Add the following routes to your router configuration:');
     logger.info(`
 import { ${modelName}List } from './components/${modelName.toLowerCase()}/${modelName}List';

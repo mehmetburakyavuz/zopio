@@ -1,5 +1,4 @@
 {
-    "greeting": "Merhaba",
-    "today": "Bugün {date}"
-  }
-  
+  "greeting": "Merhaba",
+  "today": "Bugün {date}"
+}

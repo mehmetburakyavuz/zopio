@@ -1,8 +1,9 @@
-
-// lib/clerk-adapter.ts
-import { clerkClient } from '@clerk/clerk-sdk-node'
-
-export async function createApiKey(userId: string, name: string, scopes: string[], expiration: string) {
+export async function createApiKey(
+  userId: string,
+  name: string,
+  scopes: string[],
+  expiration: string
+) {
   // Creates a new Clerk API Key
   const response = await fetch('https://api.clerk.com/v1/api_keys', {
     method: 'POST',
@@ -16,12 +17,12 @@ export async function createApiKey(userId: string, name: string, scopes: string[
       scopes,
       expiration,
     }),
-  })
+  });
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(`Clerk API error: ${JSON.stringify(error)}`)
+    const error = await response.json();
+    throw new Error(`Clerk API error: ${JSON.stringify(error)}`);
   }
 
-  return response.json()
+  return response.json();
 }

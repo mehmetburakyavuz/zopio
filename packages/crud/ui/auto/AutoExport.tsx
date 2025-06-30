@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { Button } from "@repo/design-system/components/ui/button";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import { Button } from '@repo/design-system/components/ui/button';
+import { Checkbox } from '@repo/design-system/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
   DialogDescription,
-  DialogFooter
-} from "@repo/design-system/components/ui/dialog";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@repo/design-system/components/ui/select";
-import { Checkbox } from "@repo/design-system/components/ui/checkbox";
-import { Label } from "@repo/design-system/components/ui/label";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Download, FileDown } from "lucide-react";
-import { useCrudTranslation } from "../i18n";
-import type { FieldDefinition, FieldValue, TableColumn } from "./types";
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@repo/design-system/components/ui/dialog';
+import { Input } from '@repo/design-system/components/ui/input';
+import { Label } from '@repo/design-system/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/design-system/components/ui/select';
+import { Download, FileDown } from 'lucide-react';
+import { useState } from 'react';
+import { useCrudTranslation } from '../i18n';
+import type { FieldDefinition, FieldValue, TableColumn } from './types';
 
 export type ExportFormat = 'csv' | 'json' | 'xlsx' | 'pdf' | 'xml';
 
@@ -29,32 +29,32 @@ export interface ExportOptions {
    * Export file format
    */
   format: ExportFormat;
-  
+
   /**
    * Filename without extension
    */
   filename: string;
-  
+
   /**
    * Whether to include column headers
    */
   includeHeaders: boolean;
-  
+
   /**
    * Fields to include in export
    */
   fields: string[];
-  
+
   /**
    * Custom delimiter for CSV export
    */
   delimiter?: string;
-  
+
   /**
    * Whether to export all data or just current page
    */
   exportAll: boolean;
-  
+
   /**
    * Additional export options
    */
@@ -66,62 +66,71 @@ export interface AutoExportProps {
    * Data to export
    */
   data: Record<string, FieldValue>[];
-  
+
   /**
    * Field definitions or table columns
    */
   fields: FieldDefinition[] | TableColumn[];
-  
+
   /**
    * Available export formats
    */
   formats?: ExportFormat[];
-  
+
   /**
    * Default export options
    */
   defaultOptions?: Partial<ExportOptions>;
-  
+
   /**
    * Function to handle export with options
    */
-  onExport: (data: Record<string, FieldValue>[], options: ExportOptions) => Promise<void> | void;
-  
+  onExport: (
+    data: Record<string, FieldValue>[],
+    options: ExportOptions
+  ) => Promise<void> | void;
+
   /**
    * Function to fetch all data when exportAll is true
    */
   fetchAllData?: () => Promise<Record<string, FieldValue>[]>;
-  
+
   /**
    * Whether the component is disabled
    */
   disabled?: boolean;
-  
+
   /**
    * Button variant
    */
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
+
   /**
    * Button size
    */
   size?: 'default' | 'sm' | 'lg' | 'icon';
-  
+
   /**
    * Button label
    */
   label?: string;
-  
+
   /**
    * Whether to show the button label
    */
   showLabel?: boolean;
-  
+
   /**
    * Whether to show the button icon
    */
   showIcon?: boolean;
-  
+
   /**
    * CSS class for the button
    */
@@ -145,7 +154,7 @@ export function AutoExport({
   label,
   showLabel = true,
   showIcon = true,
-  className = "",
+  className = '',
 }: AutoExportProps) {
   const { t } = useCrudTranslation();
   const [open, setOpen] = useState(false);
@@ -154,12 +163,12 @@ export function AutoExport({
     format: defaultOptions?.format || 'csv',
     filename: defaultOptions?.filename || 'export',
     includeHeaders: defaultOptions?.includeHeaders !== false,
-    fields: defaultOptions?.fields || fields.map(field => 
-      'key' in field ? field.key : field.name
-    ),
+    fields:
+      defaultOptions?.fields ||
+      fields.map((field) => ('key' in field ? field.key : field.name)),
     delimiter: defaultOptions?.delimiter || ',',
     exportAll: defaultOptions?.exportAll || false,
-    ...defaultOptions
+    ...defaultOptions,
   });
 
   // Get field name and label
@@ -174,14 +183,14 @@ export function AutoExport({
   const handleExport = async () => {
     try {
       setIsExporting(true);
-      
+
       let dataToExport = data;
-      
+
       // Fetch all data if exportAll is true and fetchAllData is provided
       if (options.exportAll && fetchAllData) {
         dataToExport = await fetchAllData();
       }
-      
+
       await onExport(dataToExport, options);
       setOpen(false);
     } catch (error) {
@@ -198,9 +207,9 @@ export function AutoExport({
       json: 'JSON',
       xlsx: 'Excel',
       pdf: 'PDF',
-      xml: 'XML'
+      xml: 'XML',
     };
-    
+
     return formatLabels[format] || format.toUpperCase();
   };
 
@@ -209,12 +218,12 @@ export function AutoExport({
     if (options.fields.includes(fieldName)) {
       setOptions({
         ...options,
-        fields: options.fields.filter(f => f !== fieldName)
+        fields: options.fields.filter((f) => f !== fieldName),
       });
     } else {
       setOptions({
         ...options,
-        fields: [...options.fields, fieldName]
+        fields: [...options.fields, fieldName],
       });
     }
   };
@@ -224,12 +233,14 @@ export function AutoExport({
     if (options.fields.length === fields.length) {
       setOptions({
         ...options,
-        fields: []
+        fields: [],
       });
     } else {
       setOptions({
         ...options,
-        fields: fields.map(field => 'key' in field ? field.key : field.name)
+        fields: fields.map((field) =>
+          'key' in field ? field.key : field.name
+        ),
       });
     }
   };
@@ -250,16 +261,21 @@ export function AutoExport({
           </span>
         )}
       </Button>
-      
+
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{t('export.title', { defaultValue: 'Export Data' })}</DialogTitle>
+            <DialogTitle>
+              {t('export.title', { defaultValue: 'Export Data' })}
+            </DialogTitle>
             <DialogDescription>
-              {t('export.description', { defaultValue: 'Configure export options and download your data.' })}
+              {t('export.description', {
+                defaultValue:
+                  'Configure export options and download your data.',
+              })}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="export-format" className="text-right">
@@ -267,7 +283,7 @@ export function AutoExport({
               </Label>
               <Select
                 value={options.format}
-                onValueChange={(value: ExportFormat) => 
+                onValueChange={(value: ExportFormat) =>
                   setOptions({ ...options, format: value })
                 }
               >
@@ -275,7 +291,7 @@ export function AutoExport({
                   <SelectValue placeholder={t('export.selectFormat')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {formats.map(format => (
+                  {formats.map((format) => (
                     <SelectItem key={format} value={format}>
                       {getFormatLabel(format)}
                     </SelectItem>
@@ -283,7 +299,7 @@ export function AutoExport({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="export-filename" className="text-right">
                 {t('export.filename')}
@@ -291,11 +307,13 @@ export function AutoExport({
               <Input
                 id="export-filename"
                 value={options.filename}
-                onChange={(e) => setOptions({ ...options, filename: e.target.value })}
+                onChange={(e) =>
+                  setOptions({ ...options, filename: e.target.value })
+                }
                 className="col-span-3"
               />
             </div>
-            
+
             {options.format === 'csv' && (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="export-delimiter" className="text-right">
@@ -304,23 +322,23 @@ export function AutoExport({
                 <Input
                   id="export-delimiter"
                   value={options.delimiter}
-                  onChange={(e) => setOptions({ ...options, delimiter: e.target.value })}
+                  onChange={(e) =>
+                    setOptions({ ...options, delimiter: e.target.value })
+                  }
                   className="col-span-3"
                   maxLength={1}
                 />
               </div>
             )}
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
-              <div className="text-right">
-                {t('export.options')}
-              </div>
+              <div className="text-right">{t('export.options')}</div>
               <div className="col-span-3 space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="export-headers"
                     checked={options.includeHeaders}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       setOptions({ ...options, includeHeaders: !!checked })
                     }
                   />
@@ -328,13 +346,13 @@ export function AutoExport({
                     {t('export.includeHeaders')}
                   </Label>
                 </div>
-                
+
                 {fetchAllData && (
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="export-all"
                       checked={options.exportAll}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         setOptions({ ...options, exportAll: !!checked })
                       }
                     />
@@ -345,13 +363,11 @@ export function AutoExport({
                 )}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 gap-4">
-              <div className="text-right pt-2">
-                {t('export.fields')}
-              </div>
+              <div className="pt-2 text-right">{t('export.fields')}</div>
               <div className="col-span-3">
-                <div className="flex items-center space-x-2 mb-2">
+                <div className="mb-2 flex items-center space-x-2">
                   <Checkbox
                     id="export-all-fields"
                     checked={options.fields.length === fields.length}
@@ -361,12 +377,15 @@ export function AutoExport({
                     {t('export.selectAll')}
                   </Label>
                 </div>
-                
-                <div className="max-h-[200px] overflow-y-auto border rounded p-2">
-                  {fields.map(field => {
+
+                <div className="max-h-[200px] overflow-y-auto rounded border p-2">
+                  {fields.map((field) => {
                     const { name, label } = getFieldInfo(field);
                     return (
-                      <div key={name} className="flex items-center space-x-2 py-1">
+                      <div
+                        key={name}
+                        className="flex items-center space-x-2 py-1"
+                      >
                         <Checkbox
                           id={`export-field-${name}`}
                           checked={options.fields.includes(name)}
@@ -382,20 +401,20 @@ export function AutoExport({
               </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               {t('export.cancel')}
             </Button>
-            <Button 
-              onClick={handleExport} 
+            <Button
+              onClick={handleExport}
               disabled={isExporting || options.fields.length === 0}
             >
               {isExporting ? (
                 <span>{t('export.exporting')}</span>
               ) : (
                 <>
-                  <FileDown className="h-4 w-4 mr-2" />
+                  <FileDown className="mr-2 h-4 w-4" />
                   {t('export.download')}
                 </>
               )}

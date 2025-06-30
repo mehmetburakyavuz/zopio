@@ -6,15 +6,18 @@ type QueryOptions = Record<string, unknown>;
 
 // Create a namespace for fragmentOn to match the original basehub API
 function createFragmentOn() {
-  function fragmentOn<T extends Record<string, unknown>>(type: string, fields: T): FragmentType<T> {
+  function fragmentOn<T extends Record<string, unknown>>(
+    type: string,
+    fields: T
+  ): FragmentType<T> {
     return { __type: type, ...fields };
   }
-  
+
   // Add infer method to the function
   fragmentOn.infer = function infer<T>(_fragment: T): T {
     return {} as T;
   };
-  
+
   return fragmentOn;
 }
 
@@ -22,7 +25,7 @@ const fragmentOn = createFragmentOn();
 
 function basehubClient(options: { token: string }) {
   const baseUrl = `https://basehub.com/api/graphql?token=${options.token}`;
-  
+
   async function query(queryOptions: QueryOptions) {
     try {
       const response = await fetch(baseUrl, {
@@ -32,18 +35,18 @@ function basehubClient(options: { token: string }) {
         },
         body: JSON.stringify({ query: JSON.stringify(queryOptions) }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (_error) {
       // Log error but don't expose in production
       return {};
     }
   }
-  
+
   return { query };
 }
 
@@ -134,12 +137,12 @@ export const blog = {
   getPosts: async (): Promise<PostMeta[]> => {
     try {
       const data = await basehub.query(blog.postsQuery);
-      
+
       // Add null checks to handle potential undefined values
       if (!data || !data.blog || !data.blog.posts) {
         return [];
       }
-      
+
       return data.blog.posts.items || [];
     } catch (_) {
       return [];
@@ -149,11 +152,11 @@ export const blog = {
   getLatestPost: async () => {
     try {
       const data = await basehub.query(blog.latestPostQuery);
-      
+
       if (!data || !data.blog || !data.blog.posts) {
         return null;
       }
-      
+
       return data.blog.posts.item;
     } catch (_) {
       return null;
@@ -164,11 +167,11 @@ export const blog = {
     try {
       const query = blog.postQuery(slug);
       const data = await basehub.query(query);
-      
+
       if (!data || !data.blog || !data.blog.posts) {
         return null;
       }
-      
+
       return data.blog.posts.item;
     } catch (_) {
       return null;
@@ -232,12 +235,12 @@ export const legal = {
   getPosts: async (): Promise<LegalPost[]> => {
     try {
       const data = await basehub.query(legal.postsQuery);
-      
+
       // Add null checks to handle potential undefined values
       if (!data || !data.legalPages) {
         return [];
       }
-      
+
       return data.legalPages.items || [];
     } catch (_) {
       return [];
@@ -247,11 +250,11 @@ export const legal = {
   getLatestPost: async () => {
     try {
       const data = await basehub.query(legal.latestPostQuery);
-      
+
       if (!data || !data.legalPages) {
         return null;
       }
-      
+
       return data.legalPages.item;
     } catch (_) {
       return null;
@@ -262,11 +265,11 @@ export const legal = {
     try {
       const query = legal.postQuery(slug);
       const data = await basehub.query(query);
-      
+
       if (!data || !data.legalPages) {
         return null;
       }
-      
+
       return data.legalPages.item;
     } catch (_) {
       return null;

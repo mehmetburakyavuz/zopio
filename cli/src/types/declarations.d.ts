@@ -72,6 +72,6 @@ declare module 'chalk' {
     yellow,
     red,
     cyan,
-    bold
+    bold,
   };
 }

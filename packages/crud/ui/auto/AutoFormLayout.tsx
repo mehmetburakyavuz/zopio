@@ -1,32 +1,43 @@
-import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/design-system/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@repo/design-system/components/ui/card";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import { AutoForm } from "./AutoForm";
-import type { FieldDefinition, FieldValue } from "../types";
-import { useCrudTranslation } from "../i18n";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components/ui/card';
+import { Separator } from '@repo/design-system/components/ui/separator';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@repo/design-system/components/ui/tabs';
+import { useState } from 'react';
+import { useCrudTranslation } from '../i18n';
+import type { FieldDefinition, FieldValue } from '../types';
+import { AutoForm } from './AutoForm';
 
 export interface FormSection {
   /**
    * Section title
    */
   title?: string;
-  
+
   /**
    * Section description
    */
   description?: string;
-  
+
   /**
    * Field names to include in this section
    */
   fields: string[];
-  
+
   /**
    * Number of columns for the grid layout (1-4)
    */
   columns?: 1 | 2 | 3 | 4;
-  
+
   /**
    * Custom CSS class for the section
    */
@@ -38,17 +49,17 @@ export interface FormTab {
    * Tab title
    */
   title: string;
-  
+
   /**
    * Tab description
    */
   description?: string;
-  
+
   /**
    * Sections within this tab
    */
   sections: FormSection[];
-  
+
   /**
    * Custom CSS class for the tab
    */
@@ -60,22 +71,22 @@ export interface FormLayout {
    * Layout type
    */
   type: 'tabs' | 'sections' | 'wizard' | 'accordion' | 'basic';
-  
+
   /**
    * Tabs configuration (for tabs layout)
    */
   tabs?: FormTab[];
-  
+
   /**
    * Sections configuration (for sections layout)
    */
   sections?: FormSection[];
-  
+
   /**
    * Steps configuration (for wizard layout)
    */
   steps?: FormTab[];
-  
+
   /**
    * Accordion items (for accordion layout)
    */
@@ -87,52 +98,52 @@ export interface AutoFormLayoutProps {
    * Form layout configuration
    */
   layout: FormLayout;
-  
+
   /**
    * Field definitions
    */
   fields: FieldDefinition[];
-  
+
   /**
    * Form values
    */
   value: Record<string, FieldValue>;
-  
+
   /**
    * Called when form values change
    */
   onChange: (value: Record<string, FieldValue>) => void;
-  
+
   /**
    * Form validation errors
    */
   errors?: Record<string, string>;
-  
+
   /**
    * Called when form is submitted
    */
   onSubmit?: (value: Record<string, FieldValue>) => void;
-  
+
   /**
    * Whether form is currently submitting
    */
   isSubmitting?: boolean;
-  
+
   /**
    * Label for submit button
    */
   submitLabel?: string;
-  
+
   /**
    * Label for reset button
    */
   resetLabel?: string;
-  
+
   /**
    * Whether to show reset button
    */
   showReset?: boolean;
-  
+
   /**
    * Custom CSS class
    */
@@ -154,15 +165,15 @@ export function AutoFormLayout({
   submitLabel,
   resetLabel,
   showReset = true,
-  className = "",
+  className = '',
 }: AutoFormLayoutProps) {
   const { t } = useCrudTranslation();
-  const [activeTab, setActiveTab] = useState<string>("0");
+  const [activeTab, setActiveTab] = useState<string>('0');
   const [activeStep, setActiveStep] = useState<number>(0);
 
   // Filter fields to only include those specified in a section
   const getFieldsForSection = (section: FormSection): FieldDefinition[] => {
-    return fields.filter(field => section.fields.includes(field.name));
+    return fields.filter((field) => section.fields.includes(field.name));
   };
 
   // Render basic layout (single column of fields)
@@ -195,10 +206,16 @@ export function AutoFormLayout({
           <Card key={section.title || `section-${index}`} className="mb-6">
             {section.title && (
               <CardHeader>
-                <CardTitle>{t(`form.sections.${section.title}`, { defaultValue: section.title })}</CardTitle>
+                <CardTitle>
+                  {t(`form.sections.${section.title}`, {
+                    defaultValue: section.title,
+                  })}
+                </CardTitle>
                 {section.description && (
                   <CardDescription>
-                    {t(`form.sections.${section.title}.description`, { defaultValue: section.description })}
+                    {t(`form.sections.${section.title}.description`, {
+                      defaultValue: section.description,
+                    })}
                   </CardDescription>
                 )}
               </CardHeader>
@@ -211,7 +228,7 @@ export function AutoFormLayout({
                 errors={errors}
                 className={section.className}
                 layout={{
-                  sections: [{ ...section, columns: section.columns || 1 }]
+                  sections: [{ ...section, columns: section.columns || 1 }],
                 }}
               />
             </CardContent>
@@ -219,25 +236,27 @@ export function AutoFormLayout({
         ))}
 
         {onSubmit && (
-          <div className="flex justify-end space-x-2 mt-6">
+          <div className="mt-6 flex justify-end space-x-2">
             {showReset && (
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
                 onClick={() => onChange({})}
                 disabled={isSubmitting}
               >
                 {t('form.reset', { defaultValue: resetLabel || 'Reset' })}
               </button>
             )}
-            
+
             <button
               type="button"
-              className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90"
+              className="rounded-md bg-primary px-4 py-2 font-medium text-sm text-white hover:bg-primary/90"
               onClick={() => onSubmit(value)}
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('form.submitting') : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
+              {isSubmitting
+                ? t('form.submitting')
+                : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
             </button>
           </div>
         )}
@@ -256,36 +275,52 @@ export function AutoFormLayout({
         <Tabs defaultValue="0" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-4">
             {layout.tabs.map((tab, index) => (
-              <TabsTrigger key={tab.title || `tab-${index}`} value={index.toString()}>
+              <TabsTrigger
+                key={tab.title || `tab-${index}`}
+                value={index.toString()}
+              >
                 {t(`form.tabs.${tab.title}`, { defaultValue: tab.title })}
               </TabsTrigger>
             ))}
           </TabsList>
-          
+
           {layout.tabs.map((tab, index) => (
-            <TabsContent key={tab.title || `tab-content-${index}`} value={index.toString()} className={tab.className}>
+            <TabsContent
+              key={tab.title || `tab-content-${index}`}
+              value={index.toString()}
+              className={tab.className}
+            >
               {tab.description && (
-                <p className="text-sm text-gray-500 mb-4">
-                  {t(`form.tabs.${tab.title}.description`, { defaultValue: tab.description })}
+                <p className="mb-4 text-gray-500 text-sm">
+                  {t(`form.tabs.${tab.title}.description`, {
+                    defaultValue: tab.description,
+                  })}
                 </p>
               )}
-              
+
               {tab.sections.map((section, sectionIndex) => (
-                <div key={section.title || `section-${sectionIndex}`} className="mb-6">
+                <div
+                  key={section.title || `section-${sectionIndex}`}
+                  className="mb-6"
+                >
                   {section.title && (
                     <>
-                      <h3 className="text-lg font-medium mb-2">
-                        {t(`form.sections.${section.title}`, { defaultValue: section.title })}
+                      <h3 className="mb-2 font-medium text-lg">
+                        {t(`form.sections.${section.title}`, {
+                          defaultValue: section.title,
+                        })}
                       </h3>
                       {section.description && (
-                        <p className="text-sm text-gray-500 mb-3">
-                          {t(`form.sections.${section.title}.description`, { defaultValue: section.description })}
+                        <p className="mb-3 text-gray-500 text-sm">
+                          {t(`form.sections.${section.title}.description`, {
+                            defaultValue: section.description,
+                          })}
                         </p>
                       )}
                       <Separator className="mb-4" />
                     </>
                   )}
-                  
+
                   <AutoForm
                     fields={getFieldsForSection(section)}
                     value={value}
@@ -293,7 +328,7 @@ export function AutoFormLayout({
                     errors={errors}
                     className={section.className}
                     layout={{
-                      sections: [{ ...section, columns: section.columns || 1 }]
+                      sections: [{ ...section, columns: section.columns || 1 }],
                     }}
                   />
                 </div>
@@ -303,25 +338,27 @@ export function AutoFormLayout({
         </Tabs>
 
         {onSubmit && (
-          <div className="flex justify-end space-x-2 mt-6">
+          <div className="mt-6 flex justify-end space-x-2">
             {showReset && (
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
                 onClick={() => onChange({})}
                 disabled={isSubmitting}
               >
                 {t('form.reset', { defaultValue: resetLabel || 'Reset' })}
               </button>
             )}
-            
+
             <button
               type="button"
-              className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90"
+              className="rounded-md bg-primary px-4 py-2 font-medium text-sm text-white hover:bg-primary/90"
               onClick={() => onSubmit(value)}
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('form.submitting') : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
+              {isSubmitting
+                ? t('form.submitting')
+                : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
             </button>
           </div>
         )}
@@ -342,45 +379,61 @@ export function AutoFormLayout({
     return (
       <div className={className}>
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-semibold">
-              {t(`form.steps.${currentStep.title}`, { defaultValue: currentStep.title })}
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="font-semibold text-xl">
+              {t(`form.steps.${currentStep.title}`, {
+                defaultValue: currentStep.title,
+              })}
             </h2>
-            <span className="text-sm text-gray-500">
-              {t('form.wizard.step', { current: activeStep + 1, total: layout.steps.length })}
+            <span className="text-gray-500 text-sm">
+              {t('form.wizard.step', {
+                current: activeStep + 1,
+                total: layout.steps.length,
+              })}
             </span>
           </div>
-          
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div 
-              className="bg-primary h-2.5 rounded-full" 
-              style={{ width: `${((activeStep + 1) / layout.steps.length) * 100}%` }}
+
+          <div className="h-2.5 w-full rounded-full bg-gray-200">
+            <div
+              className="h-2.5 rounded-full bg-primary"
+              style={{
+                width: `${((activeStep + 1) / layout.steps.length) * 100}%`,
+              }}
             ></div>
           </div>
         </div>
 
         {currentStep.description && (
-          <p className="text-sm text-gray-500 mb-4">
-            {t(`form.steps.${currentStep.title}.description`, { defaultValue: currentStep.description })}
+          <p className="mb-4 text-gray-500 text-sm">
+            {t(`form.steps.${currentStep.title}.description`, {
+              defaultValue: currentStep.description,
+            })}
           </p>
         )}
 
         {currentStep.sections.map((section, sectionIndex) => (
-          <div key={section.title || `section-${sectionIndex}`} className="mb-6">
+          <div
+            key={section.title || `section-${sectionIndex}`}
+            className="mb-6"
+          >
             {section.title && (
               <>
-                <h3 className="text-lg font-medium mb-2">
-                  {t(`form.sections.${section.title}`, { defaultValue: section.title })}
+                <h3 className="mb-2 font-medium text-lg">
+                  {t(`form.sections.${section.title}`, {
+                    defaultValue: section.title,
+                  })}
                 </h3>
                 {section.description && (
-                  <p className="text-sm text-gray-500 mb-3">
-                    {t(`form.sections.${section.title}.description`, { defaultValue: section.description })}
+                  <p className="mb-3 text-gray-500 text-sm">
+                    {t(`form.sections.${section.title}.description`, {
+                      defaultValue: section.description,
+                    })}
                   </p>
                 )}
                 <Separator className="mb-4" />
               </>
             )}
-            
+
             <AutoForm
               fields={getFieldsForSection(section)}
               value={value}
@@ -388,16 +441,16 @@ export function AutoFormLayout({
               errors={errors}
               className={section.className}
               layout={{
-                sections: [{ ...section, columns: section.columns || 1 }]
+                sections: [{ ...section, columns: section.columns || 1 }],
               }}
             />
           </div>
         ))}
 
-        <div className="flex justify-between mt-6">
+        <div className="mt-6 flex justify-between">
           <button
             type="button"
-            className={`px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+            className={`rounded-md border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50 ${
               isFirstStep ? 'invisible' : ''
             }`}
             onClick={() => setActiveStep(activeStep - 1)}
@@ -405,12 +458,12 @@ export function AutoFormLayout({
           >
             {t('form.wizard.previous', { defaultValue: 'Previous' })}
           </button>
-          
+
           <div className="flex space-x-2">
             {showReset && (
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
                 onClick={() => {
                   onChange({});
                   setActiveStep(0);
@@ -420,20 +473,22 @@ export function AutoFormLayout({
                 {t('form.reset', { defaultValue: resetLabel || 'Reset' })}
               </button>
             )}
-            
+
             {isLastStep && onSubmit ? (
               <button
                 type="button"
-                className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90"
+                className="rounded-md bg-primary px-4 py-2 font-medium text-sm text-white hover:bg-primary/90"
                 onClick={() => onSubmit(value)}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? t('form.submitting') : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
+                {isSubmitting
+                  ? t('form.submitting')
+                  : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
               </button>
             ) : (
               <button
                 type="button"
-                className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90"
+                className="rounded-md bg-primary px-4 py-2 font-medium text-sm text-white hover:bg-primary/90"
                 onClick={() => setActiveStep(activeStep + 1)}
                 disabled={isSubmitting}
               >
@@ -457,10 +512,16 @@ export function AutoFormLayout({
         {layout.accordionItems.map((section, index) => (
           <Card key={section.title || `accordion-${index}`} className="mb-4">
             <CardHeader>
-              <CardTitle>{t(`form.sections.${section.title}`, { defaultValue: section.title || `Section ${index + 1}` })}</CardTitle>
+              <CardTitle>
+                {t(`form.sections.${section.title}`, {
+                  defaultValue: section.title || `Section ${index + 1}`,
+                })}
+              </CardTitle>
               {section.description && (
                 <CardDescription>
-                  {t(`form.sections.${section.title}.description`, { defaultValue: section.description })}
+                  {t(`form.sections.${section.title}.description`, {
+                    defaultValue: section.description,
+                  })}
                 </CardDescription>
               )}
             </CardHeader>
@@ -472,7 +533,7 @@ export function AutoFormLayout({
                 errors={errors}
                 className={section.className}
                 layout={{
-                  sections: [{ ...section, columns: section.columns || 1 }]
+                  sections: [{ ...section, columns: section.columns || 1 }],
                 }}
               />
             </CardContent>
@@ -480,25 +541,27 @@ export function AutoFormLayout({
         ))}
 
         {onSubmit && (
-          <div className="flex justify-end space-x-2 mt-6">
+          <div className="mt-6 flex justify-end space-x-2">
             {showReset && (
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
                 onClick={() => onChange({})}
                 disabled={isSubmitting}
               >
                 {t('form.reset', { defaultValue: resetLabel || 'Reset' })}
               </button>
             )}
-            
+
             <button
               type="button"
-              className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90"
+              className="rounded-md bg-primary px-4 py-2 font-medium text-sm text-white hover:bg-primary/90"
               onClick={() => onSubmit(value)}
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('form.submitting') : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
+              {isSubmitting
+                ? t('form.submitting')
+                : t('form.submit', { defaultValue: submitLabel || 'Submit' })}
             </button>
           </div>
         )}

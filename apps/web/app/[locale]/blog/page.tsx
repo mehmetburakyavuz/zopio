@@ -49,11 +49,11 @@ const BlogIndex = async ({ params }: BlogProps) => {
               {(data: Record<string, unknown>) => {
                 // Safely access posts with fallback to empty array
                 const posts = Array.isArray(data.posts) ? data.posts : [];
-                
+
                 if (!posts.length) {
                   return null;
                 }
-                
+
                 return posts.map((post, index) => (
                   <Link
                     href={`/blog/${post._slug}`}

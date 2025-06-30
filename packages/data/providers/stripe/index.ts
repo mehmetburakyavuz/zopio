@@ -2,18 +2,18 @@
  * Stripe provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 export interface StripeProviderConfig {
@@ -25,9 +25,11 @@ export interface StripeProviderConfig {
 /**
  * Create a Stripe provider
  */
-export function createStripeProvider(config: StripeProviderConfig): CrudProvider {
-  const { 
-    apiKey, 
+export function createStripeProvider(
+  config: StripeProviderConfig
+): CrudProvider {
+  const {
+    apiKey,
     apiVersion = '2023-10-16',
     resourceMapping = {
       customers: 'customers',
@@ -38,8 +40,8 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
       payment_methods: 'payment_methods',
       payment_intents: 'payment_intents',
       charges: 'charges',
-      refunds: 'refunds'
-    }
+      refunds: 'refunds',
+    },
   } = config;
 
   // Helper to get Stripe resource from resource name
@@ -57,9 +59,9 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
   // Default headers
   const getHeaders = (): Record<string, string> => {
     return {
-      'Authorization': `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Stripe-Version': apiVersion
+      'Stripe-Version': apiVersion,
     };
   };
 
@@ -70,11 +72,11 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
         if (value === null || value === undefined) {
           return null;
         }
-        
+
         if (typeof value === 'object') {
           return `${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(value))}`;
         }
-        
+
         return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
       })
       .filter(Boolean)
@@ -82,13 +84,16 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
   };
 
   // Helper functions to build URL parameters
-  const addPaginationParams = (url: URL, pagination?: { page: number; perPage: number }): void => {
+  const addPaginationParams = (
+    url: URL,
+    pagination?: { page: number; perPage: number }
+  ): void => {
     if (!pagination) {
       return;
     }
-    
+
     url.searchParams.append('limit', String(pagination.perPage));
-    
+
     if (pagination.page > 1) {
       // Stripe uses cursor-based pagination
       // This is a simplified approach - in a real implementation,
@@ -98,11 +103,14 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
     }
   };
 
-  const addFilterParams = (url: URL, filter?: Record<string, unknown>): void => {
+  const addFilterParams = (
+    url: URL,
+    filter?: Record<string, unknown>
+  ): void => {
     if (!filter) {
       return;
     }
-    
+
     for (const [key, value] of Object.entries(filter)) {
       if (value !== undefined && value !== null) {
         if (typeof value === 'object') {
@@ -115,33 +123,39 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
   };
 
   return {
-    async getList({ resource, pagination, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Build URL with query parameters
         const url = new URL(buildUrl(resource));
-        
+
         // Add parameters
         addPaginationParams(url, pagination);
         addFilterParams(url, filter);
-        
+
         // Fetch data
-        const response = await fetch(url.toString(), { 
-          headers: getHeaders()
+        const response = await fetch(url.toString(), {
+          headers: getHeaders(),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Stripe returns data in a specific format
         // e.g. { data: [...], has_more: true }
         const data = result.data || [];
-        
+
         // Stripe doesn't provide a total count, so we estimate it
         const total = result.has_more ? data.length * 2 : data.length;
-        
+
         return { data, total };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -151,16 +165,18 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
     async getOne({ resource, id }: GetOneParams): Promise<GetOneResult> {
       try {
         // Fetch data
-        const response = await fetch(buildUrl(resource, id), { 
-          headers: getHeaders()
+        const response = await fetch(buildUrl(resource, id), {
+          headers: getHeaders(),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -173,36 +189,44 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
         const response = await fetch(buildUrl(resource), {
           method: 'POST',
           headers: getHeaders(),
-          body: objectToFormData(variables as Record<string, unknown>)
+          body: objectToFormData(variables as Record<string, unknown>),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to create ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to create ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Update data
         const response = await fetch(buildUrl(resource, id), {
           method: 'POST', // Stripe uses POST for updates
           headers: getHeaders(),
-          body: objectToFormData(variables as Record<string, unknown>)
+          body: objectToFormData(variables as Record<string, unknown>),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to update ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to update ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -213,24 +237,26 @@ export function createStripeProvider(config: StripeProviderConfig): CrudProvider
       try {
         // Get the record before deleting
         const { data } = await this.getOne({ resource, id });
-        
+
         // Delete data
         const response = await fetch(buildUrl(resource, id), {
           method: 'DELETE',
-          headers: getHeaders()
+          headers: getHeaders(),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to delete ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to delete ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const result = await response.json();
-        
+
         // Stripe usually returns { deleted: true, id: '...' }
         return { data: result.deleted ? data : result };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

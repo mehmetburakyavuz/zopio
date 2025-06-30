@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { z } from 'zod';
-import type { FieldValue } from '../types';
 import { validateWithZod } from '../auto/zodUtils';
+import type { FieldValue } from '../types';
 
 export interface UseZodFormOptions<T extends z.ZodObject<any>> {
   schema: T;
@@ -34,22 +34,23 @@ export function useZodForm<T extends z.ZodObject<any>>({
   initialValues = {},
   onSubmit,
 }: UseZodFormOptions<T>): UseZodFormReturn<T> {
-  const [values, setValues] = useState<Record<string, FieldValue>>(initialValues);
+  const [values, setValues] =
+    useState<Record<string, FieldValue>>(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [initialState] = useState(initialValues);
-  
+
   // Check if form is dirty (values changed from initial state)
   const isDirty = useCallback(() => {
     const initialKeys = Object.keys(initialState);
     const currentKeys = Object.keys(values);
-    
+
     if (initialKeys.length !== currentKeys.length) return true;
-    
-    return initialKeys.some(key => initialState[key] !== values[key]);
+
+    return initialKeys.some((key) => initialState[key] !== values[key]);
   }, [initialState, values]);
-  
+
   // Validate a single field
   const validateField = useCallback(
     (fieldName: string): boolean => {
@@ -57,68 +58,70 @@ export function useZodForm<T extends z.ZodObject<any>>({
         // Create a sub-schema for just this field
         const fieldSchema = z.object({ [fieldName]: schema.shape[fieldName] });
         fieldSchema.parse({ [fieldName]: values[fieldName] });
-        
+
         // Clear error if validation passes
         if (errors[fieldName]) {
-          setErrors(prev => {
+          setErrors((prev) => {
             const newErrors = { ...prev };
             delete newErrors[fieldName];
             return newErrors;
           });
         }
-        
+
         return true;
       } catch (error) {
         if (error instanceof z.ZodError) {
-          const fieldErrors = validateWithZod(fieldSchema, { [fieldName]: values[fieldName] });
-          
-          setErrors(prev => ({
+          const fieldErrors = validateWithZod(fieldSchema, {
+            [fieldName]: values[fieldName],
+          });
+
+          setErrors((prev) => ({
             ...prev,
             ...fieldErrors,
           }));
-          
+
           return false;
         }
-        
+
         return true;
       }
     },
     [schema, values, errors]
   );
-  
+
   // Validate the entire form
   const validateForm = useCallback((): boolean => {
     const validationErrors = validateWithZod(schema, values);
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   }, [schema, values]);
-  
+
   // Handle field blur
   const handleBlur = useCallback(
     (fieldName: string) => {
-      setTouched(prev => ({
+      setTouched((prev) => ({
         ...prev,
         [fieldName]: true,
       }));
-      
+
       validateField(fieldName);
     },
     [validateField]
   );
-  
+
   // Handle form change
   const handleChange = useCallback(
     (newValues: Record<string, FieldValue>) => {
       setValues(newValues);
-      
+
       // Validate fields that have been touched
       Object.keys(touched)
-        .filter(field => touched[field])
+        .filter((field) => touched[field])
         .forEach(validateField);
     },
     [touched, validateField]
   );
-  
+
   // Handle form submission
   const handleSubmit = useCallback(async (): Promise<boolean> => {
     // Mark all fields as touched
@@ -127,14 +130,14 @@ export function useZodForm<T extends z.ZodObject<any>>({
       {}
     );
     setTouched(allTouched);
-    
+
     // Validate all fields
     const isValid = validateForm();
-    
+
     if (!isValid || !onSubmit) {
       return false;
     }
-    
+
     try {
       setIsSubmitting(true);
       await onSubmit(values as z.infer<T>);
@@ -146,7 +149,7 @@ export function useZodForm<T extends z.ZodObject<any>>({
       setIsSubmitting(false);
     }
   }, [schema, validateForm, onSubmit, values]);
-  
+
   // Reset form to initial state
   const reset = useCallback(() => {
     setValues(initialState);
@@ -154,7 +157,7 @@ export function useZodForm<T extends z.ZodObject<any>>({
     setTouched({});
     setIsSubmitting(false);
   }, [initialState]);
-  
+
   return {
     values,
     setValues,

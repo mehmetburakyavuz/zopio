@@ -1,6 +1,6 @@
-import type { UserContext } from "../types";
-import { getAuth } from "@repo/auth/server";
-import type { NextRequest } from "next/server";
+import { getAuth } from '@repo/auth/server';
+import type { NextRequest } from 'next/server';
+import type { UserContext } from '../types';
 
 // Define the expected structure of auth.sessionClaims
 interface SessionClaims {
@@ -17,12 +17,12 @@ interface Auth {
 }
 
 export async function getUserContext(req: NextRequest): Promise<UserContext> {
-  const auth = await getAuth(req) as Auth;
-  
+  const auth = (await getAuth(req)) as Auth;
+
   if (!auth.userId || !auth.orgId || !auth.sessionClaims?.metadata?.role) {
-    throw new Error("Unauthorized or incomplete session");
+    throw new Error('Unauthorized or incomplete session');
   }
-  
+
   return {
     userId: auth.userId,
     role: auth.sessionClaims.metadata.role,

@@ -1,12 +1,12 @@
-import type { 
-  ViewSchema, 
-  FormViewSchema, 
-  TableViewSchema, 
+import type {
   DetailViewSchema,
   FieldDefinition,
   FormLayout,
-  TableColumn
-} from "../engine/renderers/types";
+  FormViewSchema,
+  TableColumn,
+  TableViewSchema,
+  ViewSchema,
+} from '../engine/renderers/types';
 
 /**
  * Create a new form view schema
@@ -23,14 +23,14 @@ export function createFormView(options: {
   showReset?: boolean;
 }): FormViewSchema {
   return {
-    type: "form",
+    type: 'form',
     schema: options.schema,
     fields: options.fields || {},
     layout: options.layout,
     i18nNamespace: options.i18nNamespace,
     submitLabel: options.submitLabel,
     resetLabel: options.resetLabel,
-    showReset: options.showReset
+    showReset: options.showReset,
   };
 }
 
@@ -50,14 +50,14 @@ export function createTableView(options: {
   };
   defaultSort?: {
     column: string;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   };
   rowActions?: string[];
   bulkActions?: string[];
   selectable?: boolean;
 }): TableViewSchema {
   return {
-    type: "table",
+    type: 'table',
     schema: options.schema,
     columns: options.columns,
     fields: options.fields || {},
@@ -66,7 +66,7 @@ export function createTableView(options: {
     defaultSort: options.defaultSort,
     rowActions: options.rowActions,
     bulkActions: options.bulkActions,
-    selectable: options.selectable
+    selectable: options.selectable,
   };
 }
 
@@ -83,12 +83,12 @@ export function createDetailView(options: {
   actions?: string[];
 }): DetailViewSchema {
   return {
-    type: "detail",
+    type: 'detail',
     schema: options.schema,
     fields: options.fields || {},
     layout: options.layout,
     i18nNamespace: options.i18nNamespace,
-    actions: options.actions
+    actions: options.actions,
   };
 }
 
@@ -100,18 +100,18 @@ export function createDetailView(options: {
  * @returns A new view schema with the field added
  */
 export function addField(
-  schema: ViewSchema, 
-  fieldName: string, 
+  schema: ViewSchema,
+  fieldName: string,
   fieldDef: FieldDefinition
 ): ViewSchema {
   const newSchema = { ...schema };
-  
+
   if (!newSchema.fields) {
     newSchema.fields = {};
   }
-  
+
   newSchema.fields[fieldName] = fieldDef;
-  
+
   return newSchema;
 }
 
@@ -121,19 +121,16 @@ export function addField(
  * @param fieldName The name of the field to remove
  * @returns A new view schema with the field removed
  */
-export function removeField(
-  schema: ViewSchema, 
-  fieldName: string
-): ViewSchema {
+export function removeField(schema: ViewSchema, fieldName: string): ViewSchema {
   const newSchema = { ...schema };
-  
+
   if (!newSchema.fields) {
     return newSchema;
   }
-  
+
   const { [fieldName]: _, ...remainingFields } = newSchema.fields;
   newSchema.fields = remainingFields;
-  
+
   return newSchema;
 }
 
@@ -145,20 +142,20 @@ export function removeField(
  * @returns A new view schema with the field updated
  */
 export function updateField(
-  schema: ViewSchema, 
-  fieldName: string, 
+  schema: ViewSchema,
+  fieldName: string,
   updates: Partial<FieldDefinition>
 ): ViewSchema {
   const newSchema = { ...schema };
-  
+
   if (!newSchema.fields || !newSchema.fields[fieldName]) {
     return newSchema;
   }
-  
+
   newSchema.fields[fieldName] = {
     ...newSchema.fields[fieldName],
-    ...updates
+    ...updates,
   };
-  
+
   return newSchema;
 }

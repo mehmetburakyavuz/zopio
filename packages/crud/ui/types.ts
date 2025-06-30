@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 
-export type FieldType = 
-  | 'string' 
-  | 'number' 
-  | 'boolean' 
-  | 'date' 
-  | 'enum' 
-  | 'relation' 
+export type FieldType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'enum'
+  | 'relation'
   | 'text'
   | 'file'
   | 'richtext'
@@ -18,7 +18,15 @@ export type FieldType =
   | 'color'
   | 'tel';
 
-export type FieldValue = string | number | boolean | Date | null | undefined | Record<string, unknown> | Array<unknown>;
+export type FieldValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | null
+  | undefined
+  | Record<string, unknown>
+  | Array<unknown>;
 
 export interface FieldOption {
   label: string;
@@ -43,10 +51,20 @@ export interface FieldDefinition {
 }
 
 export interface ValidationRule {
-  type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
+  type:
+    | 'required'
+    | 'min'
+    | 'max'
+    | 'minLength'
+    | 'maxLength'
+    | 'pattern'
+    | 'custom';
   message: string;
   value?: string | number;
-  validator?: (value: FieldValue, formValues: Record<string, FieldValue>) => boolean;
+  validator?: (
+    value: FieldValue,
+    formValues: Record<string, FieldValue>
+  ) => boolean;
 }
 
 export interface FormSection {
@@ -101,7 +119,16 @@ export interface TableSorting {
 
 export interface TableFilter {
   column: string;
-  operator: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'startsWith' | 'endsWith';
+  operator:
+    | 'eq'
+    | 'neq'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'contains'
+    | 'startsWith'
+    | 'endsWith';
   value: string | number | boolean;
 }
 

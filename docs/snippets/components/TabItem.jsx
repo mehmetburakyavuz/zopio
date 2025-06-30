@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Tab item component to be used within Tabs
  * @param {Object} props - Component props

@@ -64,7 +64,7 @@ export type FormLayout = {
  * Form view schema
  */
 export type FormViewSchema = BaseViewSchema & {
-  type: "form";
+  type: 'form';
   layout?: FormLayout;
   submitAction?: string;
   resetLabel?: string;
@@ -89,7 +89,7 @@ export type TableColumn = {
  * Table view schema
  */
 export type TableViewSchema = BaseViewSchema & {
-  type: "table";
+  type: 'table';
   columns: TableColumn[];
   pagination?: {
     defaultPageSize?: number;
@@ -97,7 +97,7 @@ export type TableViewSchema = BaseViewSchema & {
   };
   defaultSort?: {
     column: string;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   };
   rowActions?: string[];
   bulkActions?: string[];
@@ -108,7 +108,7 @@ export type TableViewSchema = BaseViewSchema & {
  * Detail view schema
  */
 export type DetailViewSchema = BaseViewSchema & {
-  type: "detail";
+  type: 'detail';
   layout?: FormLayout;
   actions?: string[];
 };
@@ -117,7 +117,7 @@ export type DetailViewSchema = BaseViewSchema & {
  * Audit log view schema
  */
 export type AuditLogViewSchema = BaseViewSchema & {
-  type: "audit-log";
+  type: 'audit-log';
   entityIdField?: string;
   showUser?: boolean;
   showTimestamp?: boolean;
@@ -128,7 +128,7 @@ export type AuditLogViewSchema = BaseViewSchema & {
  * Import view schema
  */
 export type ImportViewSchema = BaseViewSchema & {
-  type: "import";
+  type: 'import';
   fileTypes?: string[];
   maxFileSize?: number;
   templateUrl?: string;
@@ -139,9 +139,9 @@ export type ImportViewSchema = BaseViewSchema & {
  * Export view schema
  */
 export type ExportViewSchema = BaseViewSchema & {
-  type: "export";
-  formats?: ("csv" | "xlsx" | "json" | "pdf")[];
-  defaultFormat?: "csv" | "xlsx" | "json" | "pdf";
+  type: 'export';
+  formats?: ('csv' | 'xlsx' | 'json' | 'pdf')[];
+  defaultFormat?: 'csv' | 'xlsx' | 'json' | 'pdf';
   includeHeaders?: boolean;
   fileName?: string;
 };

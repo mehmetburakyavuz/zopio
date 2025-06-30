@@ -12,7 +12,7 @@ import type {
   GetOneParams,
   GetOneResult,
   UpdateParams,
-  UpdateResult
+  UpdateResult,
 } from '../types/index.js';
 
 /**

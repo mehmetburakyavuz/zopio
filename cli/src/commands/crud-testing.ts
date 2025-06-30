@@ -1,9 +1,9 @@
-// Use ES module import for commander
-import { Command } from 'commander';
-import chalk from 'chalk';
 import fs from 'node:fs';
 import path from 'node:path';
-import { logger, isZopioProject } from '../utils/helpers';
+import chalk from 'chalk';
+// Use ES module import for commander
+import { Command } from 'commander';
+import { isZopioProject, logger } from '../utils/helpers';
 
 /**
  * Generate updated field value based on field type
@@ -13,7 +13,7 @@ import { logger, isZopioProject } from '../utils/helpers';
 function getUpdatedFieldValue(field: { name: string; type: string }): string {
   if (field.type === 'string') {
     return `      ${field.name}: "Updated value"`;
-  } 
+  }
   if (field.type === 'number') {
     return `      ${field.name}: 999`;
   }
@@ -28,7 +28,7 @@ function getUpdatedFieldValue(field: { name: string; type: string }): string {
 function generateUpdatedValue(type: string): string {
   if (type === 'string') {
     return '"Updated value"';
-  } 
+  }
   if (type === 'number') {
     return '999';
   }
@@ -49,17 +49,19 @@ interface CrudTestingCommandOptions {
  * @param fieldsStr Fields string in format "name:type,age:number"
  * @returns Array of field objects
  */
-function parseFields(fieldsStr: string): Array<{ name: string; type: string; example?: string }> {
+function parseFields(
+  fieldsStr: string
+): Array<{ name: string; type: string; example?: string }> {
   if (!fieldsStr) {
     return [];
   }
-  
-  return fieldsStr.split(',').map(field => {
+
+  return fieldsStr.split(',').map((field) => {
     const parts = field.trim().split(':');
     const name = parts[0].trim();
     const type = parts[1]?.trim() || 'string';
     const example = parts[2]?.trim() || generateExampleValue(name, type);
-    
+
     return { name, type, example };
   });
 }
@@ -73,19 +75,37 @@ function parseFields(fieldsStr: string): Array<{ name: string; type: string; exa
 function generateExampleValue(name: string, type: string): string {
   switch (type.toLowerCase()) {
     case 'string': {
-      if (name.includes('name')) { return "\"John Doe\""; }
-      if (name.includes('email')) { return "\"user@example.com\""; }
-      if (name.includes('phone')) { return "\"123-456-7890\""; }
-      if (name.includes('address')) { return "\"123 Main St\""; }
-      if (name.includes('description')) { return "\"Sample description\""; }
+      if (name.includes('name')) {
+        return '"John Doe"';
+      }
+      if (name.includes('email')) {
+        return '"user@example.com"';
+      }
+      if (name.includes('phone')) {
+        return '"123-456-7890"';
+      }
+      if (name.includes('address')) {
+        return '"123 Main St"';
+      }
+      if (name.includes('description')) {
+        return '"Sample description"';
+      }
       return '"example"';
     }
     case 'number':
     case 'integer': {
-      if (name.includes('age')) { return '30'; }
-      if (name.includes('year')) { return '2023'; }
-      if (name.includes('price')) { return '99.99'; }
-      if (name.includes('count')) { return '5'; }
+      if (name.includes('age')) {
+        return '30';
+      }
+      if (name.includes('year')) {
+        return '2023';
+      }
+      if (name.includes('price')) {
+        return '99.99';
+      }
+      if (name.includes('count')) {
+        return '5';
+      }
       return '42';
     }
     case 'boolean':
@@ -107,20 +127,26 @@ function generateExampleValue(name: string, type: string): string {
  * @param fields Array of field objects
  * @returns Jest test file as a string
  */
-function generateJestApiTest(model: string, fields: Array<{ name: string; type: string; example?: string }>): string {
+function generateJestApiTest(
+  model: string,
+  fields: Array<{ name: string; type: string; example?: string }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
   const modelNameLower = model.toLowerCase();
-  
+
   // Generate mock data
-  const mockDataProperties = fields.map(field => {
-    return `    ${field.name}: ${field.example}`;
-  }).join(',\n');
-  
+  const mockDataProperties = fields
+    .map((field) => {
+      return `    ${field.name}: ${field.example}`;
+    })
+    .join(',\n');
+
   // Generate updated field value for the first field (if available)
-  const updatedFieldValue = fields.length > 0 ? 
-    `      ${fields[0].name}: ${generateUpdatedValue(fields[0].type)}` : 
-    '      // No fields to update';
-  
+  const updatedFieldValue =
+    fields.length > 0
+      ? `      ${fields[0].name}: ${generateUpdatedValue(fields[0].type)}`
+      : '      // No fields to update';
+
   return `import request from 'supertest';
 import { app } from '../app';
 import { ${modelName}Model } from '../models/${modelNameLower}.model';
@@ -150,7 +176,7 @@ ${mockDataProperties}
       testId = response.body._id;
       
       // Verify all fields are saved correctly
-${fields.map(field => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
+${fields.map((field) => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
     });
     
     it('should return 400 with invalid data', async () => {
@@ -181,7 +207,7 @@ ${fields.map(field => `      expect(response.body.${field.name}).toEqual(mock${m
         .expect(200);
       
       expect(response.body).toHaveProperty('_id', testId);
-${fields.map(field => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
+${fields.map((field) => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
     });
     
     it('should return 404 for non-existent ID', async () => {
@@ -245,15 +271,20 @@ ${fields.length > 0 ? `      expect(response.body.${fields[0].name}).toEqual(upd
  * @param fields Array of field objects
  * @returns Vitest test file as a string
  */
-function generateVitestApiTest(model: string, fields: Array<{ name: string; type: string; example?: string }>): string {
+function generateVitestApiTest(
+  model: string,
+  fields: Array<{ name: string; type: string; example?: string }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
   const modelNameLower = model.toLowerCase();
-  
+
   // Generate mock data
-  const mockDataProperties = fields.map(field => {
-    return `    ${field.name}: ${field.example}`;
-  }).join(',\n');
-  
+  const mockDataProperties = fields
+    .map((field) => {
+      return `    ${field.name}: ${field.example}`;
+    })
+    .join(',\n');
+
   return `import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../app';
@@ -284,7 +315,7 @@ ${mockDataProperties}
       testId = response.body._id;
       
       // Verify all fields are saved correctly
-${fields.map(field => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
+${fields.map((field) => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
     });
     
     it('should return 400 with invalid data', async () => {
@@ -315,7 +346,7 @@ ${fields.map(field => `      expect(response.body.${field.name}).toEqual(mock${m
         .expect(200);
       
       expect(response.body).toHaveProperty('_id', testId);
-${fields.map(field => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
+${fields.map((field) => `      expect(response.body.${field.name}).toEqual(mock${modelName}.${field.name});`).join('\n')}
     });
     
     it('should return 404 for non-existent ID', async () => {
@@ -379,15 +410,20 @@ ${fields.length > 0 ? `      expect(response.body.${fields[0].name}).toEqual(upd
  * @param fields Array of field objects
  * @returns React Testing Library test file as a string
  */
-function generateReactTestingLibraryTest(model: string, fields: Array<{ name: string; type: string; example?: string }>): string {
+function generateReactTestingLibraryTest(
+  model: string,
+  fields: Array<{ name: string; type: string; example?: string }>
+): string {
   const modelName = model.charAt(0).toUpperCase() + model.slice(1);
   const modelNameLower = model.toLowerCase();
-  
+
   // Generate mock data
-  const mockDataProperties = fields.map(field => {
-    return `    ${field.name}: ${field.example}`;
-  }).join(',\n');
-  
+  const mockDataProperties = fields
+    .map((field) => {
+      return `    ${field.name}: ${field.example}`;
+    })
+    .join(',\n');
+
   return `import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
@@ -433,15 +469,17 @@ ${mockDataProperties}
       // Wait for the data to load
       await waitFor(() => {
         // Check if the data is displayed
-${fields.map(field => {
-  if (field.type === 'boolean') {
-    return `        expect(screen.getByText('Yes')).toBeInTheDocument();`;
-  } 
-  if (field.type === 'date') {
-    return `        // Date field will be formatted, so we don't check exact value`;
-  } 
-  return `        expect(screen.getByText(mock${modelName}.${field.name}.toString())).toBeInTheDocument();`;
-}).join('\n')}
+${fields
+  .map((field) => {
+    if (field.type === 'boolean') {
+      return `        expect(screen.getByText('Yes')).toBeInTheDocument();`;
+    }
+    if (field.type === 'date') {
+      return `        // Date field will be formatted, so we don't check exact value`;
+    }
+    return `        expect(screen.getByText(mock${modelName}.${field.name}.toString())).toBeInTheDocument();`;
+  })
+  .join('\n')}
       });
     });
     
@@ -491,9 +529,11 @@ ${fields.map(field => {
       expect(screen.getByText('Create ${modelName}')).toBeInTheDocument();
       
       // Check if form fields are rendered
-${fields.map(field => {
-  return `      expect(screen.getByLabelText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}')).toBeInTheDocument();`;
-}).join('\n')}
+${fields
+  .map((field) => {
+    return `      expect(screen.getByLabelText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}')).toBeInTheDocument();`;
+  })
+  .join('\n')}
     });
     
     it('should handle form submission for create', async () => {
@@ -506,12 +546,14 @@ ${fields.map(field => {
       );
       
       // Fill in the form
-${fields.map(field => {
-  if (field.type === 'boolean') {
-    return `      fireEvent.click(screen.getByLabelText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}'));`;
-  }
-  return `      fireEvent.change(screen.getByLabelText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}'), { target: { value: mock${modelName}.${field.name} } });`;
-}).join('\n')}
+${fields
+  .map((field) => {
+    if (field.type === 'boolean') {
+      return `      fireEvent.click(screen.getByLabelText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}'));`;
+    }
+    return `      fireEvent.change(screen.getByLabelText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}'), { target: { value: mock${modelName}.${field.name} } });`;
+  })
+  .join('\n')}
       
       // Submit the form
       fireEvent.click(screen.getByText('Save'));
@@ -545,18 +587,20 @@ ${fields.map(field => {
       // Wait for the data to load
       await waitFor(() => {
         // Check if the data is displayed
-${fields.map(field => {
-  if (field.type === 'boolean') {
-    return `        expect(screen.getByText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:')).toBeInTheDocument();
+${fields
+  .map((field) => {
+    if (field.type === 'boolean') {
+      return `        expect(screen.getByText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:')).toBeInTheDocument();
         expect(screen.getByText('Yes')).toBeInTheDocument();`;
-  } 
-  if (field.type === 'date') {
-    return `        expect(screen.getByText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:')).toBeInTheDocument();
+    }
+    if (field.type === 'date') {
+      return `        expect(screen.getByText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:')).toBeInTheDocument();
         // Date field will be formatted, so we don't check exact value`;
-  } 
-  return `        expect(screen.getByText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:')).toBeInTheDocument();
+    }
+    return `        expect(screen.getByText('${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:')).toBeInTheDocument();
         expect(screen.getByText(mock${modelName}.${field.name}.toString())).toBeInTheDocument();`;
-}).join('\n')}
+  })
+  .join('\n')}
       });
     });
     
@@ -597,50 +641,67 @@ ${fields.map(field => {
 export const crudTestingCommand = new Command('crud-testing')
   .description('Generate tests for CRUD operations')
   .option('-m, --model <name>', 'Model name')
-  .option('-f, --fields <fields>', 'Fields in format "name:type:example,age:number:30"')
+  .option(
+    '-f, --fields <fields>',
+    'Fields in format "name:type:example,age:number:30"'
+  )
   .option('-o, --output <directory>', 'Output directory for tests')
-  .option('-fw, --framework <framework>', 'Testing framework (jest, vitest)', 'jest')
+  .option(
+    '-fw, --framework <framework>',
+    'Testing framework (jest, vitest)',
+    'jest'
+  )
   .option('--api', 'Generate API tests')
   .option('--ui', 'Generate UI component tests')
   .action(async (options: CrudTestingCommandOptions) => {
     // Check if running in a Zopio project
     if (!isZopioProject()) {
-      logger.error('Not a Zopio project. Please run this command in a Zopio project directory.');
+      logger.error(
+        'Not a Zopio project. Please run this command in a Zopio project directory.'
+      );
       process.exit(1);
     }
-    
+
     if (!options.model) {
-      logger.error('Model name is required. Use --model <name> to specify a model name.');
+      logger.error(
+        'Model name is required. Use --model <name> to specify a model name.'
+      );
       crudTestingCommand.help();
       return;
     }
-    
+
     const modelName = options.model;
     const fields = options.fields ? parseFields(options.fields) : [];
     const framework = options.framework || 'jest';
-    
+
     // Default to generating both API and UI tests if neither is specified
-    const generateApi = options.api === undefined && options.ui === undefined ? true : options.api;
-    const generateUi = options.api === undefined && options.ui === undefined ? true : options.ui;
-    
+    const generateApi =
+      options.api === undefined && options.ui === undefined
+        ? true
+        : options.api;
+    const generateUi =
+      options.api === undefined && options.ui === undefined ? true : options.ui;
+
     if (fields.length === 0) {
-      logger.warning('No fields specified. Use --fields <fields> to specify fields for the model.');
+      logger.warning(
+        'No fields specified. Use --fields <fields> to specify fields for the model.'
+      );
     }
-    
+
     // Determine output directory
     const outputDir = options.output || path.join(process.cwd(), 'tests');
-    
+
     // Create output directory if it doesn't exist
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
       logger.info(`Created output directory: ${outputDir}`);
     }
-    
+
     // Generate API tests if requested
     if (generateApi) {
       let apiTest = '';
       let apiTestFileName = '';
-      
+
       switch (framework.toLowerCase()) {
         case 'jest': {
           apiTest = generateJestApiTest(modelName, fields);
@@ -657,25 +718,27 @@ export const crudTestingCommand = new Command('crud-testing')
           apiTestFileName = `${modelName.toLowerCase()}.api.test.js`;
         }
       }
-      
+
       const apiTestPath = path.join(outputDir, apiTestFileName);
-      
+
       fs.writeFileSync(apiTestPath, apiTest);
       logger.success(`Generated API tests: ${chalk.green(apiTestPath)}`);
     }
-    
+
     // Generate UI component tests if requested
     if (generateUi) {
       const uiTest = generateReactTestingLibraryTest(modelName, fields);
       const uiTestFileName = `${modelName.toLowerCase()}.ui.test.jsx`;
       const uiTestPath = path.join(outputDir, uiTestFileName);
-      
+
       fs.writeFileSync(uiTestPath, uiTest);
-      logger.success(`Generated UI component tests: ${chalk.green(uiTestPath)}`);
+      logger.success(
+        `Generated UI component tests: ${chalk.green(uiTestPath)}`
+      );
     }
-    
+
     logger.info('\nYou can now run these tests with:');
-    
+
     if (framework.toLowerCase() === 'jest') {
       logger.info('npm test');
     } else if (framework.toLowerCase() === 'vitest') {

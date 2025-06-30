@@ -2,18 +2,18 @@
  * GitHub provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 // Define regex patterns at the top level scope for better performance
@@ -29,10 +29,12 @@ export interface GitHubProviderConfig {
 /**
  * Create a GitHub provider
  */
-export function createGithubProvider(config: GitHubProviderConfig): CrudProvider {
-  const { 
-    token, 
-    owner, 
+export function createGithubProvider(
+  config: GitHubProviderConfig
+): CrudProvider {
+  const {
+    token,
+    owner,
     repo,
     resourceMapping = {
       issues: 'issues',
@@ -40,8 +42,8 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
       releases: 'releases',
       commits: 'commits',
       branches: 'branches',
-      tags: 'tags'
-    }
+      tags: 'tags',
+    },
   } = config;
 
   // Helper to get GitHub API endpoint from resource name
@@ -58,29 +60,34 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
 
   // Default headers
   const headers = {
-    'Authorization': `token ${token}`,
-    'Accept': 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
+    Authorization: `token ${token}`,
+    Accept: 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json',
   };
 
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Build URL with query parameters
         const url = new URL(buildUrl(resource));
-        
+
         // Add pagination params
         if (pagination) {
           url.searchParams.append('page', String(pagination.page));
           url.searchParams.append('per_page', String(pagination.perPage));
         }
-        
+
         // Add sort params if supported
         if (sort) {
           url.searchParams.append('sort', sort.field);
           url.searchParams.append('direction', sort.order);
         }
-        
+
         // Add filter params if supported
         if (filter) {
           // GitHub API uses specific query parameters for filtering
@@ -89,30 +96,32 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
           if (resource === 'issues' || resource === 'pulls') {
             const state = filter.state || 'open';
             url.searchParams.append('state', String(state));
-            
+
             if (filter.labels) {
               url.searchParams.append('labels', String(filter.labels));
             }
-            
+
             if (filter.since) {
               url.searchParams.append('since', String(filter.since));
             }
           }
         }
-        
+
         // Fetch data
         const response = await fetch(url.toString(), { headers });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         // Get total count from Link header if available
         let total = Array.isArray(data) ? data.length : 0;
         const linkHeader = response.headers.get('Link');
-        
+
         if (linkHeader) {
           const lastPageMatch = linkHeader.match(LAST_PAGE_REGEX);
           if (lastPageMatch && pagination) {
@@ -120,7 +129,7 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
             total = lastPage * pagination.perPage;
           }
         }
-        
+
         return { data, total };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -131,13 +140,15 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
       try {
         // Fetch data
         const response = await fetch(buildUrl(resource, id), { headers });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -150,36 +161,44 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
         const response = await fetch(buildUrl(resource), {
           method: 'POST',
           headers,
-          body: JSON.stringify(variables)
+          body: JSON.stringify(variables),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to create ${resource}: ${response.statusText}`);
+          throw new Error(
+            `Failed to create ${resource}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Update data
         const response = await fetch(buildUrl(resource, id), {
           method: 'PATCH',
           headers,
-          body: JSON.stringify(variables)
+          body: JSON.stringify(variables),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to update ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to update ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -190,21 +209,23 @@ export function createGithubProvider(config: GitHubProviderConfig): CrudProvider
       try {
         // Get the record before deleting
         const { data } = await this.getOne({ resource, id });
-        
+
         // Delete data - note that not all GitHub resources support deletion
         const response = await fetch(buildUrl(resource, id), {
           method: 'DELETE',
-          headers
+          headers,
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to delete ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to delete ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

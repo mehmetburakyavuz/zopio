@@ -2,11 +2,7 @@
   {
     "type": "form",
     "schema": "user",
-    "layout": [
-      "name",
-      "email",
-      "role"
-    ],
+    "layout": ["name", "email", "role"],
     "fields": {
       "name": {
         "label": "Full Name",
@@ -18,10 +14,7 @@
       },
       "role": {
         "type": "select",
-        "options": [
-          "admin",
-          "user"
-        ]
+        "options": ["admin", "user"]
       }
     }
   },

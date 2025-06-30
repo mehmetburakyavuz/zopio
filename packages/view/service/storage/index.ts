@@ -1,12 +1,12 @@
-export * from "./types";
-export * from "./localStorage";
-export * from "./fileStorage";
+export * from './types';
+export * from './localStorage';
+export * from './fileStorage';
 
+import path from 'node:path';
+import { FileStorageProvider } from './fileStorage';
+import { LocalStorageProvider } from './localStorage';
 // Factory function to create the appropriate storage provider based on environment
-import type { ViewStorageProvider } from "./types";
-import { LocalStorageProvider } from "./localStorage";
-import { FileStorageProvider } from "./fileStorage";
-import path from "node:path";
+import type { ViewStorageProvider } from './types';
 
 /**
  * Create a storage provider based on the current environment
@@ -14,19 +14,21 @@ import path from "node:path";
  * @returns An instance of a ViewStorageProvider
  */
 export function createStorageProvider(options?: {
-  type?: "local" | "file";
+  type?: 'local' | 'file';
   storagePath?: string;
   storagePrefix?: string;
 }): ViewStorageProvider {
-  const type = options?.type || (typeof window === "undefined" ? "file" : "local");
-  
-  if (type === "local") {
+  const type =
+    options?.type || (typeof window === 'undefined' ? 'file' : 'local');
+
+  if (type === 'local') {
     return new LocalStorageProvider(options?.storagePrefix);
   }
-  
-  const defaultPath = typeof process !== "undefined" && process.cwd
-    ? path.join(process.cwd(), "data", "views")
-    : "./data/views";
-  
+
+  const defaultPath =
+    typeof process !== 'undefined' && process.cwd
+      ? path.join(process.cwd(), 'data', 'views')
+      : './data/views';
+
   return new FileStorageProvider(options?.storagePath || defaultPath);
 }

@@ -15,11 +15,10 @@ declare module 'react' {
   /**
    * Extended useCallback hook for field updates
    */
-  export function useCallback<T extends (name: string, updates: Partial<FormField>) => void>(
-    callback: T,
-    deps: React.DependencyList
-  ): T;
-  
+  export function useCallback<
+    T extends (name: string, updates: Partial<FormField>) => void,
+  >(callback: T, deps: React.DependencyList): T;
+
   // Add React.DragEvent type
   export interface DragEvent<T = Element> extends React.MouseEvent<T> {
     dataTransfer: DataTransfer;

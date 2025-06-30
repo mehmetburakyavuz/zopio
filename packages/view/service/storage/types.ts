@@ -1,4 +1,4 @@
-import type { ViewSchema } from "@repo/view-engine/renderers/types";
+import type { ViewSchema } from '@repo/view-engine/renderers/types';
 
 /**
  * Interface for view storage providers

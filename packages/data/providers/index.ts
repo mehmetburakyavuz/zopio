@@ -1,41 +1,41 @@
 /**
  * @repo/data-providers
- * 
+ *
  * Unified data providers for Zopio framework that implement the CRUD interface
  * for various backends and services.
  */
 
 import type { CreateDataProviderOptions, CrudProvider } from '@repo/data-base';
 
-// Import provider implementations
-import { createRestProvider } from './rest/index.js';
-import { createMockProvider } from './mock/index.js';
-import { createGraphQLProvider } from './graphql/index.js';
-import { createFirebaseProvider } from './firebase/index.js';
-import { createSupabaseProvider } from './supabase/index.js';
-import { createLocalProvider } from './local/index.js';
-import { createDrizzleProvider } from './drizzle/index.js';
-import { createKyselyProvider } from './kysely/index.js';
-import { createPrismaProvider } from './prisma/index.js';
-import { createZopioProvider } from './zopio/index.js';
 import { createAirtableProvider } from './airtable/index.js';
 import { createBaserowProvider } from './baserow/index.js';
+import { createDrizzleProvider } from './drizzle/index.js';
+import { createFirebaseProvider } from './firebase/index.js';
 import { createFormbricksProvider } from './formbricks/index.js';
 import { createGithubProvider } from './github/index.js';
 import { createGoogleSheetsProvider } from './google-sheets/index.js';
+import { createGraphQLProvider } from './graphql/index.js';
 import { createKillbillProvider } from './killbill/index.js';
+import { createKyselyProvider } from './kysely/index.js';
+import { createLocalProvider } from './local/index.js';
 import { createMedusaProvider } from './medusa/index.js';
+import { createMockProvider } from './mock/index.js';
 import { createN8nProvider } from './n8n/index.js';
 import { createNeonProvider } from './neon/index.js';
 import { createNocodbProvider } from './nocodb/index.js';
 import { createNotionProvider } from './notion/index.js';
 import { createOdooProvider } from './odoo/index.js';
+import { createPrismaProvider } from './prisma/index.js';
+// Import provider implementations
+import { createRestProvider } from './rest/index.js';
 import { createSAPProvider } from './sap/index.js';
 import { createShopifyProvider } from './shopify/index.js';
 import { createStripeProvider } from './stripe/index.js';
+import { createSupabaseProvider } from './supabase/index.js';
 import { createSyncOpsProvider } from './syncops/index.js';
 import { createTemporalProvider } from './temporal/index.js';
 import { createXataProvider } from './xata/index.js';
+import { createZopioProvider } from './zopio/index.js';
 
 // Export individual providers for direct use
 export * from './rest/index.js';
@@ -70,7 +70,9 @@ export * from './xata/index.js';
 /**
  * Factory function to create a data provider based on type
  */
-export function createDataProvider(options: CreateDataProviderOptions): CrudProvider {
+export function createDataProvider(
+  options: CreateDataProviderOptions
+): CrudProvider {
   const { type, config = {} } = options;
 
   switch (type) {

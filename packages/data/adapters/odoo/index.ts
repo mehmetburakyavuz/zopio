@@ -1,6 +1,6 @@
 /**
  * Odoo Adapter
- * 
+ *
  * Utilities for working with Odoo API data in Zopio applications.
  * Provides normalization, flattening, and conversion functions for Odoo responses.
  */

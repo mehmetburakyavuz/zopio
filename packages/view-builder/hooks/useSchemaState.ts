@@ -1,5 +1,5 @@
 // Import React directly to use JSX
-import React from "react";
+import React from 'react';
 
 // Import React hooks directly
 const createContext = React.createContext;
@@ -35,7 +35,7 @@ interface ViewSchema {
   };
   defaultSort?: {
     column: string;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   };
   rowActions?: string[];
   bulkActions?: string[];
@@ -108,13 +108,18 @@ const deleteView = async (id: string): Promise<void> => {
 };
 
 // Mock schema validation function
-const safeValidateViewSchema = (schema: unknown): { success: boolean; data?: ViewSchema; error?: Error | unknown } => {
+const safeValidateViewSchema = (
+  schema: unknown
+): { success: boolean; data?: ViewSchema; error?: Error | unknown } => {
   // In a real implementation, this would validate the schema
   try {
     // Basic validation
     const typedSchema = schema as ViewSchema;
     if (!typedSchema.type || !typedSchema.schema) {
-      return { success: false, error: new Error('Invalid schema: missing required fields') };
+      return {
+        success: false,
+        error: new Error('Invalid schema: missing required fields'),
+      };
     }
     return { success: true, data: typedSchema };
   } catch (error) {
@@ -147,13 +152,13 @@ export interface FormField {
  * Initial empty form schema
  */
 const initialSchema: ViewSchema = {
-  type: "form",
-  schema: "user",
+  type: 'form',
+  schema: 'user',
   fields: {},
-  i18nNamespace: "forms",
-  submitLabel: "Save",
-  resetLabel: "Reset",
-  showReset: true
+  i18nNamespace: 'forms',
+  submitLabel: 'Save',
+  resetLabel: 'Reset',
+  showReset: true,
 };
 
 /**
@@ -163,15 +168,15 @@ interface SchemaContextType {
   // Schema state
   schema: ViewSchema;
   setSchema: (schema: ViewSchema) => void;
-  
+
   // Field operations
   addField: (field: FormField) => void;
   updateField: (name: string, field: Partial<FormField>) => void;
   removeField: (name: string) => void;
-  
+
   // Schema validation
   validateSchema: () => { valid: boolean; errors?: unknown };
-  
+
   // Storage operations
   persistView: (id?: string) => Promise<string>;
   loadView: (id: string) => Promise<boolean>;
@@ -189,10 +194,10 @@ const defaultContextValue: SchemaContextType = {
   updateField: () => {},
   removeField: () => {},
   validateSchema: () => ({ valid: false }),
-  persistView: async () => "",
+  persistView: async () => '',
   loadView: async () => false,
   deleteView: async () => false,
-  getViewList: async () => []
+  getViewList: async () => [],
 };
 
 /**
@@ -208,13 +213,13 @@ const SchemaContext = createContext<SchemaContextType>(defaultContextValue);
 export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
   // Initialize schema state
   const [schema, setSchema] = useState<ViewSchema>({
-    type: "form",
-    schema: "",
+    type: 'form',
+    schema: '',
     fields: {},
-    i18nNamespace: "forms",
-    submitLabel: "Submit",
-    resetLabel: "Reset",
-    showReset: true
+    i18nNamespace: 'forms',
+    submitLabel: 'Submit',
+    resetLabel: 'Reset',
+    showReset: true,
   });
 
   /**
@@ -223,12 +228,12 @@ export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
   const addField = useCallback((field: FormField) => {
     setSchema((prev: ViewSchema) => {
       const updatedSchema = { ...prev };
-      
+
       // Ensure fields object exists
       if (!updatedSchema.fields) {
         updatedSchema.fields = {};
       }
-      
+
       // Add the field to the schema
       updatedSchema.fields[field.name] = {
         label: field.label,
@@ -237,119 +242,131 @@ export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
         ...(field.options && { options: field.options }),
         ...(field.description && { description: field.description }),
         ...(field.placeholder && { placeholder: field.placeholder }),
-        ...(field.validation && { validation: field.validation })
+        ...(field.validation && { validation: field.validation }),
       };
-      
+
       return updatedSchema;
     });
   }, []);
-  
+
   /**
    * Update an existing field in the schema
    */
-  const updateField = useCallback((name: string, updates: Partial<FormField>) => {
-    setSchema((prev: ViewSchema) => {
-      const updatedSchema = { ...prev };
-      
-      // Ensure fields object exists
-      if (!updatedSchema.fields) {
-        updatedSchema.fields = {};
-      }
-      
-      // Check if field exists
-      if (!updatedSchema.fields[name]) {
-        console.warn(`Field '${name}' not found in schema`);
-        return prev;
-      }
-      
-      // Update the field properties
-      updatedSchema.fields[name] = {
-        ...updatedSchema.fields[name],
-        ...(updates.label !== undefined && { label: updates.label }),
-        ...(updates.type !== undefined && { type: updates.type }),
-        ...(updates.required !== undefined && { required: updates.required }),
-        ...(updates.options !== undefined && { options: updates.options }),
-        ...(updates.description !== undefined && { description: updates.description }),
-        ...(updates.placeholder !== undefined && { placeholder: updates.placeholder }),
-        ...(updates.validation !== undefined && { validation: updates.validation })
-      };
-      
-      return updatedSchema;
-    });
-  }, []);
-  
+  const updateField = useCallback(
+    (name: string, updates: Partial<FormField>) => {
+      setSchema((prev: ViewSchema) => {
+        const updatedSchema = { ...prev };
+
+        // Ensure fields object exists
+        if (!updatedSchema.fields) {
+          updatedSchema.fields = {};
+        }
+
+        // Check if field exists
+        if (!updatedSchema.fields[name]) {
+          console.warn(`Field '${name}' not found in schema`);
+          return prev;
+        }
+
+        // Update the field properties
+        updatedSchema.fields[name] = {
+          ...updatedSchema.fields[name],
+          ...(updates.label !== undefined && { label: updates.label }),
+          ...(updates.type !== undefined && { type: updates.type }),
+          ...(updates.required !== undefined && { required: updates.required }),
+          ...(updates.options !== undefined && { options: updates.options }),
+          ...(updates.description !== undefined && {
+            description: updates.description,
+          }),
+          ...(updates.placeholder !== undefined && {
+            placeholder: updates.placeholder,
+          }),
+          ...(updates.validation !== undefined && {
+            validation: updates.validation,
+          }),
+        };
+
+        return updatedSchema;
+      });
+    },
+    []
+  );
+
   /**
    * Remove a field from the schema
    */
   const removeField = useCallback((name: string) => {
     setSchema((prev: ViewSchema) => {
       const updatedSchema = { ...prev };
-      
+
       // Ensure fields object exists
       if (!updatedSchema.fields) {
         return prev;
       }
-      
+
       // Check if field exists
       if (!updatedSchema.fields[name]) {
         console.warn(`Field '${name}' not found in schema`);
         return prev;
       }
-      
+
       // Remove the field
       const { [name]: _, ...remainingFields } = updatedSchema.fields;
       updatedSchema.fields = remainingFields;
-      
+
       return updatedSchema;
     });
   }, []);
-  
+
   /**
    * Validate the current schema
    */
   const validateSchema = useCallback(() => {
     const result = safeValidateViewSchema(schema);
-    
+
     return {
       valid: result.success,
-      errors: result.success ? undefined : result.error
+      errors: result.success ? undefined : result.error,
     };
   }, [schema]);
-  
+
   /**
    * Save the current schema to storage
    */
-  const persistView = useCallback(async (id?: string) => {
-    const viewId = id || `view_${Date.now()}`;
-    
-    try {
-      await saveView(viewId, schema);
-      return viewId;
-    } catch (error) {
-      console.error("Error saving view:", error);
-      throw error;
-    }
-  }, [schema]);
-  
+  const persistView = useCallback(
+    async (id?: string) => {
+      const viewId = id || `view_${Date.now()}`;
+
+      try {
+        await saveView(viewId, schema);
+        return viewId;
+      } catch (error) {
+        console.error('Error saving view:', error);
+        throw error;
+      }
+    },
+    [schema]
+  );
+
   /**
    * Load a view from storage
    */
   const loadView = useCallback(async (id: string) => {
     try {
       const view = await getView(id);
-      
+
       if (view) {
         setSchema(view);
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error(`Error loading view '${id}':`, error);
       return false;
     }
   }, []);
-  
+
   /**
    * Delete a view from storage
    */
@@ -362,7 +379,7 @@ export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
       return false;
     }
   }, []);
-  
+
   /**
    * Get a list of all views in storage
    */
@@ -370,11 +387,11 @@ export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
     try {
       return await listViews();
     } catch (error) {
-      console.error("Error listing views:", error);
+      console.error('Error listing views:', error);
       return [];
     }
   }, []);
-  
+
   // Create context value object
   const contextValue = {
     schema,
@@ -386,9 +403,9 @@ export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
     persistView,
     loadView,
     deleteView: deleteViewById,
-    getViewList
+    getViewList,
   };
-  
+
   // Use React.createElement for better compatibility
   // Cast to JSX.Element to resolve type compatibility issues
   return React.createElement(
@@ -404,10 +421,10 @@ export function SchemaProvider(props: { children: ReactNode }): JSX.Element {
  */
 export function useSchemaState(): SchemaContextType {
   const context = useContext(SchemaContext);
-  
+
   if (!context) {
-    throw new Error("useSchemaState must be used within a SchemaProvider");
+    throw new Error('useSchemaState must be used within a SchemaProvider');
   }
-  
+
   return context;
 }

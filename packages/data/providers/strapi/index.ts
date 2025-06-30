@@ -1,22 +1,22 @@
 /**
  * Strapi client provider implementation
- * 
+ *
  * This provider integrates with Strapi CMS (https://github.com/strapi/strapi)
  * for RESTful API endpoints.
  */
 
 import type {
+  CreateParams,
+  CreateResult,
   CrudProvider,
+  DeleteParams,
+  DeleteResult,
   GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 export interface StrapiClientConfig {
@@ -24,17 +24,17 @@ export interface StrapiClientConfig {
    * Base URL of the Strapi API
    */
   apiUrl: string;
-  
+
   /**
    * Optional authentication token (JWT)
    */
   authToken?: string;
-  
+
   /**
    * Optional custom headers to include in all requests
    */
   customHeaders?: Record<string, string>;
-  
+
   /**
    * Optional resource mapping to override default endpoint paths
    * @example { articles: 'api/articles' }
@@ -45,38 +45,38 @@ export interface StrapiClientConfig {
 /**
  * Create a Strapi client provider
  */
-export function createStrapiClientProvider(config: StrapiClientConfig): CrudProvider {
-  const {
-    apiUrl,
-    authToken,
-    customHeaders = {},
-    resources = {}
-  } = config;
-  
+export function createStrapiClientProvider(
+  config: StrapiClientConfig
+): CrudProvider {
+  const { apiUrl, authToken, customHeaders = {}, resources = {} } = config;
+
   // Helper function to build the URL for a resource
-  const buildUrl = ({ resource, id }: { resource: string; id?: string | number }): string => {
+  const buildUrl = ({
+    resource,
+    id,
+  }: { resource: string; id?: string | number }): string => {
     const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
     const resourcePath = resources[resource] || `api/${resource}`;
-    
-    return id 
+
+    return id
       ? `${baseUrl}/${resourcePath}/${id}`
       : `${baseUrl}/${resourcePath}`;
   };
-  
+
   // Helper function to get request headers
   const getHeaders = (): Record<string, string> => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...customHeaders
+      ...customHeaders,
     };
-    
+
     if (authToken) {
       headers.Authorization = `Bearer ${authToken}`;
     }
-    
+
     return headers;
   };
-  
+
   // Helper function to handle a single filter operator
   const addFilterOperator = (
     url: URL,
@@ -86,7 +86,10 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
   ): void => {
     if (operatorValue !== undefined && operatorValue !== null) {
       // Strapi uses a specific filter format
-      url.searchParams.append(`filters[${key}][${operator}]`, String(operatorValue));
+      url.searchParams.append(
+        `filters[${key}][${operator}]`,
+        String(operatorValue)
+      );
     }
   };
 
@@ -102,7 +105,7 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
       addFilterOperator(url, key, strapiOperator, operatorValue);
     }
   };
-  
+
   // Helper function to map common operators to Strapi's format
   const mapOperatorToStrapi = (operator: string): string => {
     const operatorMap: Record<string, string> = {
@@ -120,9 +123,9 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
       $notNull: 'notNull',
       $between: 'between',
       $startsWith: 'startsWith',
-      $endsWith: 'endsWith'
+      $endsWith: 'endsWith',
     };
-    
+
     return operatorMap[operator] || operator.replace('$', '');
   };
 
@@ -139,7 +142,7 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
       if (value === undefined || value === null) {
         continue;
       }
-      
+
       // Strapi supports various filter operators
       if (typeof value === 'object' && value !== null) {
         // Handle operator objects like { $eq: 'value' }
@@ -150,7 +153,7 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
       }
     }
   };
-  
+
   // Helper function to add pagination parameters to URL
   const addPaginationParams = (
     url: URL,
@@ -159,10 +162,13 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
     if (pagination) {
       // Strapi uses page and pageSize for pagination
       url.searchParams.append('pagination[page]', String(pagination.page));
-      url.searchParams.append('pagination[pageSize]', String(pagination.perPage));
+      url.searchParams.append(
+        'pagination[pageSize]',
+        String(pagination.perPage)
+      );
     }
   };
-  
+
   // Helper function to add sort parameters to URL
   const addSortParams = (
     url: URL,
@@ -174,166 +180,181 @@ export function createStrapiClientProvider(config: StrapiClientConfig): CrudProv
       url.searchParams.append('sort', `${sort.field}:${order}`);
     }
   };
-  
+
   // Helper function to process response and extract data and total
-  const processListResponse = async (response: Response): Promise<{ data: unknown[]; total: number }> => {
+  const processListResponse = async (
+    response: Response
+  ): Promise<{ data: unknown[]; total: number }> => {
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    
+
     const result = await response.json();
-    
+
     // Strapi v4 returns data in a specific format
     const data = result.data || [];
-    
+
     // Extract metadata
     const total = result.meta?.pagination?.total || data.length;
-    
+
     // Transform data to include id from attributes if needed
     const transformedData = data.map((item: any) => {
       if (item.id && item.attributes) {
         return {
           id: item.id,
-          ...item.attributes
+          ...item.attributes,
         };
       }
       return item;
     });
-    
-    return { 
+
+    return {
       data: transformedData,
-      total
+      total,
     };
   };
-  
+
   // Helper function to process a single item response
-  const processSingleItemResponse = async (response: Response): Promise<{ data: unknown }> => {
+  const processSingleItemResponse = async (
+    response: Response
+  ): Promise<{ data: unknown }> => {
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    
+
     const result = await response.json();
-    
+
     // Strapi v4 returns data in a specific format
     const item = result.data;
-    
+
     if (item && item.id && item.attributes) {
       return {
         data: {
           id: item.id,
-          ...item.attributes
-        }
+          ...item.attributes,
+        },
       };
     }
-    
+
     return { data: item || {} };
   };
-  
+
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Build URL with query parameters
         const url = new URL(buildUrl({ resource }));
-        
+
         // Add parameters
         addPaginationParams(url, pagination);
         addSortParams(url, sort);
         addFilterParams(url, filter);
-        
+
         // Add populate parameter to include relations
         url.searchParams.append('populate', '*');
-        
+
         // Fetch data
-        const response = await fetch(url.toString(), { 
-          headers: getHeaders()
+        const response = await fetch(url.toString(), {
+          headers: getHeaders(),
         });
-        
+
         // Process response
         return await processListResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
+
     async getOne({ resource, id }: GetOneParams): Promise<GetOneResult> {
       try {
         // Build URL
         const url = new URL(buildUrl({ resource, id }));
-        
+
         // Add populate parameter to include relations
         url.searchParams.append('populate', '*');
-        
+
         // Fetch data
-        const response = await fetch(url.toString(), { 
-          headers: getHeaders()
+        const response = await fetch(url.toString(), {
+          headers: getHeaders(),
         });
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
+
     async create({ resource, variables }: CreateParams): Promise<CreateResult> {
       try {
         // Strapi v4 expects data to be wrapped in a data object
         const requestBody = {
-          data: variables
+          data: variables,
         };
-        
+
         // Create data
         const response = await fetch(buildUrl({ resource }), {
           method: 'POST',
           headers: getHeaders(),
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
         });
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Strapi v4 expects data to be wrapped in a data object
         const requestBody = {
-          data: variables
+          data: variables,
         };
-        
+
         // Update data
         const response = await fetch(buildUrl({ resource, id }), {
           method: 'PUT',
           headers: getHeaders(),
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
         });
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
+
     async deleteOne({ resource, id }: DeleteParams): Promise<DeleteResult> {
       try {
         // Delete data
         const response = await fetch(buildUrl({ resource, id }), {
           method: 'DELETE',
-          headers: getHeaders()
+          headers: getHeaders(),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to delete ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to delete ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

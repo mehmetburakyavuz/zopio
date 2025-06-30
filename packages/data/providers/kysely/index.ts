@@ -2,18 +2,18 @@
  * Kysely provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 // Define interfaces for Kysely types without direct import
@@ -28,8 +28,14 @@ interface KyselyInstance {
 
 interface KyselySelectBuilder {
   selectAll: () => KyselySelectBuilder;
-  select: (selector: (eb: KyselyExpressionBuilder) => KyselyCountExpression | string) => KyselySelectBuilder;
-  where: (field: string, operator: string, value: unknown) => KyselySelectBuilder;
+  select: (
+    selector: (eb: KyselyExpressionBuilder) => KyselyCountExpression | string
+  ) => KyselySelectBuilder;
+  where: (
+    field: string,
+    operator: string,
+    value: unknown
+  ) => KyselySelectBuilder;
   orderBy: (field: string, direction?: 'asc' | 'desc') => KyselySelectBuilder;
   limit: (limit: number) => KyselySelectBuilder;
   offset: (offset: number) => KyselySelectBuilder;
@@ -45,14 +51,22 @@ interface KyselyInsertBuilder {
 
 interface KyselyUpdateBuilder {
   set: (values: Record<string, unknown>) => KyselyUpdateBuilder;
-  where: (field: string, operator: string, value: unknown) => KyselyUpdateBuilder;
+  where: (
+    field: string,
+    operator: string,
+    value: unknown
+  ) => KyselyUpdateBuilder;
   returning: (columns: string | string[]) => KyselyUpdateBuilder;
   returningAll: () => KyselyUpdateBuilder;
   execute: () => Promise<Record<string, unknown>[]>;
 }
 
 interface KyselyDeleteBuilder {
-  where: (field: string, operator: string, value: unknown) => KyselyDeleteBuilder;
+  where: (
+    field: string,
+    operator: string,
+    value: unknown
+  ) => KyselyDeleteBuilder;
   returning: (columns: string | string[]) => KyselyDeleteBuilder;
   returningAll: () => KyselyDeleteBuilder;
   execute: () => Promise<Record<string, unknown>[]>;
@@ -76,11 +90,10 @@ export interface KyselyProviderConfig {
 /**
  * Create a Kysely provider
  */
-export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider {
-  const { 
-    db,
-    schema = {}
-  } = config;
+export function createKyselyProvider(
+  config: KyselyProviderConfig
+): CrudProvider {
+  const { db, schema = {} } = config;
 
   // Helper to get table name from resource name
   const getTableName = (resource: string): string => {
@@ -88,13 +101,18 @@ export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider
   };
 
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         const tableName = getTableName(resource);
-        
+
         // Build query
         let query = db.selectFrom(tableName).selectAll();
-        
+
         // Apply filters
         if (filter) {
           for (const [field, value] of Object.entries(filter)) {
@@ -103,11 +121,14 @@ export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider
             }
           }
         }
-        
+
         // Get total count
-        const countQuery = db.selectFrom(tableName)
-          .select((eb: KyselyExpressionBuilder) => eb.fn.count('id').as('count'));
-          
+        const countQuery = db
+          .selectFrom(tableName)
+          .select((eb: KyselyExpressionBuilder) =>
+            eb.fn.count('id').as('count')
+          );
+
         // Apply filters to count query as well
         if (filter) {
           for (const [field, value] of Object.entries(filter)) {
@@ -116,25 +137,28 @@ export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider
             }
           }
         }
-        
+
         const [{ count }] = await countQuery.execute();
         const total = Number(count);
-        
+
         // Apply sorting
         if (sort) {
-          query = query.orderBy(sort.field, sort.order === 'asc' ? 'asc' : 'desc');
+          query = query.orderBy(
+            sort.field,
+            sort.order === 'asc' ? 'asc' : 'desc'
+          );
         }
-        
+
         // Apply pagination
         if (pagination) {
           const { page, perPage } = pagination;
           const offset = (page - 1) * perPage;
           query = query.limit(perPage).offset(offset);
         }
-        
+
         // Execute query
         const data = await query.execute();
-        
+
         return { data, total };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -144,20 +168,21 @@ export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider
     async getOne({ resource, id }: GetOneParams): Promise<GetOneResult> {
       try {
         const tableName = getTableName(resource);
-        
+
         // Build query
-        const query = db.selectFrom(tableName)
+        const query = db
+          .selectFrom(tableName)
           .selectAll()
           .where('id', '=', id)
           .limit(1);
-        
+
         // Execute query
         const [data] = await query.execute();
-        
+
         if (!data) {
           throw new Error(`Record with id ${id} not found in ${resource}`);
         }
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -167,38 +192,44 @@ export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider
     async create({ resource, variables }: CreateParams): Promise<CreateResult> {
       try {
         const tableName = getTableName(resource);
-        
+
         // Build query
-        const query = db.insertInto(tableName)
+        const query = db
+          .insertInto(tableName)
           .values(variables as Record<string, unknown>)
           .returningAll();
-        
+
         // Execute query
         const [data] = await query.execute();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         const tableName = getTableName(resource);
-        
+
         // Build query
-        const query = db.updateTable(tableName)
+        const query = db
+          .updateTable(tableName)
           .set(variables)
           .where('id', '=', id)
           .returningAll();
-        
+
         // Execute query
         const [data] = await query.execute();
-        
+
         if (!data) {
           throw new Error(`Record with id ${id} not found in ${resource}`);
         }
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -208,22 +239,23 @@ export function createKyselyProvider(config: KyselyProviderConfig): CrudProvider
     async deleteOne({ resource, id }: DeleteParams): Promise<DeleteResult> {
       try {
         const tableName = getTableName(resource);
-        
+
         // Get the record before deleting
         const { data } = await this.getOne({ resource, id });
-        
+
         // Build query
-        const query = db.deleteFrom(tableName)
+        const query = db
+          .deleteFrom(tableName)
           .where('id', '=', id)
           .returningAll();
-        
+
         // Execute query
         await query.execute();
-        
+
         return { data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

@@ -16,5 +16,5 @@ export type {
   FormSection,
   FormTab,
   FormLayout,
-  TableColumn
-} from "../engine/renderers/types";
+  TableColumn,
+} from '../engine/renderers/types';

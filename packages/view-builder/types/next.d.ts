@@ -1,5 +1,5 @@
 declare module 'next/dynamic' {
-  import { ComponentType } from 'react';
+  import type { ComponentType } from 'react';
 
   export interface DynamicOptions {
     loading?: ComponentType;
@@ -14,7 +14,7 @@ declare module 'next/dynamic' {
 }
 
 declare module 'react-monaco-editor' {
-  import { ComponentType } from 'react';
+  import type { ComponentType } from 'react';
 
   export interface MonacoEditorProps {
     width?: string | number;
@@ -41,5 +41,7 @@ declare module '@repo/view/engine/validation/schema' {
     error?: string;
   }
 
-  export function safeValidateViewSchema<T>(schema: unknown): ValidationResult<T>;
+  export function safeValidateViewSchema<T>(
+    schema: unknown
+  ): ValidationResult<T>;
 }

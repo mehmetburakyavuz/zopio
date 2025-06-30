@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Alert component for displaying tips, warnings, or important information
  * @param {Object} props - Component props
@@ -11,30 +9,30 @@ export default function Alert({ type = 'info', children }) {
     tip: {
       backgroundColor: '#f0fff4',
       borderColor: '#68d391',
-      color: '#2f855a'
+      color: '#2f855a',
     },
     warning: {
       backgroundColor: '#fffaf0',
       borderColor: '#f6ad55',
-      color: '#c05621'
+      color: '#c05621',
     },
     info: {
       backgroundColor: '#ebf8ff',
       borderColor: '#63b3ed',
-      color: '#2b6cb0'
+      color: '#2b6cb0',
     },
     danger: {
       backgroundColor: '#fff5f5',
       borderColor: '#fc8181',
-      color: '#c53030'
-    }
+      color: '#c53030',
+    },
   };
 
   const icons = {
     tip: '💡',
     warning: '⚠️',
     info: 'ℹ️',
-    danger: '🚫'
+    danger: '🚫',
   };
 
   return (
@@ -44,7 +42,7 @@ export default function Alert({ type = 'info', children }) {
         marginBottom: '1rem',
         borderLeft: '4px solid',
         borderRadius: '0.25rem',
-        ...styles[type]
+        ...styles[type],
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>

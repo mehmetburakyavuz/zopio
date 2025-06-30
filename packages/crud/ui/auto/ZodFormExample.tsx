@@ -5,15 +5,21 @@ import { ZodForm, createTypedZodForm } from './ZodForm';
 
 // Define a Zod schema for user data
 const userSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  age: z.number().min(18, { message: "Must be at least 18 years old" }).optional(),
-  role: z.enum(['admin', 'user', 'editor'], { 
-    errorMap: () => ({ message: "Please select a valid role" })
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  age: z
+    .number()
+    .min(18, { message: 'Must be at least 18 years old' })
+    .optional(),
+  role: z.enum(['admin', 'user', 'editor'], {
+    errorMap: () => ({ message: 'Please select a valid role' }),
   }),
-  bio: z.string().max(200, { message: "Bio must be less than 200 characters" }).optional(),
+  bio: z
+    .string()
+    .max(200, { message: 'Bio must be less than 200 characters' })
+    .optional(),
   newsletter: z.boolean().default(false),
-  website: z.string().url({ message: "Invalid URL" }).optional(),
+  website: z.string().url({ message: 'Invalid URL' }).optional(),
 });
 
 // Create a type from the schema
@@ -24,17 +30,17 @@ const UserForm = createTypedZodForm(userSchema);
 
 export function ZodFormExample() {
   const [formData, setFormData] = React.useState<UserFormData | null>(null);
-  
+
   // Handle form submission
   const handleSubmit = async (values: UserFormData) => {
     // In a real application, you would submit the data to an API
     console.log('Form submitted with values:', values);
     setFormData(values);
-    
+
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   };
-  
+
   // Define form layout
   const formLayout = {
     sections: [
@@ -51,11 +57,13 @@ export function ZodFormExample() {
       },
     ],
   };
-  
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">User Registration Form with Zod Validation</h1>
-      
+    <div className="mx-auto max-w-4xl p-6">
+      <h1 className="mb-6 font-bold text-2xl">
+        User Registration Form with Zod Validation
+      </h1>
+
       <div className="mb-8">
         <ZodForm
           schema={userSchema}
@@ -80,7 +88,8 @@ export function ZodFormExample() {
             },
             descriptions: {
               role: 'Select your role in the system',
-              newsletter: 'Receive updates about new features and announcements',
+              newsletter:
+                'Receive updates about new features and announcements',
             },
             placeholders: {
               name: 'John Doe',
@@ -91,10 +100,12 @@ export function ZodFormExample() {
           }}
         />
       </div>
-      
+
       {/* Alternative approach using the typed form component */}
-      <div className="mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-xl font-bold mb-6">Alternative: Using Typed Form Component</h2>
+      <div className="mt-12 border-gray-200 border-t pt-8">
+        <h2 className="mb-6 font-bold text-xl">
+          Alternative: Using Typed Form Component
+        </h2>
         <UserForm
           initialValues={{
             name: '',
@@ -106,12 +117,12 @@ export function ZodFormExample() {
           submitLabel="Submit"
         />
       </div>
-      
+
       {/* Display submitted data */}
       {formData && (
-        <div className="mt-8 p-4 border border-green-300 bg-green-50 rounded">
-          <h3 className="text-lg font-semibold mb-2">Submitted Data:</h3>
-          <pre className="bg-white p-3 rounded overflow-auto">
+        <div className="mt-8 rounded border border-green-300 bg-green-50 p-4">
+          <h3 className="mb-2 font-semibold text-lg">Submitted Data:</h3>
+          <pre className="overflow-auto rounded bg-white p-3">
             {JSON.stringify(formData, null, 2)}
           </pre>
         </div>

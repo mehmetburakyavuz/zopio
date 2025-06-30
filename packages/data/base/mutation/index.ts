@@ -6,7 +6,9 @@
 /**
  * Basic mutation function type
  */
-export type MutationFn<TInput = unknown, TResult = unknown> = (input: TInput) => Promise<TResult>;
+export type MutationFn<TInput = unknown, TResult = unknown> = (
+  input: TInput
+) => Promise<TResult>;
 
 /**
  * Options for mutation operations
@@ -35,20 +37,20 @@ export function createMutation<TInput = unknown, TResult = unknown>(
   options: MutationOptions<TResult> = {}
 ): MutationResult<TInput, TResult> {
   const { onSuccess, onError, invalidateQueries } = options;
-  
+
   const mutate = async <T extends TInput>(input: T): Promise<TResult> => {
     try {
       const result = await mutationFn(input);
-      
+
       if (onSuccess) {
         onSuccess(result);
       }
-      
+
       if (invalidateQueries && invalidateQueries.length > 0) {
         // In a real implementation, this would trigger cache invalidation
         // Queries to invalidate: ${invalidateQueries.join(', ')}
       }
-      
+
       return result;
     } catch (error) {
       if (onError && error instanceof Error) {
@@ -57,12 +59,12 @@ export function createMutation<TInput = unknown, TResult = unknown>(
       throw error;
     }
   };
-  
+
   return {
     data: null,
     error: null,
     loading: false,
-    mutate
+    mutate,
   };
 }
 
@@ -79,20 +81,24 @@ export interface OptimisticUpdateOptions<TData = unknown, TInput = unknown> {
 /**
  * Performs an optimistic update on client-side data
  */
-export function optimisticUpdate<TData = unknown, TInput = unknown, TResult = unknown>(
+export function optimisticUpdate<
+  TData = unknown,
+  TInput = unknown,
+  TResult = unknown,
+>(
   options: OptimisticUpdateOptions<TData, TInput>,
   mutationFn: MutationFn<TInput, TResult>
 ): Promise<TResult> {
   const { currentData, input, updateFn, rollbackFn } = options;
-  
+
   // Apply optimistic update
   const optimisticData = updateFn(currentData, input);
-  
+
   // Return updated data immediately (in a real implementation)
   // Optimistic update has been applied
-  
+
   // Execute actual mutation
-  return mutationFn(input).catch(error => {
+  return mutationFn(input).catch((error) => {
     // Rollback on error
     if (rollbackFn) {
       // Apply rollback function

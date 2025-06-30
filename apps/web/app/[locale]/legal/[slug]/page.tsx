@@ -37,8 +37,10 @@ export const generateStaticParams = async (): Promise<{ slug: string }[]> => {
   const posts = await legal.getPosts();
 
   return posts
-    .filter((post): post is typeof post & { _slug: string } => 
-      typeof post._slug === 'string' && post._slug !== '')
+    .filter(
+      (post): post is typeof post & { _slug: string } =>
+        typeof post._slug === 'string' && post._slug !== ''
+    )
     .map(({ _slug }) => ({ slug: _slug }));
 };
 
@@ -47,19 +49,19 @@ const LegalPage = async ({ params }: LegalPageProperties) => {
 
   // Query the legal post data
   const data = await legal.getPost(slug);
-  
+
   if (!data) {
     notFound();
   }
-  
+
   // Type assertion to ensure TypeScript knows the structure
   const legalPost = data as LegalPost;
-  
+
   return (
     <Feed data={{ page: legalPost }}>
       {(feedData) => {
         const page = feedData.page as LegalPost;
-        
+
         if (!page) {
           return null;
         }
@@ -82,15 +84,24 @@ const LegalPage = async ({ params }: LegalPageProperties) => {
             <div className="mt-16 flex flex-col items-start gap-8 sm:flex-row">
               <div className="sm:flex-1">
                 <div className="prose prose-neutral dark:prose-invert">
-                  {page.body?.json?.content && Array.isArray(page.body.json.content) ? (
+                  {page.body?.json?.content &&
+                  Array.isArray(page.body.json.content) ? (
                     <Body content={page.body.json.content} />
                   ) : null}
                 </div>
               </div>
               <div className="sticky top-24 hidden shrink-0 md:block">
                 <Sidebar
-                  toc={page.body?.json?.toc ? <TableOfContents data={page.body.json.toc} /> : null}
-                  readingTime={page.body?.readingTime ? `${page.body.readingTime} min read` : ""}
+                  toc={
+                    page.body?.json?.toc ? (
+                      <TableOfContents data={page.body.json.toc} />
+                    ) : null
+                  }
+                  readingTime={
+                    page.body?.readingTime
+                      ? `${page.body.readingTime} min read`
+                      : ''
+                  }
                   date={new Date()}
                 />
               </div>

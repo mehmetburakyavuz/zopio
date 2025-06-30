@@ -1,22 +1,22 @@
 /**
  * PayloadCMS client provider implementation
- * 
+ *
  * This provider integrates with PayloadCMS (https://github.com/payloadcms/payload)
  * for RESTful API endpoints.
  */
 
 import type {
+  CreateParams,
+  CreateResult,
   CrudProvider,
+  DeleteParams,
+  DeleteResult,
   GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 export interface PayloadCMSClientConfig {
@@ -24,17 +24,17 @@ export interface PayloadCMSClientConfig {
    * Base URL of the PayloadCMS API
    */
   apiUrl: string;
-  
+
   /**
    * Optional authentication token
    */
   authToken?: string;
-  
+
   /**
    * Optional custom headers to include in all requests
    */
   customHeaders?: Record<string, string>;
-  
+
   /**
    * Optional resource mapping to override default collection names
    * @example { posts: 'blog-posts' }
@@ -45,38 +45,38 @@ export interface PayloadCMSClientConfig {
 /**
  * Create a PayloadCMS client provider
  */
-export function createPayloadCMSClientProvider(config: PayloadCMSClientConfig): CrudProvider {
-  const {
-    apiUrl,
-    authToken,
-    customHeaders = {},
-    resources = {}
-  } = config;
-  
+export function createPayloadCMSClientProvider(
+  config: PayloadCMSClientConfig
+): CrudProvider {
+  const { apiUrl, authToken, customHeaders = {}, resources = {} } = config;
+
   // Helper function to build the URL for a resource
-  const buildUrl = ({ resource, id }: { resource: string; id?: string | number }): string => {
+  const buildUrl = ({
+    resource,
+    id,
+  }: { resource: string; id?: string | number }): string => {
     const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
     const resourcePath = resources[resource] || resource;
-    
-    return id 
+
+    return id
       ? `${baseUrl}/api/${resourcePath}/${id}`
       : `${baseUrl}/api/${resourcePath}`;
   };
-  
+
   // Helper function to get request headers
   const getHeaders = (): Record<string, string> => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...customHeaders
+      ...customHeaders,
     };
-    
+
     if (authToken) {
       headers.Authorization = `JWT ${authToken}`;
     }
-    
+
     return headers;
   };
-  
+
   // Helper function to handle a single where condition
   const addWhereCondition = (
     conditions: Record<string, unknown>[],
@@ -87,8 +87,8 @@ export function createPayloadCMSClientProvider(config: PayloadCMSClientConfig): 
     if (value !== undefined && value !== null) {
       conditions.push({
         [key]: {
-          [operator]: value
-        }
+          [operator]: value,
+        },
       });
     }
   };
@@ -105,7 +105,7 @@ export function createPayloadCMSClientProvider(config: PayloadCMSClientConfig): 
       addWhereCondition(conditions, key, payloadOperator, operatorValue);
     }
   };
-  
+
   // Helper function to map common operators to PayloadCMS's format
   const mapOperatorToPayload = (operator: string): string => {
     const operatorMap: Record<string, string> = {
@@ -118,9 +118,9 @@ export function createPayloadCMSClientProvider(config: PayloadCMSClientConfig): 
       $contains: 'like',
       $in: 'in',
       $notIn: 'not_in',
-      $exists: 'exists'
+      $exists: 'exists',
     };
-    
+
     return operatorMap[operator] || operator.replace('$', '');
   };
 
@@ -138,7 +138,7 @@ export function createPayloadCMSClientProvider(config: PayloadCMSClientConfig): 
       if (value === undefined || value === null) {
         continue;
       }
-      
+
       // PayloadCMS supports various filter operators
       if (typeof value === 'object' && value !== null) {
         // Handle operator objects like { $eq: 'value' }
@@ -155,172 +155,190 @@ export function createPayloadCMSClientProvider(config: PayloadCMSClientConfig): 
     } else if (conditions.length === 1) {
       return conditions[0];
     }
-    
+
     return {};
   };
-  
+
   // Helper function to build sort parameters for PayloadCMS
-  const buildSortParams = (
-    sort?: { field: string; order: string }
-  ): Record<string, unknown> => {
+  const buildSortParams = (sort?: { field: string; order: string }): Record<
+    string,
+    unknown
+  > => {
     if (!sort) {
       return {};
     }
-    
+
     return {
       sort: sort.field,
-      order: sort.order.toLowerCase()
+      order: sort.order.toLowerCase(),
     };
   };
-  
+
   // Helper function to build pagination parameters for PayloadCMS
-  const buildPaginationParams = (
-    pagination?: { page: number; perPage: number }
-  ): Record<string, unknown> => {
+  const buildPaginationParams = (pagination?: {
+    page: number;
+    perPage: number;
+  }): Record<string, unknown> => {
     if (!pagination) {
       return {};
     }
-    
+
     return {
       page: pagination.page,
-      limit: pagination.perPage
+      limit: pagination.perPage,
     };
   };
-  
+
   // Helper function to process list response
-  const processListResponse = async (response: Response): Promise<{ data: unknown[]; total: number }> => {
+  const processListResponse = async (
+    response: Response
+  ): Promise<{ data: unknown[]; total: number }> => {
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    
+
     const result = await response.json();
-    
+
     // PayloadCMS returns data in a specific format
     const docs = result.docs || [];
     const total = result.totalDocs || docs.length;
-    
-    return { 
+
+    return {
       data: docs,
-      total
+      total,
     };
   };
-  
+
   // Helper function to process a single item response
-  const processSingleItemResponse = async (response: Response): Promise<{ data: unknown }> => {
+  const processSingleItemResponse = async (
+    response: Response
+  ): Promise<{ data: unknown }> => {
     if (!response.ok) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
-    
+
     const result = await response.json();
-    
+
     return { data: result || {} };
   };
-  
+
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Build query parameters
         const where = buildWhereConditions(filter);
         const sortParams = buildSortParams(sort);
         const paginationParams = buildPaginationParams(pagination);
-        
+
         // Combine all parameters
         const queryParams = {
-          where: Object.keys(where).length > 0 ? JSON.stringify(where) : undefined,
+          where:
+            Object.keys(where).length > 0 ? JSON.stringify(where) : undefined,
           ...sortParams,
           ...paginationParams,
-          depth: 1 // Include relationships one level deep
+          depth: 1, // Include relationships one level deep
         };
-        
+
         // Build URL
         const url = new URL(buildUrl({ resource }));
-        
+
         // Add query parameters
         for (const [key, value] of Object.entries(queryParams)) {
           if (value !== undefined) {
             url.searchParams.append(key, String(value));
           }
         }
-        
+
         // Fetch data
-        const response = await fetch(url.toString(), { 
-          headers: getHeaders()
+        const response = await fetch(url.toString(), {
+          headers: getHeaders(),
         });
-        
+
         // Process response
         return await processListResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
+
     async getOne({ resource, id }: GetOneParams): Promise<GetOneResult> {
       try {
         // Build URL with depth parameter for relationships
         const url = new URL(buildUrl({ resource, id }));
         url.searchParams.append('depth', '1');
-        
+
         // Fetch data
-        const response = await fetch(url.toString(), { 
-          headers: getHeaders()
+        const response = await fetch(url.toString(), {
+          headers: getHeaders(),
         });
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
+
     async create({ resource, variables }: CreateParams): Promise<CreateResult> {
       try {
         // Create data
         const response = await fetch(buildUrl({ resource }), {
           method: 'POST',
           headers: getHeaders(),
-          body: JSON.stringify(variables)
+          body: JSON.stringify(variables),
         });
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Update data
         const response = await fetch(buildUrl({ resource, id }), {
           method: 'PATCH',
           headers: getHeaders(),
-          body: JSON.stringify(variables)
+          body: JSON.stringify(variables),
         });
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
-    
+
     async deleteOne({ resource, id }: DeleteParams): Promise<DeleteResult> {
       try {
         // Delete data
         const response = await fetch(buildUrl({ resource, id }), {
           method: 'DELETE',
-          headers: getHeaders()
+          headers: getHeaders(),
         });
-        
+
         if (!response.ok) {
-          throw new Error(`Failed to delete ${resource}/${id}: ${response.statusText}`);
+          throw new Error(
+            `Failed to delete ${resource}/${id}: ${response.statusText}`
+          );
         }
-        
+
         // Process response
         return await processSingleItemResponse(response);
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

@@ -22,12 +22,12 @@ export function getFieldTypeFromZodType(zodType: z.ZodTypeAny): FieldType {
   if (zodType instanceof z.ZodNativeEnum) return 'enum';
   if (zodType instanceof z.ZodArray) return 'multiselect';
   if (zodType instanceof z.ZodObject) return 'json';
-  
+
   // Handle optional and nullable types
   if (zodType instanceof z.ZodOptional || zodType instanceof z.ZodNullable) {
     return getFieldTypeFromZodType(zodType.unwrap());
   }
-  
+
   // Default to string for unknown types
   return 'string';
 }
@@ -35,23 +35,28 @@ export function getFieldTypeFromZodType(zodType: z.ZodTypeAny): FieldType {
 /**
  * Extracts validation rules from a Zod schema
  */
-export function extractValidationRules(zodType: z.ZodTypeAny): ValidationRule[] {
+export function extractValidationRules(
+  zodType: z.ZodTypeAny
+): ValidationRule[] {
   const rules: ValidationRule[] = [];
-  
+
   // Handle required validation
-  if (!(zodType instanceof z.ZodOptional) && !(zodType instanceof z.ZodNullable)) {
+  if (
+    !(zodType instanceof z.ZodOptional) &&
+    !(zodType instanceof z.ZodNullable)
+  ) {
     rules.push({
       type: 'required',
       message: 'This field is required',
     });
   }
-  
+
   // Unwrap optional/nullable types
   let unwrappedType = zodType;
   if (zodType instanceof z.ZodOptional || zodType instanceof z.ZodNullable) {
     unwrappedType = zodType.unwrap();
   }
-  
+
   // Extract string validations
   if (unwrappedType instanceof z.ZodString && unwrappedType._def.checks) {
     for (const check of unwrappedType._def.checks) {
@@ -79,7 +84,8 @@ export function extractValidationRules(zodType: z.ZodTypeAny): ValidationRule[] 
       if (check.kind === 'url') {
         rules.push({
           type: 'pattern',
-          value: '^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$',
+          value:
+            '^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$',
           message: 'Must be a valid URL',
         });
       }
@@ -92,7 +98,7 @@ export function extractValidationRules(zodType: z.ZodTypeAny): ValidationRule[] 
       }
     }
   }
-  
+
   // Extract number validations
   if (unwrappedType instanceof z.ZodNumber && unwrappedType._def.checks) {
     for (const check of unwrappedType._def.checks) {
@@ -112,31 +118,35 @@ export function extractValidationRules(zodType: z.ZodTypeAny): ValidationRule[] 
       }
     }
   }
-  
+
   return rules;
 }
 
 /**
  * Extracts enum options from a Zod enum schema
  */
-export function extractEnumOptions(zodType: z.ZodEnum<[string, ...string[]]> | z.ZodNativeEnum<Record<string, string | number>>) {
+export function extractEnumOptions(
+  zodType:
+    | z.ZodEnum<[string, ...string[]]>
+    | z.ZodNativeEnum<Record<string, string | number>>
+) {
   if (zodType instanceof z.ZodEnum) {
     return zodType._def.values.map((value: string) => ({
       label: value,
       value,
     }));
   }
-  
+
   if (zodType instanceof z.ZodNativeEnum) {
     const enumObject = zodType._def.values;
     return Object.keys(enumObject)
-      .filter(key => !Number.isNaN(Number(key)) && isNaN(Number(key))) // Filter out numeric keys
-      .map(key => ({
+      .filter((key) => !Number.isNaN(Number(key)) && isNaN(Number(key))) // Filter out numeric keys
+      .map((key) => ({
         label: key,
         value: enumObject[key],
       }));
   }
-  
+
   return [];
 }
 
@@ -156,14 +166,14 @@ export function zodSchemaToFieldDefinitions(
 ): FieldDefinition[] {
   const { shape } = schema._def;
   const fieldNames = options.fieldOrder || Object.keys(shape);
-  
+
   return fieldNames
-    .filter(name => !options.hiddenFields?.includes(name))
-    .map(name => {
+    .filter((name) => !options.hiddenFields?.includes(name))
+    .map((name) => {
       const zodType = shape[name];
       const fieldType = getFieldTypeFromZodType(zodType);
       const validationRules = extractValidationRules(zodType);
-      
+
       const field: FieldDefinition = {
         name,
         type: fieldType,
@@ -171,20 +181,26 @@ export function zodSchemaToFieldDefinitions(
         description: options.descriptions?.[name],
         placeholder: options.placeholders?.[name],
         validation: validationRules,
-        required: validationRules.some(rule => rule.type === 'required'),
+        required: validationRules.some((rule) => rule.type === 'required'),
         readOnly: options.readOnlyFields?.includes(name),
       };
-      
+
       // Add enum options if applicable
       let unwrappedType = zodType;
-      if (zodType instanceof z.ZodOptional || zodType instanceof z.ZodNullable) {
+      if (
+        zodType instanceof z.ZodOptional ||
+        zodType instanceof z.ZodNullable
+      ) {
         unwrappedType = zodType.unwrap();
       }
-      
-      if (unwrappedType instanceof z.ZodEnum || unwrappedType instanceof z.ZodNativeEnum) {
+
+      if (
+        unwrappedType instanceof z.ZodEnum ||
+        unwrappedType instanceof z.ZodNativeEnum
+      ) {
         field.options = extractEnumOptions(unwrappedType);
       }
-      
+
       return field;
     });
 }
@@ -203,15 +219,15 @@ export function validateWithZod(
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string> = {};
-      
+
       for (const issue of error.errors) {
         const path = issue.path.join('.');
         errors[path] = issue.message;
       }
-      
+
       return errors;
     }
-    
+
     return { _form: 'Invalid form data' };
   }
 }

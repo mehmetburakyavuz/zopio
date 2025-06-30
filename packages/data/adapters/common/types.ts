@@ -1,6 +1,6 @@
 /**
  * Common Adapter Types
- * 
+ *
  * Type definitions shared across data adapters.
  */
 
@@ -20,14 +20,14 @@ export interface RelationObject {
 /**
  * Filter operator types for query building
  */
-export type FilterOperator = 
-  | '$eq'     // Equal to
-  | '$ne'     // Not equal to
-  | '$gt'     // Greater than
-  | '$gte'    // Greater than or equal to
-  | '$lt'     // Less than
-  | '$lte'    // Less than or equal to
-  | '$in'     // In array
-  | '$nin'    // Not in array
+export type FilterOperator =
+  | '$eq' // Equal to
+  | '$ne' // Not equal to
+  | '$gt' // Greater than
+  | '$gte' // Greater than or equal to
+  | '$lt' // Less than
+  | '$lte' // Less than or equal to
+  | '$in' // In array
+  | '$nin' // Not in array
   | '$contains' // Contains substring
   | '$exists'; // Field exists

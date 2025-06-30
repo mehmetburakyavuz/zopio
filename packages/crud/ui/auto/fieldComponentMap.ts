@@ -11,7 +11,7 @@ import {} from '@repo/design-system/components/ui/radio-group';
 import {} from '@repo/design-system/components/ui/select';
 
 // Import field component props type
-import { type FieldComponentProps } from './types';
+import type { FieldComponentProps } from './types';
 
 // Translation hook - replace with actual implementation if available
 interface TranslationHook {

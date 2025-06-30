@@ -16,23 +16,9 @@ export default {
         'refactor',
         'revert',
         'style',
-        'test'
-      ]
+        'test',
+      ],
     ],
     'subject-case': [0], // Disable case checking for subject
-  }
+  },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

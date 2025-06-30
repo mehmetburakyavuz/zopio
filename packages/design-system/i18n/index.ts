@@ -1,6 +1,6 @@
 /**
  * Design System Internationalization
- * 
+ *
  * This file provides a unified i18n integration for all design system components,
  * ensuring consistent translation handling across the application.
  */
@@ -82,7 +82,8 @@ const defaultTranslations = {
       no: 'No',
       delete: 'Delete',
       deleteConfirmation: 'Are you sure you want to delete this item?',
-      deleteConfirmationMultiple: 'Are you sure you want to delete these items?',
+      deleteConfirmationMultiple:
+        'Are you sure you want to delete these items?',
     },
     fileUpload: {
       dragDrop: 'Drag and drop files here',
@@ -180,7 +181,8 @@ const defaultTranslations = {
       no: 'Hayır',
       delete: 'Sil',
       deleteConfirmation: 'Bu öğeyi silmek istediğinizden emin misiniz?',
-      deleteConfirmationMultiple: 'Bu öğeleri silmek istediğinizden emin misiniz?',
+      deleteConfirmationMultiple:
+        'Bu öğeleri silmek istediğinizden emin misiniz?',
     },
     fileUpload: {
       dragDrop: 'Dosyaları buraya sürükleyip bırakın',
@@ -278,7 +280,8 @@ const defaultTranslations = {
       no: 'No',
       delete: 'Eliminar',
       deleteConfirmation: '¿Está seguro de que desea eliminar este elemento?',
-      deleteConfirmationMultiple: '¿Está seguro de que desea eliminar estos elementos?',
+      deleteConfirmationMultiple:
+        '¿Está seguro de que desea eliminar estos elementos?',
     },
     fileUpload: {
       dragDrop: 'Arrastre y suelte archivos aquí',
@@ -375,8 +378,10 @@ const defaultTranslations = {
       yes: 'Ja',
       no: 'Nein',
       delete: 'Löschen',
-      deleteConfirmation: 'Sind Sie sicher, dass Sie dieses Element löschen möchten?',
-      deleteConfirmationMultiple: 'Sind Sie sicher, dass Sie diese Elemente löschen möchten?',
+      deleteConfirmation:
+        'Sind Sie sicher, dass Sie dieses Element löschen möchten?',
+      deleteConfirmationMultiple:
+        'Sind Sie sicher, dass Sie diese Elemente löschen möchten?',
     },
     fileUpload: {
       dragDrop: 'Dateien hier ablegen',
@@ -402,13 +407,17 @@ const defaultTranslations = {
 };
 
 // Global translation function that can be set by the application
-let globalTranslate: ((key: string, params?: Record<string, string | number>) => string) | null = null;
+let globalTranslate:
+  | ((key: string, params?: Record<string, string | number>) => string)
+  | null = null;
 
 /**
  * Set the global translation function
  * @param translateFn - Translation function to use
  */
-export function setTranslator(translateFn: (key: string, params?: Record<string, string | number>) => string): void {
+export function setTranslator(
+  translateFn: (key: string, params?: Record<string, string | number>) => string
+): void {
   globalTranslate = translateFn;
 }
 
@@ -418,33 +427,40 @@ export function setTranslator(translateFn: (key: string, params?: Record<string,
  * @param params - Optional parameters for interpolation
  * @returns Translated string
  */
-export function t(key: string, params?: Record<string, string | number>): string {
+export function t(
+  key: string,
+  params?: Record<string, string | number>
+): string {
   if (globalTranslate) {
     return globalTranslate(key, params);
   }
-  
+
   // Fallback to simple key lookup in default translations
   const [namespace, messageKey] = key.split('.');
   const locale = 'en'; // Default to English if no global translator
-  
+
   if (!namespace || !messageKey) {
     return key;
   }
-  
-  const translation = defaultTranslations[locale as keyof typeof defaultTranslations]?.[namespace as keyof typeof defaultTranslations.en]?.[messageKey as keyof typeof defaultTranslations.en.common];
-  
+
+  const translation =
+    defaultTranslations[locale as keyof typeof defaultTranslations]?.[
+      namespace as keyof typeof defaultTranslations.en
+    ]?.[messageKey as keyof typeof defaultTranslations.en.common];
+
   if (typeof translation !== 'string') {
     return key;
   }
-  
+
   // Simple parameter replacement
   if (params) {
     return Object.entries(params).reduce(
-      (str, [paramKey, paramValue]) => str.replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue)),
+      (str, [paramKey, paramValue]) =>
+        str.replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue)),
       translation
     );
   }
-  
+
   return translation;
 }
 

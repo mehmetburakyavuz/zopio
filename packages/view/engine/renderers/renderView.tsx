@@ -1,16 +1,29 @@
-import type { ViewSchema, FormViewSchema, TableViewSchema, DetailViewSchema, AuditLogViewSchema, ImportViewSchema, ExportViewSchema } from "./types";
-import * as React from "react";
-import { safeValidateViewSchema } from "../validation/schema";
-import { ViewErrorBoundary, UnsupportedViewTypeError, ViewRenderingError, ViewSchemaValidationError } from "../error";
-import { useViewTranslations } from "../../i18n";
+import type * as React from 'react';
+import { useViewTranslations } from '../../i18n';
+import {
+  UnsupportedViewTypeError,
+  ViewErrorBoundary,
+  ViewRenderingError,
+  ViewSchemaValidationError,
+} from '../error';
+import { safeValidateViewSchema } from '../validation/schema';
+import type {
+  AuditLogViewSchema,
+  DetailViewSchema,
+  ExportViewSchema,
+  FormViewSchema,
+  ImportViewSchema,
+  TableViewSchema,
+  ViewSchema,
+} from './types';
 
+import { AutoAuditLogView } from '@repo/crud/ui/auto/AutoAuditLogView';
+import { AutoDetail } from '@repo/crud/ui/auto/AutoDetail';
+import { AutoExport } from '@repo/crud/ui/auto/AutoExport';
 // Import CRUD components
-import { AutoForm } from "@repo/crud/ui/auto/AutoForm";
-import { AutoTable } from "@repo/crud/ui/auto/AutoTable";
-import { AutoDetail } from "@repo/crud/ui/auto/AutoDetail";
-import { AutoAuditLogView } from "@repo/crud/ui/auto/AutoAuditLogView";
-import { AutoImport } from "@repo/crud/ui/auto/AutoImport";
-import { AutoExport } from "@repo/crud/ui/auto/AutoExport";
+import { AutoForm } from '@repo/crud/ui/auto/AutoForm';
+import { AutoImport } from '@repo/crud/ui/auto/AutoImport';
+import { AutoTable } from '@repo/crud/ui/auto/AutoTable';
 
 /**
  * Props for the RenderView component
@@ -26,12 +39,20 @@ interface RenderViewProps {
 /**
  * Form view renderer component
  */
-function FormView({ schema, data, onSubmit }: { schema: FormViewSchema; data?: Record<string, unknown>; onSubmit?: (data: Record<string, unknown>) => void | Promise<void> }): JSX.Element {
+function FormView({
+  schema,
+  data,
+  onSubmit,
+}: {
+  schema: FormViewSchema;
+  data?: Record<string, unknown>;
+  onSubmit?: (data: Record<string, unknown>) => void | Promise<void>;
+}): JSX.Element {
   const t = useViewTranslations(schema.i18nNamespace);
-  
+
   return (
-    <AutoForm 
-      schema={schema.schema} 
+    <AutoForm
+      schema={schema.schema}
       initialData={data}
       onSubmit={onSubmit}
       submitLabel={schema.submitLabel ? t(schema.submitLabel) : undefined}
@@ -46,12 +67,15 @@ function FormView({ schema, data, onSubmit }: { schema: FormViewSchema; data?: R
 /**
  * Table view renderer component
  */
-function TableView({ schema, data }: { schema: TableViewSchema; data?: Record<string, unknown>[] }): JSX.Element {
+function TableView({
+  schema,
+  data,
+}: { schema: TableViewSchema; data?: Record<string, unknown>[] }): JSX.Element {
   const t = useViewTranslations(schema.i18nNamespace);
-  
+
   return (
-    <AutoTable 
-      schema={schema.schema} 
+    <AutoTable
+      schema={schema.schema}
       data={data || []}
       columns={schema.columns}
       pagination={schema.pagination}
@@ -66,12 +90,15 @@ function TableView({ schema, data }: { schema: TableViewSchema; data?: Record<st
 /**
  * Detail view renderer component
  */
-function DetailView({ schema, data }: { schema: DetailViewSchema; data?: Record<string, unknown> }): JSX.Element {
+function DetailView({
+  schema,
+  data,
+}: { schema: DetailViewSchema; data?: Record<string, unknown> }): JSX.Element {
   const t = useViewTranslations(schema.i18nNamespace);
-  
+
   return (
-    <AutoDetail 
-      schema={schema.schema} 
+    <AutoDetail
+      schema={schema.schema}
       data={data || {}}
       fields={schema.fields}
       layout={schema.layout}
@@ -85,10 +112,10 @@ function DetailView({ schema, data }: { schema: DetailViewSchema; data?: Record<
  */
 function AuditLogView({ schema }: { schema: AuditLogViewSchema }): JSX.Element {
   const t = useViewTranslations(schema.i18nNamespace);
-  
+
   return (
-    <AutoAuditLogView 
-      schema={schema.schema} 
+    <AutoAuditLogView
+      schema={schema.schema}
       entityIdField={schema.entityIdField}
       showUser={schema.showUser}
       showTimestamp={schema.showTimestamp}
@@ -100,12 +127,18 @@ function AuditLogView({ schema }: { schema: AuditLogViewSchema }): JSX.Element {
 /**
  * Import view renderer component
  */
-function ImportView({ schema, onSubmit }: { schema: ImportViewSchema; onSubmit?: (data: Record<string, unknown>) => void | Promise<void> }): JSX.Element {
+function ImportView({
+  schema,
+  onSubmit,
+}: {
+  schema: ImportViewSchema;
+  onSubmit?: (data: Record<string, unknown>) => void | Promise<void>;
+}): JSX.Element {
   const t = useViewTranslations(schema.i18nNamespace);
-  
+
   return (
-    <AutoImport 
-      schema={schema.schema} 
+    <AutoImport
+      schema={schema.schema}
       onImportComplete={onSubmit}
       fileTypes={schema.fileTypes}
       maxFileSize={schema.maxFileSize}
@@ -120,10 +153,10 @@ function ImportView({ schema, onSubmit }: { schema: ImportViewSchema; onSubmit?:
  */
 function ExportView({ schema }: { schema: ExportViewSchema }): JSX.Element {
   const t = useViewTranslations(schema.i18nNamespace);
-  
+
   return (
-    <AutoExport 
-      schema={schema.schema} 
+    <AutoExport
+      schema={schema.schema}
       formats={schema.formats}
       defaultFormat={schema.defaultFormat}
       includeHeaders={schema.includeHeaders}
@@ -135,35 +168,62 @@ function ExportView({ schema }: { schema: ExportViewSchema }): JSX.Element {
 /**
  * Main view renderer component that selects the appropriate renderer based on the view type
  */
-function RenderView({ schema, locale, data, onSubmit, onError }: RenderViewProps): JSX.Element {
+function RenderView({
+  schema,
+  locale,
+  data,
+  onSubmit,
+  onError,
+}: RenderViewProps): JSX.Element {
   try {
     // Validate the schema
     const validationResult = safeValidateViewSchema(schema);
-    
+
     // If validation fails, throw a validation error
     if (!validationResult.success) {
       throw new ViewSchemaValidationError(
-        "Invalid view schema", 
+        'Invalid view schema',
         validationResult.error
       );
     }
-    
+
     // Use the validated schema
     const validatedSchema = validationResult.data;
-    
+
     // Render the appropriate component based on the view type
     switch (validatedSchema.type) {
-      case "form":
-        return <FormView schema={validatedSchema as FormViewSchema} data={data as Record<string, unknown>} onSubmit={onSubmit} />;
-      case "table":
-        return <TableView schema={validatedSchema as TableViewSchema} data={data as Record<string, unknown>[]} />;
-      case "detail":
-        return <DetailView schema={validatedSchema as DetailViewSchema} data={data as Record<string, unknown>} />;
-      case "audit-log":
+      case 'form':
+        return (
+          <FormView
+            schema={validatedSchema as FormViewSchema}
+            data={data as Record<string, unknown>}
+            onSubmit={onSubmit}
+          />
+        );
+      case 'table':
+        return (
+          <TableView
+            schema={validatedSchema as TableViewSchema}
+            data={data as Record<string, unknown>[]}
+          />
+        );
+      case 'detail':
+        return (
+          <DetailView
+            schema={validatedSchema as DetailViewSchema}
+            data={data as Record<string, unknown>}
+          />
+        );
+      case 'audit-log':
         return <AuditLogView schema={validatedSchema as AuditLogViewSchema} />;
-      case "import":
-        return <ImportView schema={validatedSchema as ImportViewSchema} onSubmit={onSubmit} />;
-      case "export":
+      case 'import':
+        return (
+          <ImportView
+            schema={validatedSchema as ImportViewSchema}
+            onSubmit={onSubmit}
+          />
+        );
+      case 'export':
         return <ExportView schema={validatedSchema as ExportViewSchema} />;
       default:
         throw new UnsupportedViewTypeError(validatedSchema.type as string);
@@ -174,17 +234,22 @@ function RenderView({ schema, locale, data, onSubmit, onError }: RenderViewProps
       if (onError) {
         onError(error);
       }
-      
+
       // Wrap the error in a ViewRenderingError if it's not already a ViewError
-      if (!(error instanceof ViewSchemaValidationError || error instanceof UnsupportedViewTypeError)) {
-        throw new ViewRenderingError("Error rendering view", error);
+      if (
+        !(
+          error instanceof ViewSchemaValidationError ||
+          error instanceof UnsupportedViewTypeError
+        )
+      ) {
+        throw new ViewRenderingError('Error rendering view', error);
       }
-      
+
       throw error;
     }
-    
+
     // If it's not an Error instance, wrap it
-    throw new ViewRenderingError("Unknown error rendering view");
+    throw new ViewRenderingError('Unknown error rendering view');
   }
 }
 
@@ -206,10 +271,10 @@ export function renderView(
 ): JSX.Element {
   return (
     <ViewErrorBoundary fallback={options?.errorFallback}>
-      <RenderView 
-        schema={schema} 
-        locale={options?.locale} 
-        data={options?.data as Record<string, unknown>} 
+      <RenderView
+        schema={schema}
+        locale={options?.locale}
+        data={options?.data as Record<string, unknown>}
         onSubmit={options?.onSubmit}
         onError={options?.onError}
       />

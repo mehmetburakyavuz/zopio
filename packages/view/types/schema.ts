@@ -1,6 +1,6 @@
 /**
  * View Schema Type Definitions
- * 
+ *
  * This file contains comprehensive TypeScript type definitions for view schemas,
  * ensuring type safety across the view and view-builder modules.
  */
@@ -52,10 +52,20 @@ export type FieldType =
 
 // Validation rule for field validation
 export interface ValidationRule {
-  type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
+  type:
+    | 'required'
+    | 'min'
+    | 'max'
+    | 'minLength'
+    | 'maxLength'
+    | 'pattern'
+    | 'custom';
   value?: unknown;
   message: string;
-  validator?: (value: unknown, formValues: Record<string, unknown>) => boolean | Promise<boolean>;
+  validator?: (
+    value: unknown,
+    formValues: Record<string, unknown>
+  ) => boolean | Promise<boolean>;
 }
 
 // Field option for select, multiselect, radio, etc.
@@ -236,7 +246,13 @@ export interface BaseViewSchema {
 }
 
 // View types supported by the view system
-export type ViewType = 'form' | 'table' | 'detail' | 'audit-log' | 'import' | 'export';
+export type ViewType =
+  | 'form'
+  | 'table'
+  | 'detail'
+  | 'audit-log'
+  | 'import'
+  | 'export';
 
 // Form view schema
 export interface FormViewSchema extends BaseViewSchema {

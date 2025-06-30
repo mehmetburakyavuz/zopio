@@ -4,7 +4,7 @@ interface ConfigOptions {
 
 export default function configTemplate(options: ConfigOptions = {}): string {
   const { projectName = 'zopio-app' } = options;
-  
+
   return `// Zopio Configuration File
 export default {
   // Project information
@@ -35,5 +35,5 @@ export default {
   // Plugin settings
   plugins: []
 };
-`
+`;
 }

@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 export default function Tabs({ children }) {
   // Find all child TabItems
   const tabItems = React.Children.toArray(children).filter(
-    child => child.type?.name === 'TabItem'
+    (child) => child.type?.name === 'TabItem'
   );
 
   // Set the first tab as active by default
@@ -22,10 +22,10 @@ export default function Tabs({ children }) {
         style={{
           display: 'flex',
           borderBottom: '1px solid #e2e8f0',
-          marginBottom: '1rem'
+          marginBottom: '1rem',
         }}
       >
-        {tabItems.map(tab => (
+        {tabItems.map((tab) => (
           <button
             key={tab.props.value}
             onClick={() => setActiveTab(tab.props.value)}
@@ -34,18 +34,17 @@ export default function Tabs({ children }) {
               border: 'none',
               background: 'none',
               cursor: 'pointer',
-              borderBottom: activeTab === tab.props.value ? '2px solid #4299e1' : 'none',
+              borderBottom:
+                activeTab === tab.props.value ? '2px solid #4299e1' : 'none',
               fontWeight: activeTab === tab.props.value ? 'bold' : 'normal',
-              color: activeTab === tab.props.value ? '#4299e1' : 'inherit'
+              color: activeTab === tab.props.value ? '#4299e1' : 'inherit',
             }}
           >
             {tab.props.label}
           </button>
         ))}
       </div>
-      <div>
-        {tabItems.find(tab => tab.props.value === activeTab)}
-      </div>
+      <div>{tabItems.find((tab) => tab.props.value === activeTab)}</div>
     </div>
   );
 }

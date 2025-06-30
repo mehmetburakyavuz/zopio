@@ -12,7 +12,7 @@ export { zodSchemaToFieldDefinitions, validateWithZod } from './auto/zodUtils';
 export { useZodForm } from './hooks/useZodForm';
 
 // Types
-export type { 
+export type {
   FieldType,
   FieldValue,
   FieldOption,
@@ -24,7 +24,7 @@ export type {
   TableColumn,
   TablePagination,
   TableSorting,
-  AutoTableProps
+  AutoTableProps,
 } from './types';
 export type { ZodFormProps } from './auto/ZodForm';
 export type { UseZodFormOptions, UseZodFormReturn } from './hooks/useZodForm';

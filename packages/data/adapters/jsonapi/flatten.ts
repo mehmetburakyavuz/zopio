@@ -1,6 +1,6 @@
 /**
  * JSON:API Flattener
- * 
+ *
  * Flattens JSON:API entities into simple objects for easier consumption.
  */
 
@@ -18,13 +18,13 @@ interface JsonApiResource {
 
 /**
  * Flattens a JSON:API entity into a simple object
- * 
+ *
  * @param data - The JSON:API entity to flatten
  * @returns A flattened object with ID and attributes
  */
 export const flattenJsonApi = (data: JsonApiResource): GenericRecord => {
   const result: GenericRecord = { id: data.id, ...(data.attributes || {}) };
-  
+
   if (data.relationships) {
     for (const key in data.relationships) {
       if (Object.prototype.hasOwnProperty.call(data.relationships, key)) {
@@ -32,6 +32,6 @@ export const flattenJsonApi = (data: JsonApiResource): GenericRecord => {
       }
     }
   }
-  
+
   return result;
 };

@@ -33,13 +33,13 @@ export class PluginManager {
     try {
       // Load built-in plugins
       await this.loadBuiltInPlugins();
-      
+
       // Load project plugins
       await this.loadProjectPlugins();
-      
+
       // Load user plugins
       await this.loadUserPlugins();
-      
+
       return this.commands;
     } catch (error) {
       logger.error(`Failed to load plugins: ${(error as Error).message}`);
@@ -52,24 +52,27 @@ export class PluginManager {
    */
   async loadBuiltInPlugins(): Promise<void> {
     const builtInPluginsDir = path.join(__dirname, '..', '..', 'plugins');
-    
+
     if (fs.existsSync(builtInPluginsDir)) {
-      const pluginFiles = fs.readdirSync(builtInPluginsDir)
-        .filter(file => file.endsWith('.js'));
-      
+      const pluginFiles = fs
+        .readdirSync(builtInPluginsDir)
+        .filter((file) => file.endsWith('.js'));
+
       for (const pluginFile of pluginFiles) {
         try {
           const pluginPath = path.join(builtInPluginsDir, pluginFile);
           // Convert to file:// URL for ES modules
           const pluginUrl = `file://${pluginPath.replace(/\\/g, '/')}`;
           const plugin = await import(pluginUrl);
-          
+
           if (plugin.default && typeof plugin.default === 'function') {
             const pluginName = path.basename(pluginFile, '.js');
             this.registerPlugin(pluginName, plugin.default);
           }
         } catch (error) {
-          logger.error(`Failed to load built-in plugin ${pluginFile}: ${(error as Error).message}`);
+          logger.error(
+            `Failed to load built-in plugin ${pluginFile}: ${(error as Error).message}`
+          );
         }
       }
     }
@@ -80,24 +83,27 @@ export class PluginManager {
    */
   async loadProjectPlugins(): Promise<void> {
     const projectPluginsDir = path.join(process.cwd(), '.zopio', 'plugins');
-    
+
     if (fs.existsSync(projectPluginsDir)) {
-      const pluginFiles = fs.readdirSync(projectPluginsDir)
-        .filter(file => file.endsWith('.js'));
-      
+      const pluginFiles = fs
+        .readdirSync(projectPluginsDir)
+        .filter((file) => file.endsWith('.js'));
+
       for (const pluginFile of pluginFiles) {
         try {
           const pluginPath = path.join(projectPluginsDir, pluginFile);
           // Convert to file:// URL for ES modules
           const pluginUrl = `file://${pluginPath.replace(/\\/g, '/')}`;
           const plugin = await import(pluginUrl);
-          
+
           if (plugin.default && typeof plugin.default === 'function') {
             const pluginName = path.basename(pluginFile, '.js');
             this.registerPlugin(pluginName, plugin.default);
           }
         } catch (error) {
-          logger.error(`Failed to load project plugin ${pluginFile}: ${(error as Error).message}`);
+          logger.error(
+            `Failed to load project plugin ${pluginFile}: ${(error as Error).message}`
+          );
         }
       }
     }
@@ -111,26 +117,29 @@ export class PluginManager {
     if (!userHome) {
       return;
     }
-    
+
     const userPluginsDir = path.join(userHome, '.zopio', 'plugins');
-    
+
     if (fs.existsSync(userPluginsDir)) {
-      const pluginFiles = fs.readdirSync(userPluginsDir)
-        .filter(file => file.endsWith('.js'));
-      
+      const pluginFiles = fs
+        .readdirSync(userPluginsDir)
+        .filter((file) => file.endsWith('.js'));
+
       for (const pluginFile of pluginFiles) {
         try {
           const pluginPath = path.join(userPluginsDir, pluginFile);
           // Convert to file:// URL for ES modules
           const pluginUrl = `file://${pluginPath.replace(/\\/g, '/')}`;
           const plugin = await import(pluginUrl);
-          
+
           if (plugin.default && typeof plugin.default === 'function') {
             const pluginName = path.basename(pluginFile, '.js');
             this.registerPlugin(pluginName, plugin.default);
           }
         } catch (error) {
-          logger.error(`Failed to load user plugin ${pluginFile}: ${(error as Error).message}`);
+          logger.error(
+            `Failed to load user plugin ${pluginFile}: ${(error as Error).message}`
+          );
         }
       }
     }
@@ -144,18 +153,20 @@ export class PluginManager {
       logger.warning(`Plugin '${name}' is already registered. Skipping.`);
       return;
     }
-    
+
     try {
       const commands = initFunction();
       this.plugins.set(name, { name, commands });
-      
+
       if (Array.isArray(commands)) {
         this.commands.push(...commands);
       }
-      
+
       logger.info(`Loaded plugin: ${name}`);
     } catch (error) {
-      logger.error(`Failed to initialize plugin '${name}': ${(error as Error).message}`);
+      logger.error(
+        `Failed to initialize plugin '${name}': ${(error as Error).message}`
+      );
     }
   }
 }

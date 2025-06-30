@@ -2,18 +2,18 @@
  * Drizzle provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 // Import Drizzle operators
@@ -67,15 +67,18 @@ export interface DrizzleClientConfig {
 /**
  * Create a Drizzle provider
  */
-export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider {
+export function createDrizzleProvider(
+  config: DrizzleClientConfig
+): CrudProvider {
   const { db, schema, operators } = config;
-  
+
   // Use provided operators or create placeholders
   const { eq, asc, desc, count } = operators || {
-    eq: (column: unknown, value: unknown) => ({ type: 'eq', column, value }) as SQL<unknown>,
+    eq: (column: unknown, value: unknown) =>
+      ({ type: 'eq', column, value }) as SQL<unknown>,
     asc: (column: unknown) => ({ type: 'asc', column }) as SQL<unknown>,
     desc: (column: unknown) => ({ type: 'desc', column }) as SQL<unknown>,
-    count: () => ({ type: 'count' }) as SQL<unknown>
+    count: () => ({ type: 'count' }) as SQL<unknown>,
   };
 
   // Helper function to get the table from the schema
@@ -100,7 +103,9 @@ export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider
     let filteredQuery = query;
     for (const [key, value] of Object.entries(filter)) {
       if (value !== undefined && value !== null) {
-        filteredQuery = filteredQuery.where(eq((table as Record<string, unknown>)[key], value));
+        filteredQuery = filteredQuery.where(
+          eq((table as Record<string, unknown>)[key], value)
+        );
       }
     }
     return filteredQuery;
@@ -117,9 +122,7 @@ export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider
     }
 
     return query.orderBy(
-      sort.order === 'asc' 
-        ? asc(table[sort.field]) 
-        : desc(table[sort.field])
+      sort.order === 'asc' ? asc(table[sort.field]) : desc(table[sort.field])
     );
   };
 
@@ -138,14 +141,23 @@ export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider
   };
 
   // Helper function to get the total count
-  const getTotalCount = async (table: Record<string, unknown>): Promise<number> => {
+  const getTotalCount = async (
+    table: Record<string, unknown>
+  ): Promise<number> => {
     const countQuery = db.select({ count: count() }).from(table);
     const countResult = await countQuery;
-    return countResult[0] ? (countResult[0] as Record<string, number>).count : 0;
+    return countResult[0]
+      ? (countResult[0] as Record<string, number>).count
+      : 0;
   };
 
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         // Get the table from the schema
         const table = getTableFromSchema(resource);
@@ -179,7 +191,11 @@ export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider
         }
 
         // Build query
-        const query = db.select().from(table).where(eq((table as Record<string, unknown>).id, id)).limit(1);
+        const query = db
+          .select()
+          .from(table)
+          .where(eq((table as Record<string, unknown>).id, id))
+          .limit(1);
 
         // Execute query
         const [data] = await query;
@@ -214,7 +230,11 @@ export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         // Get the table from the schema
         const table = schema[resource];
@@ -274,6 +294,6 @@ export function createDrizzleProvider(config: DrizzleClientConfig): CrudProvider
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

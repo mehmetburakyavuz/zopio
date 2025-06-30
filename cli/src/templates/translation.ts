@@ -11,7 +11,10 @@ interface Translations {
   [locale: string]: TranslationSet;
 }
 
-export default function translationTemplate(namespace: string, locale: string): string {
+export default function translationTemplate(
+  namespace: string,
+  locale: string
+): string {
   // Default translations for different locales based on memory
   const translations: Translations = {
     en: {
@@ -19,31 +22,31 @@ export default function translationTemplate(namespace: string, locale: string): 
       description: 'Description',
       button: 'Button',
       save: 'Save',
-      cancel: 'Cancel'
+      cancel: 'Cancel',
     },
     tr: {
       title: 'Başlık',
       description: 'Açıklama',
       button: 'Düğme',
       save: 'Kaydet',
-      cancel: 'İptal'
+      cancel: 'İptal',
     },
     es: {
       title: 'Título',
       description: 'Descripción',
       button: 'Botón',
       save: 'Guardar',
-      cancel: 'Cancelar'
+      cancel: 'Cancelar',
     },
     de: {
       title: 'Titel',
       description: 'Beschreibung',
       button: 'Knopf',
       save: 'Speichern',
-      cancel: 'Abbrechen'
-    }
+      cancel: 'Abbrechen',
+    },
   };
-  
+
   // Return the translations for the specified locale or fallback to English
   // Add namespace as a comment to show it's being used
   return `// Translations for namespace: ${namespace}

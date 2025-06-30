@@ -1,5 +1,10 @@
 declare module 'react' {
-  export interface ReactElement<P = Record<string, unknown>, T extends string | JSXElementConstructor<Record<string, unknown>> = string | JSXElementConstructor<Record<string, unknown>>> {
+  export interface ReactElement<
+    P = Record<string, unknown>,
+    T extends string | JSXElementConstructor<Record<string, unknown>> =
+      | string
+      | JSXElementConstructor<Record<string, unknown>>,
+  > {
     type: T;
     props: P;
     key: Key | null;
@@ -8,8 +13,15 @@ declare module 'react' {
   export type Key = string | number;
 
   export type JSXElementConstructor<P> =
-    | ((props: P) => ReactElement<Record<string, unknown>, string | JSXElementConstructor<Record<string, unknown>>> | null)
-    | (new (props: P) => Component<P, Record<string, unknown>>);
+    | ((
+        props: P
+      ) => ReactElement<
+        Record<string, unknown>,
+        string | JSXElementConstructor<Record<string, unknown>>
+      > | null)
+    | (new (
+        props: P
+      ) => Component<P, Record<string, unknown>>);
 
   export interface RefObject<T> {
     readonly current: T | null;
@@ -18,22 +30,34 @@ declare module 'react' {
   export type Ref<T> = RefCallback<T> | RefObject<T> | null;
   export type RefCallback<T> = (instance: T | null) => void;
 
-  export type ComponentType<P = Record<string, unknown>> = ComponentClass<P> | FunctionComponent<P>;
+  export type ComponentType<P = Record<string, unknown>> =
+    | ComponentClass<P>
+    | FunctionComponent<P>;
 
   export interface FunctionComponent<P = Record<string, unknown>> {
-    (props: P, context?: unknown): ReactElement<Record<string, unknown>, string | JSXElementConstructor<Record<string, unknown>>> | null;
+    (
+      props: P,
+      context?: unknown
+    ): ReactElement<
+      Record<string, unknown>,
+      string | JSXElementConstructor<Record<string, unknown>>
+    > | null;
     displayName?: string;
   }
 
-  export interface ForwardRefExoticComponent<P> extends NamedExoticComponent<P> {
+  export interface ForwardRefExoticComponent<P>
+    extends NamedExoticComponent<P> {
     defaultProps?: Partial<P>;
   }
 
-  export interface NamedExoticComponent<P = Record<string, unknown>> extends ExoticComponent<P> {
+  export interface NamedExoticComponent<P = Record<string, unknown>>
+    extends ExoticComponent<P> {
     displayName?: string;
   }
 
-  export type ExoticComponent<P = Record<string, unknown>> = (props: P) => ReactElement | null;
+  export type ExoticComponent<P = Record<string, unknown>> = (
+    props: P
+  ) => ReactElement | null;
 
   export interface RefAttributes<T> extends Attributes {
     ref?: Ref<T>;
@@ -48,15 +72,23 @@ declare module 'react' {
     props: Readonly<P>;
     state: Readonly<S>;
     setState<K extends keyof S>(
-      state: ((prevState: Readonly<S>, props: Readonly<P>) => (Pick<S, K> | S | null)) | (Pick<S, K> | S | null),
+      state:
+        | ((
+            prevState: Readonly<S>,
+            props: Readonly<P>
+          ) => Pick<S, K> | S | null)
+        | (Pick<S, K> | S | null),
       callback?: () => void
     ): void;
     forceUpdate(callback?: () => void): void;
     render(): ReactNode;
   }
 
-  export interface ComponentClass<P = Record<string, unknown>, S = Record<string, unknown>> extends StaticLifecycle<P, S> {
-    new(props: P, context?: unknown): Component<P, S>;
+  export interface ComponentClass<
+    P = Record<string, unknown>,
+    S = Record<string, unknown>,
+  > extends StaticLifecycle<P, S> {
+    new (props: P, context?: unknown): Component<P, S>;
     displayName?: string;
     defaultProps?: Partial<P>;
   }
@@ -180,40 +212,55 @@ declare module 'react' {
 
   export type ChangeEventHandler<T = Element> = (event: ChangeEvent<T>) => void;
 
-  export function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
-  export function useState<S = undefined>(): [S | undefined, Dispatch<SetStateAction<S | undefined>>];
+  export function useState<S>(
+    initialState: S | (() => S)
+  ): [S, Dispatch<SetStateAction<S>>];
+  export function useState<S = undefined>(): [
+    S | undefined,
+    Dispatch<SetStateAction<S | undefined>>,
+  ];
 
   export type Dispatch<A> = (value: A) => void;
   export type SetStateAction<S> = S | ((prevState: S) => S);
 
-  export function useEffect(effect: EffectCallback, deps?: DependencyList): void;
-  export function useCallback<T extends (...args: unknown[]) => unknown>(callback: T, deps: DependencyList): T;
+  export function useEffect(
+    effect: EffectCallback,
+    deps?: DependencyList
+  ): void;
+  export function useCallback<T extends (...args: unknown[]) => unknown>(
+    callback: T,
+    deps: DependencyList
+  ): T;
 
-  export type EffectCallback = () => ((() => void) | undefined);
+  export type EffectCallback = () => (() => void) | undefined;
   export type DependencyList = ReadonlyArray<unknown>;
 
   export const Fragment: ExoticComponent<{ children?: ReactNode }>;
-  
+
   // Add missing React hooks and functions
-  export function createElement<P>(type: string | ComponentType<P>, props?: P | null, ...children: ReactNode[]): ReactElement<P>;
+  export function createElement<P>(
+    type: string | ComponentType<P>,
+    props?: P | null,
+    ...children: ReactNode[]
+  ): ReactElement<P>;
   export function createContext<T>(defaultValue: T): Context<T>;
   export function useContext<T>(context: Context<T>): T;
-  
+
   export interface Context<T> {
     Provider: Provider<T>;
     Consumer: Consumer<T>;
     displayName?: string;
   }
-  
+
   export type Provider<T> = (props: ProviderProps<T>) => ReactElement | null;
-  
+
   export type Consumer<T> = (props: ConsumerProps<T>) => ReactElement | null;
-  
+
   export interface ProviderProps<T> {
     value: T;
     children?: ReactNode;
   }
-  
+
   export interface ConsumerProps<T> {
     children: (value: T) => ReactNode;
   }

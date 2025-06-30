@@ -1,12 +1,12 @@
 /**
  * MCP Client implementation
  */
-import type { 
-  MCPClientConfig, 
-  Resource, 
+import type {
   ListResourcesResponse,
+  MCPClientConfig,
+  MCPErrorResponse,
   ReadResourceResponse,
-  MCPErrorResponse
+  Resource,
 } from './types.js';
 
 /**
@@ -17,7 +17,7 @@ export class MCPClient {
 
   /**
    * Creates a new MCP client instance
-   * 
+   *
    * @param config Client configuration
    */
   constructor(config: MCPClientConfig) {
@@ -26,7 +26,7 @@ export class MCPClient {
 
   /**
    * Lists available resources from the server
-   * 
+   *
    * @param cursor Optional pagination cursor
    * @returns Promise resolving to list of available resources
    */
@@ -48,14 +48,14 @@ export class MCPClient {
 
   /**
    * Reads a resource from the server
-   * 
+   *
    * @param type Resource type
    * @param id Resource id
    * @returns Promise resolving to the resource
    */
   async readResource(type: string, id: string): Promise<Resource> {
     const url = new URL(`/resources/${type}/${id}`, this.config.serverUrl);
-    
+
     const response = await this.fetchWithHeaders(url.toString());
     const data = await response.json();
 
@@ -70,24 +70,24 @@ export class MCPClient {
 
   /**
    * Performs a fetch request with the configured headers
-   * 
+   *
    * @param url URL to fetch
    * @param options Additional fetch options
    * @returns Promise resolving to the fetch response
    */
   private async fetchWithHeaders(
-    url: string, 
+    url: string,
     options: RequestInit = {}
   ): Promise<Response> {
     const headers = {
       'Content-Type': 'application/json',
       ...this.config.headers,
-      ...options.headers
+      ...options.headers,
     };
 
     return await fetch(url, {
       ...options,
-      headers
+      headers,
     });
   }
 }

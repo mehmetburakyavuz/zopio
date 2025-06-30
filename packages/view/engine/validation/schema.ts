@@ -1,5 +1,5 @@
-import { z } from "zod";
-import type { ViewSchema } from "../renderers/types";
+import { z } from 'zod';
+import type { ViewSchema } from '../renderers/types';
 
 // Field definition schema
 const fieldDefinitionSchema = z.object({
@@ -11,12 +11,14 @@ const fieldDefinitionSchema = z.object({
   readOnly: z.union([z.boolean(), z.function()]).optional(),
   description: z.string().optional(),
   placeholder: z.string().optional(),
-  validation: z.object({
-    min: z.number().optional(),
-    max: z.number().optional(),
-    pattern: z.string().optional(),
-    message: z.string().optional(),
-  }).optional(),
+  validation: z
+    .object({
+      min: z.number().optional(),
+      max: z.number().optional(),
+      pattern: z.string().optional(),
+      message: z.string().optional(),
+    })
+    .optional(),
 });
 
 // Field definitions schema
@@ -27,7 +29,9 @@ const formSectionSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   fields: z.array(z.string()),
-  columns: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]).optional(),
+  columns: z
+    .union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)])
+    .optional(),
 });
 
 // Form tab schema
@@ -51,7 +55,7 @@ const baseViewSchema = z.object({
 
 // Form view schema
 const formViewSchema = baseViewSchema.extend({
-  type: z.literal("form"),
+  type: z.literal('form'),
   layout: formLayoutSchema.optional(),
   submitAction: z.string().optional(),
   resetLabel: z.string().optional(),
@@ -72,16 +76,20 @@ const tableColumnSchema = z.object({
 
 // Table view schema
 const tableViewSchema = baseViewSchema.extend({
-  type: z.literal("table"),
+  type: z.literal('table'),
   columns: z.array(tableColumnSchema),
-  pagination: z.object({
-    defaultPageSize: z.number().optional(),
-    pageSizeOptions: z.array(z.number()).optional(),
-  }).optional(),
-  defaultSort: z.object({
-    column: z.string(),
-    direction: z.union([z.literal("asc"), z.literal("desc")]),
-  }).optional(),
+  pagination: z
+    .object({
+      defaultPageSize: z.number().optional(),
+      pageSizeOptions: z.array(z.number()).optional(),
+    })
+    .optional(),
+  defaultSort: z
+    .object({
+      column: z.string(),
+      direction: z.union([z.literal('asc'), z.literal('desc')]),
+    })
+    .optional(),
   rowActions: z.array(z.string()).optional(),
   bulkActions: z.array(z.string()).optional(),
   selectable: z.boolean().optional(),
@@ -89,14 +97,14 @@ const tableViewSchema = baseViewSchema.extend({
 
 // Detail view schema
 const detailViewSchema = baseViewSchema.extend({
-  type: z.literal("detail"),
+  type: z.literal('detail'),
   layout: formLayoutSchema.optional(),
   actions: z.array(z.string()).optional(),
 });
 
 // Audit log view schema
 const auditLogViewSchema = baseViewSchema.extend({
-  type: z.literal("audit-log"),
+  type: z.literal('audit-log'),
   entityIdField: z.string().optional(),
   showUser: z.boolean().optional(),
   showTimestamp: z.boolean().optional(),
@@ -105,7 +113,7 @@ const auditLogViewSchema = baseViewSchema.extend({
 
 // Import view schema
 const importViewSchema = baseViewSchema.extend({
-  type: z.literal("import"),
+  type: z.literal('import'),
   fileTypes: z.array(z.string()).optional(),
   maxFileSize: z.number().optional(),
   templateUrl: z.string().optional(),
@@ -114,25 +122,31 @@ const importViewSchema = baseViewSchema.extend({
 
 // Export view schema
 const exportViewSchema = baseViewSchema.extend({
-  type: z.literal("export"),
-  formats: z.array(z.union([
-    z.literal("csv"),
-    z.literal("xlsx"),
-    z.literal("json"),
-    z.literal("pdf")
-  ])).optional(),
-  defaultFormat: z.union([
-    z.literal("csv"),
-    z.literal("xlsx"),
-    z.literal("json"),
-    z.literal("pdf")
-  ]).optional(),
+  type: z.literal('export'),
+  formats: z
+    .array(
+      z.union([
+        z.literal('csv'),
+        z.literal('xlsx'),
+        z.literal('json'),
+        z.literal('pdf'),
+      ])
+    )
+    .optional(),
+  defaultFormat: z
+    .union([
+      z.literal('csv'),
+      z.literal('xlsx'),
+      z.literal('json'),
+      z.literal('pdf'),
+    ])
+    .optional(),
   includeHeaders: z.boolean().optional(),
   fileName: z.string().optional(),
 });
 
 // Union of all view schemas
-const viewSchemaValidator = z.discriminatedUnion("type", [
+const viewSchemaValidator = z.discriminatedUnion('type', [
   formViewSchema,
   tableViewSchema,
   detailViewSchema,
@@ -146,7 +160,9 @@ const viewSchemaValidator = z.discriminatedUnion("type", [
  * @param schema The view schema to validate
  * @returns A zod validation result
  */
-export function validateViewSchema(schema: unknown): z.SafeParseReturnType<unknown, ViewSchema> {
+export function validateViewSchema(
+  schema: unknown
+): z.SafeParseReturnType<unknown, ViewSchema> {
   return viewSchemaValidator.safeParse(schema);
 }
 
@@ -155,20 +171,20 @@ export function validateViewSchema(schema: unknown): z.SafeParseReturnType<unkno
  * @param schema The view schema to validate
  * @returns An object with success flag and either the validated data or error
  */
-export function safeValidateViewSchema(schema: unknown): { 
-  success: boolean; 
-  data?: ViewSchema; 
-  error?: z.ZodError 
+export function safeValidateViewSchema(schema: unknown): {
+  success: boolean;
+  data?: ViewSchema;
+  error?: z.ZodError;
 } {
   const result = validateViewSchema(schema);
-  
+
   if (result.success) {
     return {
       success: true,
       data: result.data as ViewSchema,
     };
   }
-  
+
   return {
     success: false,
     error: result.error,

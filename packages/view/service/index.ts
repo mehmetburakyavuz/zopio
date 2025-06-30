@@ -1,7 +1,7 @@
-import type { ViewSchema } from "../engine/renderers/types";
-import { LocalStorageProvider } from "./storage/localStorage";
-import { FileStorageProvider } from "./storage/fileStorage";
-import type { ViewStorageProvider } from "./storage/types";
+import type { ViewSchema } from '../engine/renderers/types';
+import { FileStorageProvider } from './storage/fileStorage';
+import { LocalStorageProvider } from './storage/localStorage';
+import type { ViewStorageProvider } from './storage/types';
 
 // Default storage provider instance
 let defaultProvider: ViewStorageProvider;
@@ -21,7 +21,7 @@ export function initViewService(provider: ViewStorageProvider): void {
 function getDefaultProvider(): ViewStorageProvider {
   if (!defaultProvider) {
     // Default to localStorage in browser, file storage in Node.js
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       defaultProvider = new LocalStorageProvider();
     } else {
       // Default to a views directory in the current working directory
@@ -29,7 +29,7 @@ function getDefaultProvider(): ViewStorageProvider {
       defaultProvider = new FileStorageProvider(defaultPath);
     }
   }
-  
+
   return defaultProvider;
 }
 
@@ -41,8 +41,8 @@ function getDefaultProvider(): ViewStorageProvider {
  * @returns Promise that resolves when the view is saved
  */
 export async function saveView(
-  id: string, 
-  view: ViewSchema, 
+  id: string,
+  view: ViewSchema,
   provider?: ViewStorageProvider
 ): Promise<void> {
   const storage = provider || getDefaultProvider();
@@ -56,7 +56,7 @@ export async function saveView(
  * @returns Promise that resolves with the view schema or undefined if not found
  */
 export async function getView(
-  id: string, 
+  id: string,
   provider?: ViewStorageProvider
 ): Promise<ViewSchema | undefined> {
   const storage = provider || getDefaultProvider();
@@ -82,7 +82,7 @@ export async function listViews(
  * @returns Promise that resolves when the view is deleted
  */
 export async function deleteView(
-  id: string, 
+  id: string,
   provider?: ViewStorageProvider
 ): Promise<void> {
   const storage = provider || getDefaultProvider();

@@ -2,18 +2,18 @@
  * Neon provider implementation
  */
 
-import type { 
-  CrudProvider, 
-  GetListParams, 
+import type {
+  CreateParams,
+  CreateResult,
+  CrudProvider,
+  DeleteParams,
+  DeleteResult,
+  GetListParams,
   GetListResult,
   GetOneParams,
   GetOneResult,
-  CreateParams,
-  CreateResult,
   UpdateParams,
   UpdateResult,
-  DeleteParams,
-  DeleteResult
 } from '@repo/data-base';
 
 export interface NeonProviderConfig {
@@ -27,11 +27,11 @@ export interface NeonProviderConfig {
  * Create a Neon provider
  */
 export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
-  const { 
+  const {
     // connectionString is not directly used but kept for future reference
     pool,
     schema = 'public',
-    tableMapping = {}
+    tableMapping = {},
   } = config;
 
   // Helper to get table name from resource name
@@ -46,14 +46,22 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
   };
 
   // Helper to execute SQL queries
-  const executeQuery = async (sql: string, params: unknown[] = []): Promise<Record<string, unknown>[]> => {
+  const executeQuery = async (
+    sql: string,
+    params: unknown[] = []
+  ): Promise<Record<string, unknown>[]> => {
     // Use provided pool or create a new connection
-    const client = pool as { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> };
-    
+    const client = pool as {
+      query: (
+        sql: string,
+        params: unknown[]
+      ) => Promise<{ rows: Record<string, unknown>[] }>;
+    };
+
     if (!client || typeof client.query !== 'function') {
       throw new Error('Database pool not provided or invalid');
     }
-    
+
     try {
       const result = await client.query(sql, params);
       return result.rows || [];
@@ -64,11 +72,13 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
 
   // Helper to build WHERE clause from filter
   type FilterType = Record<string, unknown>;
-  const buildWhereClause = (filter: FilterType = {}): { clause: string; params: unknown[] } => {
+  const buildWhereClause = (
+    filter: FilterType = {}
+  ): { clause: string; params: unknown[] } => {
     const conditions: string[] = [];
     let paramIndex = 1;
     const params: unknown[] = [];
-    
+
     for (const [key, value] of Object.entries(filter)) {
       if (value !== undefined && value !== null) {
         conditions.push(`${key} = $${paramIndex}`);
@@ -76,44 +86,54 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
         paramIndex++;
       }
     }
-    
-    const clause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-    
+
+    const clause =
+      conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
     return { clause, params };
   };
 
   return {
-    async getList({ resource, pagination, sort, filter }: GetListParams): Promise<GetListResult> {
+    async getList({
+      resource,
+      pagination,
+      sort,
+      filter,
+    }: GetListParams): Promise<GetListResult> {
       try {
         const tableName = getFullTableName(resource);
-        
+
         // Build WHERE clause from filter
-        const { clause: whereClause, params: whereParams } = buildWhereClause(filter);
-        
+        const { clause: whereClause, params: whereParams } =
+          buildWhereClause(filter);
+
         // Build ORDER BY clause from sort
         let orderClause = '';
         if (sort) {
           orderClause = `ORDER BY ${sort.field} ${sort.order === 'asc' ? 'ASC' : 'DESC'}`;
         }
-        
+
         // Build LIMIT and OFFSET clauses from pagination
         let limitClause = '';
         let offsetClause = '';
         let limitParams: unknown[] = [];
-        
+
         if (pagination) {
           const { page, perPage } = pagination;
           limitClause = `LIMIT $${whereParams.length + 1}`;
           offsetClause = `OFFSET $${whereParams.length + 2}`;
           limitParams = [perPage, (page - 1) * perPage];
         }
-        
+
         // Get total count
         const countSql = `SELECT COUNT(*) AS total FROM ${tableName} ${whereClause}`;
         const countResult = await executeQuery(countSql, whereParams);
         const totalRecord = countResult[0] as Record<string, unknown>;
-        const total = totalRecord && typeof totalRecord.total === 'string' ? Number.parseInt(totalRecord.total, 10) : 0;
-        
+        const total =
+          totalRecord && typeof totalRecord.total === 'string'
+            ? Number.parseInt(totalRecord.total, 10)
+            : 0;
+
         // Get data
         const dataSql = `
           SELECT * FROM ${tableName}
@@ -122,9 +142,12 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
           ${limitClause}
           ${offsetClause}
         `;
-        
-        const data = await executeQuery(dataSql, [...whereParams, ...limitParams]);
-        
+
+        const data = await executeQuery(dataSql, [
+          ...whereParams,
+          ...limitParams,
+        ]);
+
         return { data, total };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -134,15 +157,15 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
     async getOne({ resource, id }: GetOneParams): Promise<GetOneResult> {
       try {
         const tableName = getFullTableName(resource);
-        
+
         // Get data
         const sql = `SELECT * FROM ${tableName} WHERE id = $1 LIMIT 1`;
         const result = await executeQuery(sql, [id]);
-        
+
         if (result.length === 0) {
           throw new Error(`Record with id ${id} not found in ${resource}`);
         }
-        
+
         return { data: result[0] };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -152,37 +175,43 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
     async create({ resource, variables }: CreateParams): Promise<CreateResult> {
       try {
         const tableName = getFullTableName(resource);
-        
+
         // Build column names and placeholders
         // Ensure variables is treated as a proper object
         const variablesObj = variables as Record<string, unknown>;
         const columns = Object.keys(variablesObj);
         const placeholders = columns.map((_, index) => `$${index + 1}`);
         const values = Object.values(variablesObj);
-        
+
         // Create data
         const sql = `
           INSERT INTO ${tableName} (${columns.join(', ')})
           VALUES (${placeholders.join(', ')})
           RETURNING *
         `;
-        
+
         const result = await executeQuery(sql, values);
-        
+
         return { data: result[0] };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
     },
 
-    async update({ resource, id, variables }: UpdateParams): Promise<UpdateResult> {
+    async update({
+      resource,
+      id,
+      variables,
+    }: UpdateParams): Promise<UpdateResult> {
       try {
         const tableName = getFullTableName(resource);
-        
+
         // Build SET clause
-        const setColumns = Object.keys(variables).map((key, index) => `${key} = $${index + 1}`);
+        const setColumns = Object.keys(variables).map(
+          (key, index) => `${key} = $${index + 1}`
+        );
         const values = [...Object.values(variables), id];
-        
+
         // Update data
         const sql = `
           UPDATE ${tableName}
@@ -190,13 +219,13 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
           WHERE id = $${values.length}
           RETURNING *
         `;
-        
+
         const result = await executeQuery(sql, values);
-        
+
         if (result.length === 0) {
           throw new Error(`Record with id ${id} not found in ${resource}`);
         }
-        
+
         return { data: result[0] };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
@@ -206,19 +235,19 @@ export function createNeonProvider(config: NeonProviderConfig): CrudProvider {
     async deleteOne({ resource, id }: DeleteParams): Promise<DeleteResult> {
       try {
         const tableName = getFullTableName(resource);
-        
+
         // Get data before deleting
         const data = await this.getOne({ resource, id });
-        
+
         // Delete data
         const sql = `DELETE FROM ${tableName} WHERE id = $1`;
         await executeQuery(sql, [id]);
-        
+
         // Return the data that was deleted
         return { data: data.data };
       } catch (error) {
         throw error instanceof Error ? error : new Error(String(error));
       }
-    }
+    },
   };
 }

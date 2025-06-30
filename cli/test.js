@@ -9,23 +9,23 @@ const TEST_DIR = path.join(process.cwd(), 'test-project');
 // Create a dedicated test logger that avoids direct console usage
 class TestLogger {
   #output;
-  
+
   constructor() {
     this.#output = process.stdout;
   }
-  
+
   info(msg) {
     this.#output.write(`${chalk.blue('ℹ')} ${msg}\n`);
   }
-  
+
   success(msg) {
     this.#output.write(`${chalk.green('✓')} ${msg}\n`);
   }
-  
+
   error(msg) {
     this.#output.write(`${chalk.red('✗')} ${msg}\n`);
   }
-  
+
   title(msg) {
     this.#output.write(`${chalk.bold.cyan(`\n${msg}\n`)}\n`);
   }
@@ -67,18 +67,18 @@ async function cleanup() {
 // Start tests
 async function runTests() {
   log.title('ZOPIO CLI TEST SUITE');
-  
+
   // Clean up any previous test directory
   await cleanup();
-  
+
   // Create test directory
   log.info('Creating test directory...');
   fs.mkdirSync(TEST_DIR, { recursive: true });
-  
+
   // Test init command
   log.title('Testing init command');
   const initOutput = await runCommand('node ../zopio.js init');
-  
+
   if (initOutput?.includes('Initialized zopio project')) {
     log.success('Init command successful');
   } else {
@@ -86,7 +86,7 @@ async function runTests() {
     await cleanup();
     process.exit(1);
   }
-  
+
   // Verify package.json was created
   if (fs.existsSync(path.join(TEST_DIR, 'package.json'))) {
     log.success('package.json created');
@@ -95,57 +95,61 @@ async function runTests() {
     await cleanup();
     process.exit(1);
   }
-  
+
   // Test i18n command
   log.title('Testing i18n command');
   const i18nListOutput = await runCommand('node ../zopio.js i18n --list');
-  
+
   if (i18nListOutput?.includes('Available Locales')) {
     log.success('i18n list command successful');
   } else {
     log.error('i18n list command failed');
   }
-  
+
   // Test config command
   log.title('Testing config command');
   const configOutput = await runCommand('node ../zopio.js config --init');
-  
+
   if (configOutput?.includes('Created configuration file')) {
     log.success('config init command successful');
   } else {
     log.error('config init command failed');
   }
-  
+
   // Test component command
   log.title('Testing component command');
-  const componentOutput = await runCommand('node ../zopio.js component TestComponent --i18n');
-  
+  const componentOutput = await runCommand(
+    'node ../zopio.js component TestComponent --i18n'
+  );
+
   if (componentOutput?.includes('Created component')) {
     log.success('component command successful');
   } else {
     log.error('component command failed');
   }
-  
+
   // Test generate command
   log.title('Testing generate command');
-  const generateOutput = await runCommand('node ../zopio.js generate i18n test-namespace');
-  
+  const generateOutput = await runCommand(
+    'node ../zopio.js generate i18n test-namespace'
+  );
+
   if (generateOutput?.includes('Created i18n module')) {
     log.success('generate i18n command successful');
   } else {
     log.error('generate i18n command failed');
   }
-  
+
   // All tests complete
   log.title('TEST SUMMARY');
   log.success('All tests completed');
-  
+
   // Clean up
   await cleanup();
 }
 
 // Run the tests
-runTests().catch(async error => {
+runTests().catch(async (error) => {
   log.error(`Test suite failed: ${error.message}`);
   await cleanup();
   process.exit(1);

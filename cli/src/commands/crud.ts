@@ -1,9 +1,9 @@
-// Use ES module import for commander
-import { Command } from 'commander';
-import chalk from 'chalk';
 import fs from 'node:fs';
 import path from 'node:path';
-import { logger, isZopioProject } from '../utils/helpers';
+import chalk from 'chalk';
+// Use ES module import for commander
+import { Command } from 'commander';
+import { isZopioProject, logger } from '../utils/helpers';
 
 /**
  * Command to generate CRUD operations for a Zopio project
@@ -19,12 +19,16 @@ export const crudCommand = new Command('crud')
   .action((options) => {
     // Check if running in a Zopio project
     if (!isZopioProject()) {
-      logger.error('Not a Zopio project. Please run this command in a Zopio project directory.');
+      logger.error(
+        'Not a Zopio project. Please run this command in a Zopio project directory.'
+      );
       process.exit(1);
     }
 
     if (!options.model) {
-      logger.error('Model name is required. Use --model <name> to specify a model.');
+      logger.error(
+        'Model name is required. Use --model <name> to specify a model.'
+      );
       crudCommand.help();
       return;
     }
@@ -33,7 +37,9 @@ export const crudCommand = new Command('crud')
     const fields = options.fields ? parseFields(options.fields) : [];
 
     if (fields.length === 0) {
-      logger.warning('No fields specified. Use --fields <fields> to specify fields for the model.');
+      logger.warning(
+        'No fields specified. Use --fields <fields> to specify fields for the model.'
+      );
     }
 
     if (options.all || (!options.apiOnly && !options.uiOnly)) {
@@ -51,7 +57,7 @@ export const crudCommand = new Command('crud')
  * @returns Array of field objects with name and type
  */
 function parseFields(fieldsStr: string): Array<{ name: string; type: string }> {
-  return fieldsStr.split(',').map(field => {
+  return fieldsStr.split(',').map((field) => {
     const [name, type = 'string'] = field.trim().split(':');
     return { name, type };
   });
@@ -62,12 +68,17 @@ function parseFields(fieldsStr: string): Array<{ name: string; type: string }> {
  * @param modelName Name of the model
  * @param fields Array of field objects for the model
  */
-function generateAllCrud(modelName: string, fields: Array<{ name: string; type: string }>): void {
-  logger.info(`Generating all CRUD components for model ${chalk.green(modelName)}...`);
-  
+function generateAllCrud(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): void {
+  logger.info(
+    `Generating all CRUD components for model ${chalk.green(modelName)}...`
+  );
+
   generateApiCrud(modelName, fields);
   generateUiCrud(modelName, fields);
-  
+
   logger.info(`CRUD generation completed for model ${chalk.green(modelName)}.`);
 }
 
@@ -76,42 +87,60 @@ function generateAllCrud(modelName: string, fields: Array<{ name: string; type: 
  * @param modelName Name of the model
  * @param fields Array of field objects for the model
  */
-function generateApiCrud(modelName: string, fields: Array<{ name: string; type: string }>): void {
-  logger.info(`Generating API endpoints for model ${chalk.green(modelName)}...`);
-  
-  const apiDir = path.join(process.cwd(), 'src', 'api', modelName.toLowerCase());
-  
+function generateApiCrud(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): void {
+  logger.info(
+    `Generating API endpoints for model ${chalk.green(modelName)}...`
+  );
+
+  const apiDir = path.join(
+    process.cwd(),
+    'src',
+    'api',
+    modelName.toLowerCase()
+  );
+
   // Create API directory if it doesn't exist
   if (!fs.existsSync(apiDir)) {
     fs.mkdirSync(apiDir, { recursive: true });
     logger.info(`Created API directory at ${chalk.green(apiDir)}`);
   }
-  
+
   // Generate controller file
-  const controllerPath = path.join(apiDir, `${modelName.toLowerCase()}.controller.ts`);
+  const controllerPath = path.join(
+    apiDir,
+    `${modelName.toLowerCase()}.controller.ts`
+  );
   const controllerContent = generateControllerContent(modelName);
   fs.writeFileSync(controllerPath, controllerContent);
   logger.info(`Created controller at ${chalk.green(controllerPath)}`);
-  
+
   // Generate model file
   const modelPath = path.join(apiDir, `${modelName.toLowerCase()}.model.ts`);
   const modelContent = generateModelContent(modelName, fields);
   fs.writeFileSync(modelPath, modelContent);
   logger.info(`Created model at ${chalk.green(modelPath)}`);
-  
+
   // Generate service file
-  const servicePath = path.join(apiDir, `${modelName.toLowerCase()}.service.ts`);
+  const servicePath = path.join(
+    apiDir,
+    `${modelName.toLowerCase()}.service.ts`
+  );
   const serviceContent = generateServiceContent(modelName);
   fs.writeFileSync(servicePath, serviceContent);
   logger.info(`Created service at ${chalk.green(servicePath)}`);
-  
+
   // Generate routes file
   const routesPath = path.join(apiDir, `${modelName.toLowerCase()}.routes.ts`);
   const routesContent = generateRoutesContent(modelName);
   fs.writeFileSync(routesPath, routesContent);
   logger.info(`Created routes at ${chalk.green(routesPath)}`);
-  
-  logger.info(`API endpoints generation completed for model ${chalk.green(modelName)}.`);
+
+  logger.info(
+    `API endpoints generation completed for model ${chalk.green(modelName)}.`
+  );
 }
 
 /**
@@ -119,36 +148,58 @@ function generateApiCrud(modelName: string, fields: Array<{ name: string; type: 
  * @param modelName Name of the model
  * @param fields Array of field objects for the model
  */
-function generateUiCrud(modelName: string, fields: Array<{ name: string; type: string }>): void {
-  logger.info(`Generating UI components for model ${chalk.green(modelName)}...`);
-  
-  const componentsDir = path.join(process.cwd(), 'src', 'components', modelName.toLowerCase());
-  
+function generateUiCrud(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): void {
+  logger.info(
+    `Generating UI components for model ${chalk.green(modelName)}...`
+  );
+
+  const componentsDir = path.join(
+    process.cwd(),
+    'src',
+    'components',
+    modelName.toLowerCase()
+  );
+
   // Create components directory if it doesn't exist
   if (!fs.existsSync(componentsDir)) {
     fs.mkdirSync(componentsDir, { recursive: true });
-    logger.info(`Created components directory at ${chalk.green(componentsDir)}`);
+    logger.info(
+      `Created components directory at ${chalk.green(componentsDir)}`
+    );
   }
-  
+
   // Generate list component
   const listComponentPath = path.join(componentsDir, `${modelName}List.tsx`);
   const listComponentContent = generateListComponentContent(modelName, fields);
   fs.writeFileSync(listComponentPath, listComponentContent);
   logger.info(`Created list component at ${chalk.green(listComponentPath)}`);
-  
+
   // Generate detail component
-  const detailComponentPath = path.join(componentsDir, `${modelName}Detail.tsx`);
-  const detailComponentContent = generateDetailComponentContent(modelName, fields);
+  const detailComponentPath = path.join(
+    componentsDir,
+    `${modelName}Detail.tsx`
+  );
+  const detailComponentContent = generateDetailComponentContent(
+    modelName,
+    fields
+  );
   fs.writeFileSync(detailComponentPath, detailComponentContent);
-  logger.info(`Created detail component at ${chalk.green(detailComponentPath)}`);
-  
+  logger.info(
+    `Created detail component at ${chalk.green(detailComponentPath)}`
+  );
+
   // Generate form component
   const formComponentPath = path.join(componentsDir, `${modelName}Form.tsx`);
   const formComponentContent = generateFormComponentContent(modelName, fields);
   fs.writeFileSync(formComponentPath, formComponentContent);
   logger.info(`Created form component at ${chalk.green(formComponentPath)}`);
-  
-  logger.info(`UI components generation completed for model ${chalk.green(modelName)}.`);
+
+  logger.info(
+    `UI components generation completed for model ${chalk.green(modelName)}.`
+  );
 }
 
 /**
@@ -236,10 +287,15 @@ export class ${modelName}Controller {
  * @param fields Array of field objects for the model
  * @returns Model content as a string
  */
-function generateModelContent(modelName: string, fields: Array<{ name: string; type: string }>): string {
-  const fieldsDefinition = fields.map(field => {
-    return `  ${field.name}: ${field.type};`;
-  }).join('\n');
+function generateModelContent(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): string {
+  const fieldsDefinition = fields
+    .map((field) => {
+      return `  ${field.name}: ${field.type};`;
+    })
+    .join('\n');
 
   return `export interface ${modelName} {
   id: string;
@@ -350,21 +406,28 @@ export default router;
  * @param fields Array of field objects for the model
  * @returns List component content as a string
  */
-function generateListComponentContent(modelName: string, fields: Array<{ name: string; type: string }>): string {
-  const tableHeaders = fields.map(field => {
-    return `            <th>${field.name.charAt(0).toUpperCase() + field.name.slice(1)}</th>`;
-  }).join('\n');
+function generateListComponentContent(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): string {
+  const tableHeaders = fields
+    .map((field) => {
+      return `            <th>${field.name.charAt(0).toUpperCase() + field.name.slice(1)}</th>`;
+    })
+    .join('\n');
 
-  const tableRows = fields.map(field => {
-    return `              <td>{item.${field.name}}</td>`;
-  }).join('\n');
+  const tableRows = fields
+    .map((field) => {
+      return `              <td>{item.${field.name}}</td>`;
+    })
+    .join('\n');
 
   return `import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 interface ${modelName} {
   id: string;
-${fields.map(field => `  ${field.name}: ${field.type};`).join('\n')}
+${fields.map((field) => `  ${field.name}: ${field.type};`).join('\n')}
   createdAt: Date;
   updatedAt: Date;
 }
@@ -471,19 +534,24 @@ ${tableRows}
  * @param fields Array of field objects for the model
  * @returns Detail component content as a string
  */
-function generateDetailComponentContent(modelName: string, fields: Array<{ name: string; type: string }>): string {
-  const detailFields = fields.map(field => {
-    return `      <div className="mb-3">
+function generateDetailComponentContent(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): string {
+  const detailFields = fields
+    .map((field) => {
+      return `      <div className="mb-3">
         <strong>${field.name.charAt(0).toUpperCase() + field.name.slice(1)}:</strong> {item.${field.name}}
       </div>`;
-  }).join('\n');
+    })
+    .join('\n');
 
   return `import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 interface ${modelName} {
   id: string;
-${fields.map(field => `  ${field.name}: ${field.type};`).join('\n')}
+${fields.map((field) => `  ${field.name}: ${field.type};`).join('\n')}
   createdAt: Date;
   updatedAt: Date;
 }
@@ -563,21 +631,25 @@ ${detailFields}
  * @param fields Array of field objects for the model
  * @returns Form component content as a string
  */
-function generateFormComponentContent(modelName: string, fields: Array<{ name: string; type: string }>): string {
-  const formFields = fields.map(field => {
-    let inputType = 'text';
-    if (field.type === 'number') {
-      inputType = 'number';
-    }
-    if (field.type === 'boolean') {
-      inputType = 'checkbox';
-    }
-    if (field.type === 'Date') {
-      inputType = 'datetime-local';
-    }
+function generateFormComponentContent(
+  modelName: string,
+  fields: Array<{ name: string; type: string }>
+): string {
+  const formFields = fields
+    .map((field) => {
+      let inputType = 'text';
+      if (field.type === 'number') {
+        inputType = 'number';
+      }
+      if (field.type === 'boolean') {
+        inputType = 'checkbox';
+      }
+      if (field.type === 'Date') {
+        inputType = 'datetime-local';
+      }
 
-    if (inputType === 'checkbox') {
-      return `        <div className="mb-3 form-check">
+      if (inputType === 'checkbox') {
+        return `        <div className="mb-3 form-check">
           <input
             type="${inputType}"
             className="form-check-input"
@@ -590,9 +662,9 @@ function generateFormComponentContent(modelName: string, fields: Array<{ name: s
             ${field.name.charAt(0).toUpperCase() + field.name.slice(1)}
           </label>
         </div>`;
-    }
+      }
 
-    return `        <div className="mb-3">
+      return `        <div className="mb-3">
           <label htmlFor="${field.name}" className="form-label">
             ${field.name.charAt(0).toUpperCase() + field.name.slice(1)}
           </label>
@@ -606,27 +678,30 @@ function generateFormComponentContent(modelName: string, fields: Array<{ name: s
             required
           />
         </div>`;
-  }).join('\n');
+    })
+    .join('\n');
 
-  const initialFormData = fields.map(field => {
-    if (field.type === 'number') {
-      return `    ${field.name}: 0,`;
-    }
-    if (field.type === 'boolean') {
-      return `    ${field.name}: false,`;
-    }
-    if (field.type === 'Date') {
-      return `    ${field.name}: new Date(),`;
-    }
-    return `    ${field.name}: '',`;
-  }).join('\n');
+  const initialFormData = fields
+    .map((field) => {
+      if (field.type === 'number') {
+        return `    ${field.name}: 0,`;
+      }
+      if (field.type === 'boolean') {
+        return `    ${field.name}: false,`;
+      }
+      if (field.type === 'Date') {
+        return `    ${field.name}: new Date(),`;
+      }
+      return `    ${field.name}: '',`;
+    })
+    .join('\n');
 
   return `import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 interface ${modelName} {
   id: string;
-${fields.map(field => `  ${field.name}: ${field.type};`).join('\n')}
+${fields.map((field) => `  ${field.name}: ${field.type};`).join('\n')}
   createdAt: Date;
   updatedAt: Date;
 }

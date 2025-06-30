@@ -35,13 +35,13 @@ export const secure = async (
   });
 
   const req = sourceRequest ?? (await request());
-  const aj = base.withRule(detectBot({ mode: isDevelopment ? 'DRY_RUN' : 'LIVE', allow }));
+  const aj = base.withRule(
+    detectBot({ mode: isDevelopment ? 'DRY_RUN' : 'LIVE', allow })
+  );
   const decision = await aj.protect(req);
 
   if (decision.isDenied()) {
-    log.warn(
-      `Arcjet decision: ${JSON.stringify(decision.reason, null, 2)}`
-    );
+    log.warn(`Arcjet decision: ${JSON.stringify(decision.reason, null, 2)}`);
 
     // In development mode, log but don't block
     if (isDevelopment) {

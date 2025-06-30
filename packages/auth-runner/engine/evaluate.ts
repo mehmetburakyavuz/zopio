@@ -1,7 +1,7 @@
-import { evaluateAccess as baseEvaluate } from "@zopio/auth-rbac/engine/evaluate";
-import { combinedRules } from "../rules/combinedRules";
-import { logAccessAttempt } from "@zopio/auth-log";
-import type { UserContext } from "@zopio/auth-rbac/types";
+import { logAccessAttempt } from '@zopio/auth-log';
+import { evaluateAccess as baseEvaluate } from '@zopio/auth-rbac/engine/evaluate';
+import type { UserContext } from '@zopio/auth-rbac/types';
+import { combinedRules } from '../rules/combinedRules';
 
 export function evaluateAccess(ctx: {
   context: UserContext;
@@ -19,7 +19,7 @@ export function evaluateAccess(ctx: {
     ...ctx,
     timestamp: new Date().toISOString(),
     can: result.can,
-    reason: result.reason
+    reason: result.reason,
   });
 
   return result;

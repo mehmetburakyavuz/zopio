@@ -8,10 +8,19 @@ import { resourceSchema } from '../protocol.js';
  * Schema for component prop definition
  */
 const propDefinitionSchema = z.object({
-  type: z.enum(['string', 'number', 'boolean', 'object', 'array', 'function', 'element', 'node']),
+  type: z.enum([
+    'string',
+    'number',
+    'boolean',
+    'object',
+    'array',
+    'function',
+    'element',
+    'node',
+  ]),
   description: z.string().optional(),
   required: z.boolean().optional().default(false),
-  defaultValue: z.unknown().optional()
+  defaultValue: z.unknown().optional(),
 });
 
 /**
@@ -19,29 +28,52 @@ const propDefinitionSchema = z.object({
  */
 export const componentSchema = resourceSchema.extend({
   type: z.literal('component'),
-  attributes: z.object({
-    name: z.string(),
-    description: z.string().optional(),
-    category: z.enum(['layout', 'input', 'display', 'navigation', 'feedback', 'data', 'overlay']).optional(),
-    props: z.record(z.string(), propDefinitionSchema).optional(),
-    examples: z.array(z.object({
+  attributes: z
+    .object({
       name: z.string(),
-      code: z.string(),
-      description: z.string().optional()
-    })).optional(),
-    usage: z.string().optional(),
-    accessibility: z.string().optional(),
-    notes: z.string().optional(),
-    packageName: z.string().regex(/^@repo\//, 'Package name must use @repo/* namespace').optional()
-  }).optional(),
-  relationships: z.object({
-    package: z.object({
-      data: z.object({
-        id: z.string(),
-        type: z.literal('package')
-      })
-    }).optional()
-  }).optional()
+      description: z.string().optional(),
+      category: z
+        .enum([
+          'layout',
+          'input',
+          'display',
+          'navigation',
+          'feedback',
+          'data',
+          'overlay',
+        ])
+        .optional(),
+      props: z.record(z.string(), propDefinitionSchema).optional(),
+      examples: z
+        .array(
+          z.object({
+            name: z.string(),
+            code: z.string(),
+            description: z.string().optional(),
+          })
+        )
+        .optional(),
+      usage: z.string().optional(),
+      accessibility: z.string().optional(),
+      notes: z.string().optional(),
+      packageName: z
+        .string()
+        .regex(/^@repo\//, 'Package name must use @repo/* namespace')
+        .optional(),
+    })
+    .optional(),
+  relationships: z
+    .object({
+      package: z
+        .object({
+          data: z.object({
+            id: z.string(),
+            type: z.literal('package'),
+          }),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -51,7 +83,7 @@ export type ComponentResource = z.infer<typeof componentSchema>;
 
 /**
  * Creates a component resource
- * 
+ *
  * @param id Component ID
  * @param attributes Component attributes
  * @param packageId Optional package ID for relationship
@@ -66,15 +98,17 @@ export function createComponentResource(
     id,
     type: 'component',
     attributes,
-    ...(packageId ? {
-      relationships: {
-        package: {
-          data: {
-            id: packageId,
-            type: 'package'
-          }
+    ...(packageId
+      ? {
+          relationships: {
+            package: {
+              data: {
+                id: packageId,
+                type: 'package',
+              },
+            },
+          },
         }
-      }
-    } : {})
+      : {}),
   };
 }

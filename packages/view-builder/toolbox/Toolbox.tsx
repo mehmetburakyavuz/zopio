@@ -1,11 +1,11 @@
-import { useSchemaState } from "../hooks/useSchemaState.js";
-import { Button } from "@repo/design-system/components/ui/button";
-import { useEffect, useState } from "react";
+import { Button } from '@repo/design-system/components/ui/button';
+import { useEffect, useState } from 'react';
+import { useSchemaState } from '../hooks/useSchemaState.js';
 
 const predefinedFields = [
-  { label: "Text", name: "text", type: "string" },
-  { label: "Email", name: "email", type: "string" },
-  { label: "Number", name: "quantity", type: "number" }
+  { label: 'Text', name: 'text', type: 'string' },
+  { label: 'Email', name: 'email', type: 'string' },
+  { label: 'Number', name: 'quantity', type: 'number' },
 ];
 
 export function Toolbox() {
@@ -18,7 +18,7 @@ export function Toolbox() {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold">Toolbox</h3>
+      <h3 className="font-semibold text-sm">Toolbox</h3>
       {predefinedFields.map((field) => (
         <Button
           key={`${field.name}-${field.type}`}
@@ -29,19 +29,21 @@ export function Toolbox() {
               name: `${field.name}-${Date.now()}`,
               label: field.label,
               type: field.type,
-              required: false
+              required: false,
             })
           }
         >
           ➕ {field.label} Field
         </Button>
       ))}
-      <Button variant="default" className="w-full mt-4" onClick={persistView}>
+      <Button variant="default" className="mt-4 w-full" onClick={persistView}>
         💾 Save View
       </Button>
       <div className="pt-4">
-        <h4 className="text-xs font-semibold text-muted-foreground mb-1">Saved Views</h4>
-        {views.map(id => (
+        <h4 className="mb-1 font-semibold text-muted-foreground text-xs">
+          Saved Views
+        </h4>
+        {views.map((id) => (
           <Button
             key={id}
             variant="ghost"

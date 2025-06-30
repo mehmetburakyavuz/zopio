@@ -1,6 +1,12 @@
 import React from 'react';
 import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 // Utility function for class name merging
 const cn = (...classes: (string | undefined)[]) => {
@@ -33,11 +39,14 @@ export interface SelectFieldProps {
 
 /**
  * SelectField component
- * 
+ *
  * A reusable select field component that combines label, select dropdown, description, and error message.
  * Can be used in both crud/ui and view-builder modules for consistent form styling.
  */
-export const SelectField = React.forwardRef<HTMLButtonElement, SelectFieldProps>(
+export const SelectField = React.forwardRef<
+  HTMLButtonElement,
+  SelectFieldProps
+>(
   (
     {
       id,
@@ -62,43 +71,38 @@ export const SelectField = React.forwardRef<HTMLButtonElement, SelectFieldProps>
     const fieldId = id || `field-${name}`;
     const errorId = error ? `${fieldId}-error` : undefined;
     const descriptionId = description ? `${fieldId}-description` : undefined;
-    
+
     return (
       <div className={cn('space-y-2', className)}>
         {label && (
           <Label
             htmlFor={fieldId}
-            className={cn('text-sm font-medium', labelClassName)}
+            className={cn('font-medium text-sm', labelClassName)}
           >
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className="ml-1 text-destructive">*</span>}
           </Label>
         )}
-        
+
         {description && (
           <p
             id={descriptionId}
-            className={cn('text-sm text-muted-foreground', descriptionClassName)}
+            className={cn(
+              'text-muted-foreground text-sm',
+              descriptionClassName
+            )}
           >
             {description}
           </p>
         )}
-        
-        <Select
-          value={value}
-          onValueChange={onChange}
-          disabled={disabled}
-        >
+
+        <Select value={value} onValueChange={onChange} disabled={disabled}>
           <SelectTrigger
             id={fieldId}
             ref={ref}
             aria-invalid={!!error}
             aria-describedby={
-              error
-                ? errorId
-                : description
-                ? descriptionId
-                : undefined
+              error ? errorId : description ? descriptionId : undefined
             }
             className={cn(error && 'border-destructive', selectClassName)}
           >
@@ -112,11 +116,11 @@ export const SelectField = React.forwardRef<HTMLButtonElement, SelectFieldProps>
             ))}
           </SelectContent>
         </Select>
-        
+
         {error && (
           <p
             id={errorId}
-            className={cn('text-sm text-destructive', errorClassName)}
+            className={cn('text-destructive text-sm', errorClassName)}
             role="alert"
           >
             {error}

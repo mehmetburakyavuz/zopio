@@ -1,5 +1,6 @@
-import React, { createContext, useContext } from "react";
-import type { ViewSchema } from "@repo/view-engine/renderers/types";
+import type { ViewSchema } from '@repo/view-engine/renderers/types';
+import type React from 'react';
+import { createContext, useContext } from 'react';
 
 type ViewHooksContextType = {
   overrideFieldRender?: (field: string, schema: ViewSchema) => React.ReactNode;
@@ -15,11 +16,8 @@ export function ViewHooksProvider({
   children: React.ReactNode;
   value: ViewHooksContextType;
 }) {
-  return (
-    <ViewHooksContext.Provider value={value}>
-      {children}
-    </ViewHooksContext.Provider>
-  );
+  return (<ViewHooksContext.Provider value =
+    { value } > { children } < /.>CHPVdeeeiiknoooorrsttvwx);
 }
 
 export function useViewHooks() {

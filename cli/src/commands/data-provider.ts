@@ -1,9 +1,9 @@
-// Use ES module import for commander
-import { Command } from 'commander';
-import chalk from 'chalk';
 import fs from 'node:fs';
 import path from 'node:path';
-import { logger, isZopioProject } from '../utils/helpers';
+import chalk from 'chalk';
+// Use ES module import for commander
+import { Command } from 'commander';
+import { isZopioProject, logger } from '../utils/helpers';
 
 /**
  * Command to generate data providers for a Zopio project
@@ -17,18 +17,24 @@ export const dataProviderCommand = new Command('data-provider')
   .action((options) => {
     // Check if running in a Zopio project
     if (!isZopioProject()) {
-      logger.error('Not a Zopio project. Please run this command in a Zopio project directory.');
+      logger.error(
+        'Not a Zopio project. Please run this command in a Zopio project directory.'
+      );
       process.exit(1);
     }
 
     if (!options.type) {
-      logger.error('Provider type is required. Use --type <type> to specify a provider type.');
+      logger.error(
+        'Provider type is required. Use --type <type> to specify a provider type.'
+      );
       dataProviderCommand.help();
       return;
     }
 
     if (!options.name) {
-      logger.error('Provider name is required. Use --name <name> to specify a provider name.');
+      logger.error(
+        'Provider name is required. Use --name <name> to specify a provider name.'
+      );
       dataProviderCommand.help();
       return;
     }
@@ -65,23 +71,25 @@ export const dataProviderCommand = new Command('data-provider')
  */
 function generateRestProvider(name: string, endpoint: string): void {
   logger.info(`Generating REST API data provider: ${chalk.green(name)}`);
-  
+
   const providersDir = path.join(process.cwd(), 'src', 'providers');
-  
+
   // Create providers directory if it doesn't exist
   if (!fs.existsSync(providersDir)) {
     fs.mkdirSync(providersDir, { recursive: true });
     logger.info(`Created providers directory at ${chalk.green(providersDir)}`);
   }
-  
+
   const providerPath = path.join(providersDir, `${name}.provider.ts`);
-  
+
   // Check if provider already exists
   if (fs.existsSync(providerPath)) {
-    logger.error(`Provider ${chalk.red(name)} already exists at ${chalk.red(providerPath)}`);
+    logger.error(
+      `Provider ${chalk.red(name)} already exists at ${chalk.red(providerPath)}`
+    );
     return;
   }
-  
+
   const providerContent = `import axios from 'axios';
 
 /**
@@ -176,9 +184,11 @@ export class ${name}Provider {
   }
 }
 `;
-  
+
   fs.writeFileSync(providerPath, providerContent);
-  logger.success(`Created REST API data provider at ${chalk.green(providerPath)}`);
+  logger.success(
+    `Created REST API data provider at ${chalk.green(providerPath)}`
+  );
 }
 
 /**
@@ -188,23 +198,25 @@ export class ${name}Provider {
  */
 function generateGraphQLProvider(name: string, endpoint: string): void {
   logger.info(`Generating GraphQL data provider: ${chalk.green(name)}`);
-  
+
   const providersDir = path.join(process.cwd(), 'src', 'providers');
-  
+
   // Create providers directory if it doesn't exist
   if (!fs.existsSync(providersDir)) {
     fs.mkdirSync(providersDir, { recursive: true });
     logger.info(`Created providers directory at ${chalk.green(providersDir)}`);
   }
-  
+
   const providerPath = path.join(providersDir, `${name}.provider.ts`);
-  
+
   // Check if provider already exists
   if (fs.existsSync(providerPath)) {
-    logger.error(`Provider ${chalk.red(name)} already exists at ${chalk.red(providerPath)}`);
+    logger.error(
+      `Provider ${chalk.red(name)} already exists at ${chalk.red(providerPath)}`
+    );
     return;
   }
-  
+
   const providerContent = `import axios from 'axios';
 
 /**
@@ -313,9 +325,11 @@ export class ${name}Provider {
   }
 }
 `;
-  
+
   fs.writeFileSync(providerPath, providerContent);
-  logger.success(`Created GraphQL data provider at ${chalk.green(providerPath)}`);
+  logger.success(
+    `Created GraphQL data provider at ${chalk.green(providerPath)}`
+  );
 }
 
 /**
@@ -324,23 +338,25 @@ export class ${name}Provider {
  */
 function generateMockProvider(name: string): void {
   logger.info(`Generating mock data provider: ${chalk.green(name)}`);
-  
+
   const providersDir = path.join(process.cwd(), 'src', 'providers');
-  
+
   // Create providers directory if it doesn't exist
   if (!fs.existsSync(providersDir)) {
     fs.mkdirSync(providersDir, { recursive: true });
     logger.info(`Created providers directory at ${chalk.green(providersDir)}`);
   }
-  
+
   const providerPath = path.join(providersDir, `${name}.provider.ts`);
-  
+
   // Check if provider already exists
   if (fs.existsSync(providerPath)) {
-    logger.error(`Provider ${chalk.red(name)} already exists at ${chalk.red(providerPath)}`);
+    logger.error(
+      `Provider ${chalk.red(name)} already exists at ${chalk.red(providerPath)}`
+    );
     return;
   }
-  
+
   const providerContent = `/**
  * ${name} mock data provider
  */
@@ -465,7 +481,7 @@ export class ${name}Provider {
   }
 }
 `;
-  
+
   fs.writeFileSync(providerPath, providerContent);
   logger.success(`Created mock data provider at ${chalk.green(providerPath)}`);
 }

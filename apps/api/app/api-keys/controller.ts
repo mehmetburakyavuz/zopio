@@ -1,16 +1,16 @@
 // apps/api/app/api-keys/controller.ts
-import { createApiKey } from '@repo/api-key/lib/clerk-adapter'
+import { createApiKey } from '@repo/api-key/lib/clerk-adapter';
 
 type CreateKeyInput = {
-  userId: string
-  name: string
-  scopes: string[]
-  expiration: string
-}
+  userId: string;
+  name: string;
+  scopes: string[];
+  expiration: string;
+};
 
 export async function createApiKeyController(input: CreateKeyInput) {
-  const { userId, name, scopes, expiration } = input
-  return await createApiKey(userId, name, scopes, expiration)
+  const { userId, name, scopes, expiration } = input;
+  return await createApiKey(userId, name, scopes, expiration);
 }
 
 export async function listApiKeysController() {
@@ -19,8 +19,8 @@ export async function listApiKeysController() {
       Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
       'Content-Type': 'application/json',
     },
-  })
-  return response.json()
+  });
+  return response.json();
 }
 
 export async function deleteApiKeyController(id: string) {
@@ -30,12 +30,12 @@ export async function deleteApiKeyController(id: string) {
       Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
       'Content-Type': 'application/json',
     },
-  })
+  });
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(`Clerk API error: ${JSON.stringify(error)}`)
+    const error = await response.json();
+    throw new Error(`Clerk API error: ${JSON.stringify(error)}`);
   }
 
-  return { success: true, id }
+  return { success: true, id };
 }

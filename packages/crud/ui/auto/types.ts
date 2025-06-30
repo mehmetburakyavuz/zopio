@@ -18,7 +18,9 @@ export interface FieldComponentProps {
   id?: string;
   name?: string;
   value?: FieldValue | File | File[] | Record<string, unknown>;
-  onChange: (value: FieldValue | File | File[] | Record<string, unknown>) => void;
+  onChange: (
+    value: FieldValue | File | File[] | Record<string, unknown>
+  ) => void;
   onBlur?: () => void;
   placeholder?: string;
   disabled?: boolean;
@@ -56,15 +58,17 @@ export interface FieldDefinition {
   max?: number;
   step?: number;
   description?: string;
-  validation?: ValidationRule[] | {
-    required?: boolean;
-    min?: number;
-    max?: number;
-    minLength?: number;
-    maxLength?: number;
-    pattern?: string;
-    validate?: (value: FieldValue) => boolean | string;
-  };
+  validation?:
+    | ValidationRule[]
+    | {
+        required?: boolean;
+        min?: number;
+        max?: number;
+        minLength?: number;
+        maxLength?: number;
+        pattern?: string;
+        validate?: (value: FieldValue) => boolean | string;
+      };
   hidden?: boolean | ((values: Record<string, FieldValue>) => boolean);
   readOnly?: boolean | ((values: Record<string, FieldValue>) => boolean);
   props?: Record<string, unknown>;
@@ -74,16 +78,34 @@ export interface FieldDefinition {
 /**
  * Field value type
  */
-export type FieldValue = string | number | boolean | Date | string[] | number[] | null | undefined;
+export type FieldValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | string[]
+  | number[]
+  | null
+  | undefined;
 
 /**
  * Validation rule interface
  */
 export interface ValidationRule {
-  type: 'required' | 'min' | 'max' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
+  type:
+    | 'required'
+    | 'min'
+    | 'max'
+    | 'minLength'
+    | 'maxLength'
+    | 'pattern'
+    | 'custom';
   value?: number | string | RegExp;
   message?: string;
-  validator?: (value: FieldValue, allValues: Record<string, FieldValue>) => boolean;
+  validator?: (
+    value: FieldValue,
+    allValues: Record<string, FieldValue>
+  ) => boolean;
 }
 
 /**
@@ -150,7 +172,17 @@ export interface TableColumn {
  */
 export interface TableFilter {
   column: string;
-  operator: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'startsWith' | 'endsWith' | 'between';
+  operator:
+    | 'eq'
+    | 'neq'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'contains'
+    | 'startsWith'
+    | 'endsWith'
+    | 'between';
   value: FieldValue;
 }
 
@@ -227,7 +259,9 @@ export interface RelationOption {
  */
 export interface AutoRelationFieldProps extends FieldComponentProps {
   multiple?: boolean;
-  fetchOptions?: (query: string) => Promise<RelationOption[]> | RelationOption[];
+  fetchOptions?: (
+    query: string
+  ) => Promise<RelationOption[]> | RelationOption[];
   options?: RelationOption[];
   placeholder?: string;
   emptyMessage?: string;
@@ -286,7 +320,10 @@ export interface AutoDetailProps {
   card?: boolean;
   showEmptyFields?: boolean;
   className?: string;
-  fieldRenderers?: Record<string, (value: FieldValue, field: FieldDefinition) => ReactNode>;
+  fieldRenderers?: Record<
+    string,
+    (value: FieldValue, field: FieldDefinition) => ReactNode
+  >;
   locale?: string;
 }
 
@@ -327,7 +364,13 @@ export interface Action {
   disabled?: boolean | ((data: Record<string, FieldValue>) => boolean);
   hidden?: boolean | ((data: Record<string, FieldValue>) => boolean);
   className?: string;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   requireConfirmation?: boolean;
   confirmationMessage?: string;
@@ -375,10 +418,19 @@ export interface AutoExportProps {
   fields: FieldDefinition[] | TableColumn[];
   formats?: ExportFormat[];
   defaultOptions?: Partial<ExportOptions>;
-  onExport: (data: Record<string, FieldValue>[], options: ExportOptions) => Promise<void> | void;
+  onExport: (
+    data: Record<string, FieldValue>[],
+    options: ExportOptions
+  ) => Promise<void> | void;
   fetchAllData?: () => Promise<Record<string, FieldValue>[]>;
   disabled?: boolean;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   label?: string;
   showLabel?: boolean;
@@ -422,7 +474,13 @@ export interface AutoImportProps {
   onImport: (file: File, options: ImportOptions) => Promise<ImportResult>;
   onComplete?: (result: ImportResult) => void;
   disabled?: boolean;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   label?: string;
   showLabel?: boolean;
@@ -433,7 +491,16 @@ export interface AutoImportProps {
 /**
  * Audit action type
  */
-export type AuditAction = 'create' | 'update' | 'delete' | 'view' | 'export' | 'import' | 'login' | 'logout' | string;
+export type AuditAction =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'view'
+  | 'export'
+  | 'import'
+  | 'login'
+  | 'logout'
+  | string;
 
 /**
  * Audit log entry interface
