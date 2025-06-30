@@ -1,6 +1,8 @@
 import { ContactTemplate } from '@repo/email/templates/contact';
+import type { ReactElement } from 'react';
 
-const ExampleContactEmail = () => (
+// Using explicit type annotation to fix TS2742 error
+const ExampleContactEmail = (): ReactElement => (
   <ContactTemplate
     name="Jane Smith"
     email="jane.smith@example.com"
