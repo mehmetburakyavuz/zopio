@@ -23,16 +23,20 @@ echo "ℹ️  This hook ensures code quality before committing"
 #  exit 1
 #}
 
-# Run Turbo lint on affected packages (temporary disabled)
-#echo "🔎 Running turbo affected lint..."
-#echo "   - Linting only packages affected by your changes"
-#pnpm turbo run lint --filter=...[HEAD^1] && {
-#  echo "   ✓ Affected packages lint passed"
-#} || {
-#  echo "${RED}❌ Turbo lint failed${NC}"
-#  echo "   Please fix linting issues before committing"
-#  exit 1
-#}
+# Check if the lint task exists in turbo config
+#echo "🔎 Checking for affected packages..."
+#if grep -q '"lint"' "./turbo.json" 2>/dev/null; then
+#  echo "   - Running lint on affected packages"
+#  pnpm turbo run lint --filter=...[HEAD^1] && {
+#    echo "   ✓ Affected packages lint passed"
+#  } || {
+#    echo "${RED}❌ Turbo lint failed${NC}"
+#    echo "   Please fix linting issues before committing"
+#    exit 1
+#  }
+#else
+#  echo "   - Skipping Turbo lint (task not configured in turbo.json)"
+#fi
 
 echo "${GREEN}✅ All pre-commit checks passed!${NC}"
 echo "   Your code is ready to be committed"
