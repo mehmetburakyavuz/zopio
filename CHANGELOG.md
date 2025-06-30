@@ -1,3 +1,15 @@
+# v0.9.25 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix: linting errors for collaboration ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.24 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
