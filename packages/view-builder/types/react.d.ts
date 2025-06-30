@@ -93,7 +93,7 @@ declare module 'react' {
     defaultProps?: Partial<P>;
   }
 
-  export interface StaticLifecycle<P, S> {
+  export interface StaticLifecycle<_P, _S> {
     // Static lifecycle methods would go here
   }
 
@@ -146,7 +146,7 @@ declare module 'react' {
   }
 
   export interface AriaAttributes {}
-  export interface DOMAttributes<T> {}
+  export interface DOMAttributes<_T> {}
   export interface CSSProperties {}
 
   export interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
