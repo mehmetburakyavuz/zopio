@@ -460,18 +460,19 @@ export function t(
 
   // Type-safe access to translations
   const localeTranslations = defaultTranslations[locale as SupportedLocales];
-  
+
   if (!localeTranslations) {
     return key;
   }
-  
+
   // Get the namespace translations using type assertion to handle dynamic access
-  const namespaceTranslations = localeTranslations[namespace as keyof typeof localeTranslations];
-  
+  const namespaceTranslations =
+    localeTranslations[namespace as keyof typeof localeTranslations];
+
   if (!namespaceTranslations) {
     return key;
   }
-  
+
   // Get the specific message
   const translation = namespaceTranslations[messageKey];
 
