@@ -1,6 +1,6 @@
 # Zopio Branch Structure
 
-_For a visual overview of our Git flow, see: [Git Flow Diagram](./git-flow-diagram.md)_
+_For a visual overview of our Git flow, see: [Git Flow Diagram](./GIT_FLOW_DIAGRAM.md)_
 
 ## Core Branches
 

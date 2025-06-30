@@ -5,7 +5,7 @@
 * `feat!: breaking change` / `feat(scope)!: rework API`
 * `chore(deps): update dependencies`
 
-# Commit types
+## Commit types
 
 * `build`: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
 * `ci`: Changes to CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
@@ -19,7 +19,7 @@
 * `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 * `test`: Adding missing tests or correcting existing tests
 
-# Reminders
+## Reminders
 
 * Put newline before extended commit body
 * More details at **[conventionalcommits.org](https://www.conventionalcommits.org/)**
