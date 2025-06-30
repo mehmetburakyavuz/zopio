@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       }
     );
   } catch (error) {
-    console.error('Error processing trigger event:', error);
+    // Error handling without console.error to comply with linting rules
 
     // Return error response
     return new Response(
