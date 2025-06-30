@@ -1,3 +1,21 @@
+# v0.9.33 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix: api linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: .github policies linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: design-system linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: web app linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: splash page linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: packages/data switch from eslint to ultracite ([@mkzopio](https://github.com/mkzopio))
+- fix: design-system package i18n typecheck errors ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.32 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
