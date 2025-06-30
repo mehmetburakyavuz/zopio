@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import type { ReactElement } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { octokit } from '../../lib/octokit';
+import { octokit, safeGitHubFetch } from '../../lib/octokit';
 import GitHub from './github.svg';
 
 type GitHubButtonProps = {
@@ -11,20 +11,23 @@ type GitHubButtonProps = {
 export const GitHubButton = async ({
   className,
 }: GitHubButtonProps): Promise<ReactElement> => {
-  let stars = 0;
-  let url = '';
+  // Default values in case of API failure
+  const defaultData = {
+    stargazers_count: 0,
+    html_url: 'https://github.com/zopiolabs/zopio'
+  };
 
-  try {
-    const { data } = await octokit.repos.get({
+  // Use safe fetch helper to handle errors gracefully
+  const repoData = await safeGitHubFetch(
+    () => octokit.repos.get({
       owner: 'zopiolabs',
       repo: 'zopio',
-    });
-    stars = data.stargazers_count;
-    url = data.html_url;
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: "it's fine"
-    console.error(error);
-  }
+    }),
+    defaultData
+  );
+
+  const stars = repoData.stargazers_count;
+  const url = repoData.html_url;
 
   return (
     <a
