@@ -30,5 +30,6 @@
   },
   "markdown.validate.enabled": true,
   "cursor.experimental.suggestedActions": true,
-  "windsurf.experimental.autoFixOnSave": true
+  "windsurf.experimental.autoFixOnSave": true,
+  "files.eol": "\n"
 }
