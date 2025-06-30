@@ -1,3 +1,19 @@
+# v0.9.29 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: trigger-rules package linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: notifications package linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: mcp package linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: cms package linting errors ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.28 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
