@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-toast": "^1.2.14",
     "@repo/design-system": "workspace:*",
     "@storybook/addon-actions": "^8.6.14",
