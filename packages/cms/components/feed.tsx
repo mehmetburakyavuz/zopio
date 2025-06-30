@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 
 interface FeedProps {
   children?: ReactNode | ((data: Record<string, unknown>) => ReactNode);
   data?: Record<string, unknown>;
 }
 
-export function Feed({ children, data }: FeedProps) {
+export const Feed: FC<FeedProps> = ({ children, data }) => {
   return (
     <div className="basehub-feed">
       {typeof children !== 'function' && children}
@@ -16,4 +16,4 @@ export function Feed({ children, data }: FeedProps) {
       )}
     </div>
   );
-}
+};

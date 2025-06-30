@@ -1,11 +1,12 @@
 import 'server-only';
+import type { FC } from 'react';
 import { keys } from '../keys';
 import type { BetterStackResponse } from './types';
 
 const apiKey = keys().BETTERSTACK_API_KEY;
 const url = keys().BETTERSTACK_URL;
 
-export const Status = async () => {
+export const Status: FC = async () => {
   if (!apiKey || !url) {
     return null;
   }

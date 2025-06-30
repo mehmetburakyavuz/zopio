@@ -1,5 +1,5 @@
 import { RichText } from 'basehub/react-rich-text';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, FC } from 'react';
 
 type TableOfContentsProperties = Omit<
   ComponentProps<typeof RichText>,
@@ -8,7 +8,7 @@ type TableOfContentsProperties = Omit<
   readonly data: ComponentProps<typeof RichText>['children'];
 };
 
-export const TableOfContents = ({
+export const TableOfContents: FC<TableOfContentsProperties> = ({
   data,
   ...props
 }: TableOfContentsProperties) => (

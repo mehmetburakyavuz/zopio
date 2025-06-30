@@ -1,3 +1,4 @@
 import { RichText } from 'basehub/react-rich-text';
+import type { FC } from 'react';
 
-export const Body = RichText;
+export const Body: FC = RichText;

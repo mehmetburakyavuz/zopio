@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 
 interface ToolbarProps {
   children?: ReactNode;
 }
 
-export function Toolbar({ children }: ToolbarProps) {
+export const Toolbar: FC<ToolbarProps> = ({ children }) => {
   return (
     <div
       className="basehub-toolbar"
@@ -26,4 +26,4 @@ export function Toolbar({ children }: ToolbarProps) {
       {children}
     </div>
   );
-}
+};
