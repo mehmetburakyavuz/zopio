@@ -6,10 +6,11 @@
     "composite": true,
     "incremental": true,
     "paths": {
-      "@zopio/auth-rbac/*": ["../auth-rbac/*"],
-      "@zopio/auth-log": ["../auth-log/logger"],
-      "@zopio/auth-log/*": ["../auth-log/*"]
-    }
+      "@repo/auth-rbac/*": ["../auth-rbac/*"],
+      "@repo/auth-log": ["../auth-log/logger"],
+      "@repo/auth-log/*": ["../auth-log/*"]
+    },
+    "skipLibCheck": true
   },
   "include": ["."],
   "references": [{ "path": "../auth-rbac" }, { "path": "../auth-log" }]

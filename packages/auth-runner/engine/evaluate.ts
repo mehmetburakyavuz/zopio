@@ -1,7 +1,7 @@
-import { logAccessAttempt } from '@zopio/auth-log';
-import { evaluateAccess as baseEvaluate } from '@zopio/auth-rbac/engine/evaluate';
-import type { UserContext } from '@zopio/auth-rbac/types';
-import { combinedRules } from '../rules/combinedRules';
+import { logAccessAttempt } from '@repo/auth-log';
+import { evaluateAccess as baseEvaluate } from '@repo/auth-rbac/engine/evaluate';
+import type { UserContext } from '@repo/auth-rbac/types';
+import { combinedRules } from '../rules/combined-rules';
 
 export function evaluateAccess(ctx: {
   context: UserContext;
