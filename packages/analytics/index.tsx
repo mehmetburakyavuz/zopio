@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { GoogleAnalytics } from './google';
 import { keys } from './keys';
 import { PostHogProvider } from './posthog/client';
@@ -10,7 +10,7 @@ type AnalyticsProviderProps = {
 
 const { NEXT_PUBLIC_GA_MEASUREMENT_ID } = keys();
 
-export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => (
+export const AnalyticsProvider: FC<AnalyticsProviderProps> = ({ children }) => (
   <PostHogProvider>
     {children}
     <VercelAnalytics />

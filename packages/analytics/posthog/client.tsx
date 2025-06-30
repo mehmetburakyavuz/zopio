@@ -2,7 +2,7 @@
 
 import posthog, { type PostHog } from 'posthog-js';
 import { PostHogProvider as PostHogProviderRaw } from 'posthog-js/react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useEffect } from 'react';
 import { keys } from '../keys';
 
@@ -10,8 +10,8 @@ type PostHogProviderProps = {
   readonly children: ReactNode;
 };
 
-export const PostHogProvider = (
-  properties: Omit<PostHogProviderProps, 'client'>
+export const PostHogProvider: FC<Omit<PostHogProviderProps, 'client'>> = (
+  properties
 ) => {
   useEffect(() => {
     posthog.init(keys().NEXT_PUBLIC_POSTHOG_KEY, {
