@@ -2,11 +2,17 @@ import 'server-only';
 import type en from './dictionaries/en.json';
 import languine from './languine.json';
 
+export { useTranslation } from './use-translation';
+export { TranslationProvider } from './translation-provider';
+export { loadLocaleMessages } from './load-locale-messages';
+export { i18nConfig } from './i18n-config';
+
 export const locales = [
   languine.locale.source,
   ...languine.locale.targets,
 ] as const;
 
+export type Locale = (typeof locales)[number];
 export type Dictionary = typeof en;
 
 const dictionaries: Record<string, () => Promise<Dictionary>> =
@@ -16,11 +22,8 @@ const dictionaries: Record<string, () => Promise<Dictionary>> =
       () =>
         import(`./dictionaries/${locale}.json`)
           .then((mod) => mod.default)
-          .catch((err) => {
-            console.error(
-              `Failed to load dictionary for locale: ${locale}`,
-              err
-            );
+          .catch(() => {
+            // Fallback to English dictionary
             return import('./dictionaries/en.json').then((mod) => mod.default);
           }),
     ])
@@ -29,18 +32,16 @@ const dictionaries: Record<string, () => Promise<Dictionary>> =
 export const getDictionary = async (locale: string): Promise<Dictionary> => {
   const normalizedLocale = locale.split('-')[0];
 
-  if (!locales.includes(normalizedLocale as any)) {
-    console.warn(`Locale "${locale}" is not supported, defaulting to "en"`);
-    return dictionaries['en']();
+  // Type assertion to check if the normalized locale is in our supported locales
+  if (!locales.includes(normalizedLocale as Locale)) {
+    // Silently fall back to English
+    return dictionaries.en();
   }
 
   try {
     return await dictionaries[normalizedLocale]();
-  } catch (error) {
-    console.error(
-      `Error loading dictionary for locale "${normalizedLocale}", falling back to "en"`,
-      error
-    );
-    return dictionaries['en']();
+  } catch {
+    // Fallback to English dictionary on error
+    return dictionaries.en();
   }
 };
