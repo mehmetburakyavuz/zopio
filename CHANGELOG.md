@@ -1,3 +1,16 @@
+# v0.9.24 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- chore: configure VSCode settings and Git line endings for consistent development ([@mkzopio](https://github.com/mkzopio))
+- fix: linting errors whole repo ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.23 (Sun Jun 29 2025)
 
 #### ⚠️ Pushed to `main`
