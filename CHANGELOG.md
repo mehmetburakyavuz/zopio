@@ -1,3 +1,16 @@
+# v0.9.30 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: cms package for web build and deploy error ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.29 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
