@@ -7,7 +7,7 @@ import {
   LiveblocksProvider,
   RoomProvider,
 } from '@liveblocks/react/suspense';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, FC, ReactNode } from 'react';
 
 type RoomProps = ComponentProps<typeof LiveblocksProvider> & {
   id: string;
@@ -22,7 +22,7 @@ type RoomProps = ComponentProps<typeof LiveblocksProvider> & {
   ) => Promise<string[]>;
 };
 
-export const Room = ({
+export const Room: FC<RoomProps> = ({
   id,
   children,
   authEndpoint,

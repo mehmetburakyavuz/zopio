@@ -9,10 +9,7 @@ declare global {
     };
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
-    Storage: {
-      // Example, a conflict-free list
-      // animals: LiveList<string>;
-    };
+    Storage: Record<string, never>; // Empty storage for now, will be extended later
 
     // Custom user info set when authenticating with a secret key
     UserMeta: {
@@ -25,24 +22,26 @@ declare global {
     };
 
     // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: {};
+    RoomEvent: Record<string, never>; // Empty event type for now
     // Example has two events, using a union
     // | { type: "PLAY" }
     // | { type: "REACTION"; emoji: "🔥" };
 
     // Custom metadata set on threads, for useThreads, useCreateThread, etc.
-    ThreadMetadata: {
-      // Example, attaching coordinates to a thread
-      // x: number;
-      // y: number;
-    };
+    ThreadMetadata: Record<string, never>; // Empty thread metadata for now
+    // Example usage would be:
+    // ThreadMetadata: {
+    //   x: number;
+    //   y: number;
+    // };
 
     // Custom room info set with resolveRoomsInfo, for useRoomInfo
-    RoomInfo: {
-      // Example, rooms with a title and url
-      // title: string;
-      // url: string;
-    };
+    RoomInfo: Record<string, never>; // Empty room info for now
+    // Example usage would be:
+    // RoomInfo: {
+    //   title: string;
+    //   url: string;
+    // };
   }
 }
 
