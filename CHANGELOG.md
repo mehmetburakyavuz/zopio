@@ -1,3 +1,19 @@
+# v0.9.28 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: auth-runner package linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: auth-rbac package linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: auth-log package linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: auth-hooks package linting errors ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.27 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
