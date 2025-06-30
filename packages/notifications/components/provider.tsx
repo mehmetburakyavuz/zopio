@@ -1,6 +1,7 @@
 'use client';
 
 import { KnockFeedProvider, KnockProvider } from '@knocklabs/react';
+import type React from 'react';
 import type { ReactNode } from 'react';
 import { keys } from '../keys';
 
@@ -12,10 +13,10 @@ type NotificationsProviderProps = {
   userId: string;
 };
 
-export const NotificationsProvider = ({
+export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({
   children,
   userId,
-}: NotificationsProviderProps) => {
+}) => {
   if (!knockApiKey || !knockFeedChannelId) {
     return children;
   }
