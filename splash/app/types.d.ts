@@ -1,3 +1,5 @@
+import type React from 'react';
+
 // Type declarations for modules without type definitions
 declare module 'lucide-react' {
   export const StarIcon: React.FC<{ size?: number }>;
@@ -11,8 +13,8 @@ declare module 'react-tweet' {
   export const Tweet: React.FC<TweetProps>;
 }
 
-// Add JSX namespace to fix the "JSX element implicitly has type 'any'" errors
-declare namespace JSX {
+// Fix the "JSX element implicitly has type 'any'" errors
+declare global {
   interface IntrinsicElements {
     [elemName: string]: React.DetailedHTMLProps<
       React.HTMLAttributes<HTMLElement>,
@@ -22,13 +24,13 @@ declare namespace JSX {
 }
 
 // Type declarations for the GitHub API responses
-interface GitHubRepo {
+export interface GitHubRepo {
   stargazers_count: number;
   forks_count: number;
   open_issues_count: number;
 }
 
-interface GitHubContributor {
+export interface GitHubContributor {
   id: number;
   avatar_url?: string;
   login?: string;
