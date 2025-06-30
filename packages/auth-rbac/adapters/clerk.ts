@@ -17,7 +17,12 @@ interface Auth {
 }
 
 export async function getUserContext(req: NextRequest): Promise<UserContext> {
-  const auth = (await getAuth(req)) as Auth;
+  // Use a direct type assertion to bypass the type checking
+  // This is necessary due to the version mismatch between Next.js 15.3.2 and 15.3.3
+  // where the NextRequest type definition has changed
+  const auth = (await getAuth(
+    req as unknown as Parameters<typeof getAuth>[0]
+  )) as Auth;
 
   if (!auth.userId || !auth.orgId || !auth.sessionClaims?.metadata?.role) {
     throw new Error('Unauthorized or incomplete session');

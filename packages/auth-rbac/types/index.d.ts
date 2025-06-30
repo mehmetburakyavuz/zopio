@@ -3,9 +3,7 @@ export type UserContext = {
   role: string;
   tenantId: string;
 };
-
-import type { DSLNode } from '../engine/evaluate-dsl';
-
+import type { DSLNode } from '../engine/evaluateDsl';
 export type PermissionRule = {
   resource: string;
   action: string;
@@ -16,7 +14,6 @@ export type PermissionRule = {
   dsl?: DSLNode;
   fieldPermissions?: Record<string, 'read' | 'write' | 'none'>;
 };
-
 export type AccessEvaluationInput = {
   rules: PermissionRule[];
   context: UserContext;
@@ -25,8 +22,8 @@ export type AccessEvaluationInput = {
   record?: Record<string, unknown> | null;
   field?: string;
 };
-
 export type AccessEvaluationResult = {
   can: boolean;
   reason?: string;
 };
+//# sourceMappingURL=index.d.ts.map
