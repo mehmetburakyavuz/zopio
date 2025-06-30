@@ -2,8 +2,8 @@
   "name": "@repo/auth-hooks",
   "version": "0.1.0",
   "private": true,
-  "main": "./hooks/useAccess.ts",
-  "types": "./hooks/useAccess.ts",
+  "main": "./hooks/use-access.ts",
+  "types": "./hooks/use-access.ts",
   "dependencies": {
     "@repo/auth-runner": "workspace:*",
     "react": "^19.1.0"
