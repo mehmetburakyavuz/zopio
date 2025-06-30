@@ -115,12 +115,36 @@ const BlogPost = async ({ params }: BlogPostProperties) => {
                         components={{
                           pre: ({ code, language }) => {
                             // Define a type that matches what the CodeBlock component expects
-                            type CodeLanguage = 'plainText' | 'javascript' | 'typescript' | 'jsx' | 'tsx' | 'html' | 'css' | 'json' | 'markdown' | 'python' | 'ruby' | 'go' | 'rust' | 'java' | 'c' | 'cpp' | 'csharp' | 'php' | 'bash' | 'shell' | 'yaml' | 'sql' | 'graphql';
-                            
+                            type CodeLanguage =
+                              | 'plainText'
+                              | 'javascript'
+                              | 'typescript'
+                              | 'jsx'
+                              | 'tsx'
+                              | 'html'
+                              | 'css'
+                              | 'json'
+                              | 'markdown'
+                              | 'python'
+                              | 'ruby'
+                              | 'go'
+                              | 'rust'
+                              | 'java'
+                              | 'c'
+                              | 'cpp'
+                              | 'csharp'
+                              | 'php'
+                              | 'bash'
+                              | 'shell'
+                              | 'yaml'
+                              | 'sql'
+                              | 'graphql';
+
                             // Use a type assertion to ensure the language is one of the supported types
                             // Default to 'plainText' if the language is not provided
-                            const safeLanguage = (language || 'plainText') as CodeLanguage;
-                            
+                            const safeLanguage = (language ||
+                              'plainText') as CodeLanguage;
+
                             return (
                               <CodeBlock
                                 theme="vesper"
@@ -148,7 +172,5 @@ const BlogPost = async ({ params }: BlogPostProperties) => {
     </Feed>
   );
 };
-
-
 
 export default BlogPost;

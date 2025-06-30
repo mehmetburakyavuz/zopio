@@ -7,7 +7,10 @@ type RichTextContent = unknown;
 type BodyProps = {
   content: RichTextContent;
   components?: {
-    pre?: ({ code, language }: { code: string; language: string }) => ReactElement;
+    pre?: ({
+      code,
+      language,
+    }: { code: string; language: string }) => ReactElement;
   };
 };
 
