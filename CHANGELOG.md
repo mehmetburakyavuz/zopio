@@ -1,3 +1,16 @@
+# v0.9.26 (Mon Jun 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: api for missing file bebause of linting fixes before ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.25 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
