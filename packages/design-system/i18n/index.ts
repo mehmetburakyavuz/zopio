@@ -5,8 +5,23 @@
  * ensuring consistent translation handling across the application.
  */
 
+// Define types for our translations structure
+type SupportedLocales = 'en' | 'tr' | 'es' | 'de';
+
+// Use a more flexible type definition that matches the actual structure
+type TranslationsType = {
+  [locale in SupportedLocales]: {
+    common: Record<string, string>;
+    form: Record<string, string>;
+    table: Record<string, string>;
+    dialog: Record<string, string>;
+    fileUpload: Record<string, string>;
+    errors: Record<string, string>;
+  };
+};
+
 // Default translations for design system components
-const defaultTranslations = {
+const defaultTranslations: TranslationsType = {
   en: {
     common: {
       loading: 'Loading...',
@@ -443,10 +458,22 @@ export function t(
     return key;
   }
 
-  const translation =
-    defaultTranslations[locale as keyof typeof defaultTranslations]?.[
-      namespace as keyof typeof defaultTranslations.en
-    ]?.[messageKey as keyof typeof defaultTranslations.en.common];
+  // Type-safe access to translations
+  const localeTranslations = defaultTranslations[locale as SupportedLocales];
+  
+  if (!localeTranslations) {
+    return key;
+  }
+  
+  // Get the namespace translations using type assertion to handle dynamic access
+  const namespaceTranslations = localeTranslations[namespace as keyof typeof localeTranslations];
+  
+  if (!namespaceTranslations) {
+    return key;
+  }
+  
+  // Get the specific message
+  const translation = namespaceTranslations[messageKey];
 
   if (typeof translation !== 'string') {
     return key;
