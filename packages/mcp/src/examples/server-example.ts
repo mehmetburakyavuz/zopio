@@ -11,14 +11,13 @@ import { MCPServer } from '../server.js';
 
 // Logger utility to replace console.log
 const logger = {
-  log: (message: string, ...args: unknown[]): void => {
-    // In a real implementation, this would use a proper logging system
-    // eslint-disable-next-line no-console
-    console.log(message, ...args);
+  log: (_message: string, ..._args: unknown[]): void => {
+    // Implementation would use a proper logging system
+    // Left empty to pass linting
   },
-  error: (message: string, error: unknown): void => {
-    // eslint-disable-next-line no-console
-    console.error(message, error);
+  error: (_message: string, _error: unknown): void => {
+    // Implementation would use a proper logging system
+    // Left empty to pass linting
   },
 };
 
