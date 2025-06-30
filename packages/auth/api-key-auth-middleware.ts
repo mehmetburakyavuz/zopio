@@ -1,4 +1,4 @@
-// apiKeyAuthMiddleware.ts
+// api-key-auth-middleware.ts
 import { validateApiKey } from '@repo/api-key/lib/validate';
 
 // Extend the Request type to include user property

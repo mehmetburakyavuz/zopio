@@ -1,6 +1,7 @@
 import { SignIn as ClerkSignIn } from '@clerk/nextjs';
+import type { FC } from 'react';
 
-export const SignIn = () => (
+export const SignIn: FC = () => (
   <ClerkSignIn
     appearance={{
       elements: {
