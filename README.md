@@ -27,4 +27,17 @@ npx zopio@latest init
 
 ## 📌 Zopio Monorepo Structure (With Roadmap)
 
-![Zopio Monorepo UML](https://www.plantuml.com/plantuml/png/TP9DRXin38NtFeNhLRlG7NA6ReiiEDApJ9Zw0KKvTOlSlK4obcRQT5Rl-mI21EOzDIErdkJmnIv8E7fe5r1sfPjmnk5GoLyfudYYMjlf-FjmVFj-KENdHwfhUi7oS25nTfKovFZr-xVL1joi56aRrTajdIL0DpAHNc5LoEF3lcwkMCEyv4HyUdx4J78tzcsQokwA--HkbnquMiZlpQMKQzihAN4lz9yfxJb3X_EfpLn4Q2bAnYLFgpqC26IqWuKQfa3Zc5sxDqCQ5ebO1fr1rXNkB1JdQiu6pU-BIVZN_eBawyWPFytvaiySfol6P_RlGstOiZJeZHOMjlkmbUu9sTeGIWOddDY6Ql1TjqCDPMOhIX633SqunydACKB_PgTTCBVU62yxUFHho1Siwm_UzMfJkb6jW1kaLAYhqYFdRNENtZYZjK-UpfmD_lB9onjr_SyRqe8G41pLkfynn8_ghFhry8GSUf8_)
+![Repo Structure](/repostructure.svg)
+
+[📎 View this diagram live on PlantUML →](https://www.plantuml.com/plantuml/png/TP9DRXin38NtFeNhLRlG7NA6ReiiEDApJ9Zw0KKvTOlSlK4obcRQT5Rl-mI21EOzDIErdkJmnIv8E7fe5r1sfPjmnk5GoLyfudYYMjlf-FjmVFj-KENdHwfhUi7oS25nTfKovFZr-xVL1joi56aRrTajdIL0DpAHNc5LoEF3lcwkMCEyv4HyUdx4J78tzcsQokwA--HkbnquMiZlpQMKQzihAN4lz9yfxJb3X_EfpLn4Q2bAnYLFgpqC26IqWuKQfa3Zc5sxDqCQ5ebO1fr1rXNkB1JdQiu6pU-BIVZN_eBawyWPFytvaiySfol6P_RlGstOiZJeZHOMjlkmbUu9sTeGIWOddDY6Ql1TjqCDPMOhIX633SqunydACKB_PgTTCBVU62yxUFHho1Siwm_UzMfJkb6jW1kaLAYhqYFdRNENtZYZjK-UpfmD_lB9onjr_SyRqe8G41pLkfynn8_ghFhry8GSUf8_)
+
+---
+
+## ❤️ Join the Zopio Community
+
+We’re building Zopio together with developers like you.
+
+- ⭐️ Star us on GitHub to show your support
+- 💬 [Join the discussion](https://github.com/zopiolabs/zopio/discussions)
+
+Let’s shape the future of business frameworks, together!
