@@ -1,3 +1,24 @@
+# v0.9.34 (Tue Jul 01 2025)
+
+#### ⚠️ Pushed to `main`
+
+- chore: revised config files for linting errors ([@mkzopio](https://github.com/mkzopio))
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- fix: email package lint errors ([@mkzopio](https://github.com/mkzopio))
+- fix: storybook linting errors ([@mkzopio](https://github.com/mkzopio))
+- fix: splash github token name replace ([@mkzopio](https://github.com/mkzopio))
+- feat: splash git api rate limit increase with access token ([@mkzopio](https://github.com/mkzopio))
+- fix: pgp key folder replace sure ([@mkzopio](https://github.com/mkzopio))
+- fix: pgp key folder replace ([@mkzopio](https://github.com/mkzopio))
+- feat: adding security pgp file to splash project ([@mkzopio](https://github.com/mkzopio))
+- fix: api vercel build test file not found error ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.33 (Mon Jun 30 2025)
 
 #### ⚠️ Pushed to `main`
