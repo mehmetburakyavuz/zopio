@@ -1,3 +1,16 @@
+# v0.9.37 (Tue Jul 01 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- chore: README.md repostructure SVG to PNG ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.36 (Tue Jul 01 2025)
 
 #### ⚠️ Pushed to `main`
