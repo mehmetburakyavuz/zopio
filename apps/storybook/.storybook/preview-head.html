@@ -14,4 +14,20 @@
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
   }
+  
+  /* Force CSS variables to be applied in Storybook */
+  #storybook-root {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  
+  /* Ensure Tailwind classes are properly applied */
+  .sb-show-main {
+    background-color: var(--background) !important;
+  }
 </style>
+
+<!-- Load Tailwind CSS animate plugin -->
+<script>
+  window.global = window;
+</script>

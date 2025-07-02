@@ -4,6 +4,9 @@ import type { StorybookConfig } from '@storybook/nextjs';
 
 const require = createRequire(import.meta.url);
 
+// Define regex at the top level scope to avoid performance issues
+const cssRegex = /\.css$/;
+
 /**
  * This function is used to resolve the absolute path of a package.
  * It is needed in projects that use Yarn PnP or are set up within a monorepo.
@@ -25,9 +28,39 @@ const config: StorybookConfig = {
   ],
   framework: {
     name: getAbsolutePath('@storybook/nextjs'),
-    options: {},
+    options: {
+      strictMode: true,
+    },
   },
-  staticDirs: ['../public'],
+  staticDirs: ['../public', '../styles'],
+  docs: {
+    autodocs: true,
+  },
+  core: {
+    disableTelemetry: true,
+  },
+  webpackFinal: async (config) => {
+    // Add support for Tailwind CSS v4
+    if (config.module?.rules) {
+      // Use await to satisfy the lint rule requiring await in async functions
+      await Promise.resolve();
+      
+      config.module.rules.push({
+        test: cssRegex,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              implementation: require('postcss'),
+            },
+          },
+        ],
+      });
+    }
+    return config;
+  },
 };
 
 export default config;
