@@ -1,3 +1,18 @@
+# v0.9.38 (Wed Jul 02 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Merge branch 'main' of https://github.com/zopiolabs/zopio ([@mkzopio](https://github.com/mkzopio))
+- feat: adding marketplace system for 3rdparty and marketplace app with mock datas ([@mkzopio](https://github.com/mkzopio))
+- feat: adding ai rules templates ([@mkzopio](https://github.com/mkzopio))
+- fix: strorybook tailwind errors ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.37 (Tue Jul 01 2025)
 
 #### ⚠️ Pushed to `main`
