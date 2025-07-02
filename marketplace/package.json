@@ -1,0 +1,28 @@
+{
+  "name": "@repo/marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.11.0",
+  "workspaces": [
+    "developer-plugins/*",
+    "business-plugins/*",
+    "fintech-plugins/*",
+    "insurtech-plugins/*",
+    "embedded-apps/*",
+    "integrations/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r --filter=@repo/marketplace/** build",
+    "dev": "pnpm -r --filter=@repo/marketplace/** dev",
+    "lint": "pnpm -r --filter=@repo/marketplace/** lint",
+    "clean": "pnpm -r --filter=@repo/marketplace/** clean",
+    "typecheck": "pnpm -r --filter=@repo/marketplace/** typecheck",
+    "format": "node ./format-marketplace.js",
+    "create-plugin": "node ./create-plugin.js"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "turbo": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}

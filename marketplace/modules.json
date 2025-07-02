@@ -1,0 +1,40 @@
+{
+  "categories": [
+    {
+      "name": "Developer Plugins",
+      "description": "Tools and utilities for developers working with the Zopio platform",
+      "modules": [
+        {
+          "name": "Code Generator",
+          "definition": "Generate code templates for components, hooks, services, and tests",
+          "importCode": "import { CodeGeneratorForm } from '@repo/plugin-developer-code-generator';"
+        }
+      ]
+    },
+    {
+      "name": "Business Plugins",
+      "description": "Business-focused plugins for analytics, reporting, and workflow automation",
+      "modules": []
+    },
+    {
+      "name": "Fintech Plugins",
+      "description": "Financial technology plugins for payments, banking, and financial operations",
+      "modules": []
+    },
+    {
+      "name": "Insurtech Plugins",
+      "description": "Insurance technology plugins for policy management and claims processing",
+      "modules": []
+    },
+    {
+      "name": "Embedded Apps",
+      "description": "Standalone applications that can be embedded within the Zopio platform",
+      "modules": []
+    },
+    {
+      "name": "Integrations",
+      "description": "Third-party service integrations connecting Zopio with external platforms",
+      "modules": []
+    }
+  ]
+}

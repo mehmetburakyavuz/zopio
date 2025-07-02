@@ -2,6 +2,17 @@
   "name": "zopio",
   "version": "0.9.36",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "marketplace/*",
+    "marketplace/developer-plugins/*",
+    "marketplace/business-plugins/*",
+    "marketplace/fintech-plugins/*",
+    "marketplace/insurtech-plugins/*",
+    "marketplace/embedded-apps/*",
+    "marketplace/integrations/*"
+  ],
   "bin": {
     "zopio": "dist/index.js"
   },

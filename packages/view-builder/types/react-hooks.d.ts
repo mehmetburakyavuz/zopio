@@ -1,3 +1,4 @@
+import type * as React from 'react';
 /**
  * Custom type declarations for React hooks to fix TypeScript errors
  */

@@ -1,6 +1,7 @@
 {
   "name": "zopio-cli",
   "version": "0.1.0",
+  "packageManager": "pnpm@10.11.0",
   "bin": {
     "zopio": "./dist/zopio.js"
   },

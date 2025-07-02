@@ -15,42 +15,45 @@
       "label": "Dev",
       "type": "shell",
       "command": "pnpm dev",
-      "group": "none",
+      "group": "test",
       "problemMatcher": []
     },
     {
       "label": "Lint",
       "type": "shell",
       "command": "pnpm lint",
-      "group": "none",
+      "group": "test",
       "problemMatcher": []
     },
     {
       "label": "Format",
       "type": "shell",
       "command": "pnpm format",
-      "group": "none",
+      "group": "test",
       "problemMatcher": []
     },
     {
       "label": "Test",
       "type": "shell",
       "command": "pnpm test",
-      "group": "none",
+      "group": "test",
       "problemMatcher": []
     },
     {
       "label": "Type Check",
       "type": "shell",
       "command": "pnpm typecheck",
-      "group": "none",
+      "group": "test",
       "problemMatcher": []
     },
     {
-      "label": "Analyze",
+      "label": "Turbo Check",
       "type": "shell",
-      "command": "pnpm analyze",
-      "group": "none",
+      "command": "turbo typecheck",
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "group": "test",
       "problemMatcher": []
     },
     {

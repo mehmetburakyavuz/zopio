@@ -1,0 +1,37 @@
+{
+  "name": "@repo/plugin-code-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint .",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "peerDependencies": {
+    "@repo/design-system": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.5",
+    "eslint": "^8.57.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.8.3"
+  }
+}

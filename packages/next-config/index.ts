@@ -52,3 +52,27 @@ export const config: NextConfig = {
 
 export const withAnalyzer = (sourceConfig: NextConfig): NextConfig =>
   withBundleAnalyzer()(sourceConfig);
+
+/**
+ * Combines the base configuration with custom configuration
+ * @param customConfig - Custom Next.js configuration
+ * @returns Combined Next.js configuration
+ */
+export const withConfig = (customConfig: NextConfig): NextConfig => {
+  return {
+    ...config,
+    ...customConfig,
+    // Preserve any existing rewrites from both configs
+    async rewrites() {
+      type RewriteResult = { source: string; destination: string }[];
+      
+      const baseRewritesFunc = config.rewrites as unknown as (() => Promise<RewriteResult>) | undefined;
+      const customRewritesFunc = customConfig.rewrites as unknown as (() => Promise<RewriteResult>) | undefined;
+      
+      const baseRewrites = baseRewritesFunc ? await baseRewritesFunc() : [];
+      const customRewrites = customRewritesFunc ? await customRewritesFunc() : [];
+      
+      return [...baseRewrites, ...customRewrites];
+    },
+  };
+};
