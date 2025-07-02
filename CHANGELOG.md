@@ -1,3 +1,15 @@
+# v0.9.39 (Wed Jul 02 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat: add trending and category pages with plugin listings and filters ([@mkzopio](https://github.com/mkzopio))
+
+#### Authors: 1
+
+- MK ([@mkzopio](https://github.com/mkzopio))
+
+---
+
 # v0.9.38 (Wed Jul 02 2025)
 
 #### ⚠️ Pushed to `main`
